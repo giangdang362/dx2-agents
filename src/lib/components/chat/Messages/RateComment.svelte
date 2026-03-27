@@ -137,7 +137,7 @@
 				{#each Array.from({ length: 10 }).map((_, i) => i + 1) as rating}
 					<button
 						aria-label={$i18n.t('Rate {{rating}} out of 10', { rating })}
-						class="size-7 text-sm border border-gray-100/30 dark:border-gray-850/30 hover:bg-gray-50 dark:hover:bg-gray-850 {detailedRating ===
+						class="size-7 text-sm border border-gray-100/30 dark:border-gray-850/30 hover:bg-slate-100 dark:hover:bg-slate-800 {detailedRating ===
 						rating
 							? 'bg-gray-100 dark:bg-gray-800'
 							: ''} transition rounded-full disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-white dark:disabled:bg-gray-900"
@@ -170,7 +170,7 @@
 			<div class="flex flex-wrap gap-1.5 text-sm mt-1.5">
 				{#each reasons as reason}
 					<button
-						class="px-3 py-0.5 border border-gray-100/30 dark:border-gray-850/30 hover:bg-gray-50 dark:hover:bg-gray-850 {selectedReason ===
+						class="px-3 py-0.5 border border-gray-100/30 dark:border-gray-850/30 hover:bg-slate-100 dark:hover:bg-slate-800 {selectedReason ===
 						reason
 							? 'bg-gray-100 dark:bg-gray-800'
 							: ''} transition rounded-xl"
@@ -258,7 +258,7 @@
 			<a
 				href={`https://openwebui.com/models?q=${encodeURIComponent(message.model)}`}
 				target="_blank"
-				class="flex cursor-pointer items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-850 w-full px-3 py-2 rounded-xl transition"
+				class="flex cursor-pointer items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 w-full px-3 py-2 rounded-xl transition"
 			>
 				<div class="self-center">
 					<div class="text-sm font-medium">

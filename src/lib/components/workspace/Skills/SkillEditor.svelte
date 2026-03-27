@@ -165,7 +165,7 @@
 						<div class="self-center shrink-0">
 							{#if !disabled}
 								<button
-									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
+									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
 									type="button"
 									on:click={() => (showAccessControlModal = true)}
 								>
@@ -177,7 +177,7 @@
 								</button>
 							{:else}
 								<span
-									class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full"
+									class="text-xs text-gray-500 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full"
 									>{$i18n.t('Read Only')}</span
 								>
 							{/if}

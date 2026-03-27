@@ -175,7 +175,7 @@
 						<span
 							class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium {systemOnline
 								? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-								: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}"
+								: 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-400'}"
 						>
 							<span class="w-1.5 h-1.5 rounded-full {systemOnline ? 'bg-green-500' : 'bg-gray-400'}"
 							></span>
@@ -278,7 +278,7 @@
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<div
-						class="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border shadow-sm dark:shadow-gray-950/50 hover:shadow-md transition relative h-[10rem] cursor-pointer {selectedIds.has(
+						class="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-slate-800 border shadow-sm dark:shadow-gray-950/50 hover:shadow-md transition relative h-[10rem] cursor-pointer {selectedIds.has(
 							agent.id
 						)
 							? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800'
@@ -349,7 +349,7 @@
 											</span>
 										{:else if i === 2}
 											<span
-												class="inline-block text-[10px] font-medium px-2 py-0.5 mt-1 rounded-full bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+												class="inline-block text-[10px] font-medium px-2 py-0.5 mt-1 rounded-full bg-gray-100 text-gray-500 dark:bg-slate-800 dark:text-gray-400"
 											>
 												+{(agent.meta?.tags ?? []).length - 2}
 											</span>
@@ -402,7 +402,7 @@
 		<!-- Status Bar — always shown after loading -->
 		{#if !loading}
 			<div
-				class="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-850 text-xs text-gray-500 dark:text-gray-400"
+				class="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-gray-850 text-xs text-gray-500 dark:text-gray-400"
 			>
 				<div class="flex items-center gap-4">
 					<span class="flex items-center gap-1.5">

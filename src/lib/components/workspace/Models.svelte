@@ -348,7 +348,7 @@
 			<div class="flex w-full justify-end gap-1.5">
 				{#if $user?.role === 'admin' || $user?.permissions?.workspace?.models_import}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
 						on:click={() => {
 							modelsImportInputElement.click();
 						}}
@@ -361,7 +361,7 @@
 
 				{#if total && ($user?.role === 'admin' || $user?.permissions?.workspace?.models_export)}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
 						on:click={async () => {
 							downloadModels(models);
 						}}
@@ -384,7 +384,7 @@
 	</div>
 
 	<div
-		class="py-2 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
+		class="py-2 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
 	>
 		<div class="px-3.5 flex flex-1 items-center w-full space-x-2 py-0.5 pb-2">
 			<div class="flex flex-1 items-center">
@@ -408,7 +408,7 @@
 				{#if query}
 					<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
 						<button
-							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							aria-label={$i18n.t('Clear search')}
 							on:click={() => {
 								query = '';

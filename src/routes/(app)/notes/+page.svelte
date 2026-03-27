@@ -91,7 +91,7 @@
 								}}
 							>
 								<button
-									class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									class="select-none flex rounded-xl p-1.5 w-full hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 									aria-label="User Menu"
 								>
 									<div class=" self-center">

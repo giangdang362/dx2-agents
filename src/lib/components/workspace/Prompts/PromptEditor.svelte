@@ -301,7 +301,7 @@
 		<div class="flex justify-between items-center mb-2">
 			<div class="text-lg font-medium">{$i18n.t('Edit Prompt')}</div>
 			<button
-				class="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+				class="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
 				aria-label={$i18n.t('Close')}
 				on:click={() => (showEditModal = false)}
 			>
@@ -408,14 +408,14 @@
 						</button>
 
 						<button
-							class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-white transition px-2.5 py-1 rounded-full flex gap-1.5 items-center text-sm border border-gray-100 dark:border-gray-800"
+							class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2.5 py-1 rounded-full flex gap-1.5 items-center text-sm border border-gray-100 dark:border-gray-800"
 							on:click={() => (showAccessControlModal = true)}
 						>
 							<LockClosed strokeWidth="2.5" className="size-3.5" />
 							{$i18n.t('Access')}
 						</button>
 					{:else}
-						<span class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full"
+						<span class="text-xs text-gray-500 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full"
 							>{$i18n.t('Read Only')}</span
 						>
 					{/if}
@@ -472,7 +472,7 @@
 						</div>
 						{#if selectedHistoryEntry}
 							<span
-								class="text-xs text-gray-500 font-mono bg-gray-100 dark:bg-gray-800 px-1.5 rounded"
+								class="text-xs text-gray-500 font-mono bg-gray-100 dark:bg-slate-800 px-1.5 rounded"
 							>
 								{selectedHistoryEntry.id.slice(0, 7)}
 							</span>
@@ -504,7 +504,7 @@
 					<!-- Copy button - outside scroll area -->
 					<div class="absolute top-2 right-2 z-10">
 						<button
-							class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+							class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 							aria-label={$i18n.t('Copy content')}
 							on:click={copyContent}
 						>
@@ -545,7 +545,7 @@
 							/>
 							<div class="self-center shrink-0">
 								<button
-									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
+									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
 									type="button"
 									on:click={() => (showAccessControlModal = true)}
 								>
@@ -633,7 +633,7 @@
 						<button
 							class="flex-1 text-left px-3.5 py-2 mb-1 rounded-2xl transition group
 								{selectedHistoryEntry?.id === entry.id
-								? 'bg-gray-100/50 dark:bg-gray-850/50'
+								? 'bg-gray-100/50 dark:bg-slate-800 '
 								: 'hover:bg-gray-100/50 dark:hover:bg-gray-850/50'}"
 							on:click={() => (selectedHistoryEntry = entry)}
 						>

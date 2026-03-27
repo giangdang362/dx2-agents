@@ -147,7 +147,7 @@
 	</div>
 
 	<div
-		class="py-2 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
+		class="py-2 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
 	>
 		<div class="flex items-center w-full space-x-2 py-0.5 px-3.5">
 			<div class="flex flex-1">
@@ -163,7 +163,7 @@
 				{#if query}
 					<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
 						<button
-							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							aria-label={$i18n.t('Clear search')}
 							on:click={() => {
 								query = '';
@@ -183,7 +183,7 @@
 				}}
 			>
 				<Select.Trigger
-					class="relative flex items-center gap-0.5 px-2.5 py-1.5 text-sm bg-gray-50 dark:bg-gray-850 rounded-xl shrink-0"
+					class="relative flex items-center gap-0.5 px-2.5 py-1.5 text-sm bg-gray-50 dark:bg-slate-800 rounded-xl shrink-0"
 					aria-label={$i18n.t('Sort by')}
 				>
 					<Select.Value
@@ -194,7 +194,7 @@
 				</Select.Trigger>
 
 				<Select.Content
-					class="rounded-2xl min-w-[170px] p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg"
+					class="rounded-2xl min-w-[170px] p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-slate-800 dark:text-white shadow-lg"
 					sameWidth={false}
 					align="end"
 				>

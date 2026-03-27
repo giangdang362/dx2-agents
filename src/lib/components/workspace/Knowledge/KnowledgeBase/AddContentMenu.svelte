@@ -33,7 +33,7 @@
 >
 	<Tooltip content={$i18n.t('Add Content')}>
 		<button
-			class=" p-1.5 rounded-xl hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 transition font-medium text-sm flex items-center space-x-1"
+			class=" p-1.5 rounded-xl hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition font-medium text-sm flex items-center space-x-1"
 			on:click={(e) => {
 				e.stopPropagation();
 				show = true;
@@ -54,7 +54,7 @@
 
 	<div slot="content">
 		<DropdownMenu.Content
-			class="w-full max-w-[200px] rounded-2xl px-1 py-1  border border-gray-100  dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg transition"
+			class="w-full max-w-[200px] rounded-2xl px-1 py-1  border border-gray-100  dark:border-gray-800 z-50 bg-white dark:bg-slate-800 dark:text-white shadow-lg transition"
 			sideOffset={4}
 			side="bottom"
 			align="end"

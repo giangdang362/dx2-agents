@@ -136,7 +136,7 @@
 						{#if query}
 							<div class="self-center pl-1.5 pr-1 translate-y-[0.5px] rounded-l-xl bg-transparent">
 								<button
-									class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+									class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 									on:click={() => {
 										query = '';
 										selectedIdx = 0;
@@ -249,7 +249,7 @@
 								{/if}
 
 								<div
-									class=" w-full flex items-center rounded-lg text-sm py-2 px-3 hover:bg-gray-50 dark:hover:bg-gray-850"
+									class=" w-full flex items-center rounded-lg text-sm py-2 px-3 hover:bg-slate-100 dark:hover:bg-slate-800"
 									draggable="false"
 								>
 									{#if showUserInfo && chat.user_id}

@@ -128,7 +128,7 @@
 >
 	{#if loading}
 		<div
-			class="absolute inset-0 flex items-center justify-center z-10 bg-white/50 dark:bg-gray-900/50"
+			class="absolute inset-0 flex items-center justify-center z-10 bg-white/50 dark:bg-slate-900/50"
 		>
 			<Spinner className="size-5" />
 		</div>
@@ -169,7 +169,7 @@
 			<tbody>
 				{#each sortedModels as model, idx (model.id)}
 					<tr
-						class="bg-white dark:bg-gray-900 text-xs group cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-850/50 transition"
+						class="bg-white dark:bg-gray-900 text-xs group cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 						on:click={() => openModal(model)}
 					>
 						<td class="px-3 py-1.5 font-medium text-gray-900 dark:text-white">

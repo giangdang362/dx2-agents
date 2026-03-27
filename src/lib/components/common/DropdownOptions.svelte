@@ -34,7 +34,7 @@
 
 	<DropdownMenu.Content {align}>
 		<div
-			class="dark:bg-gray-850 z-50 w-full rounded-2xl border border-gray-100 bg-white p-1 shadow-lg dark:border-gray-800 dark:text-white"
+			class="dark:bg-slate-800 z-50 w-full rounded-2xl border border-gray-100 bg-white p-1 shadow-lg dark:border-gray-800 dark:text-white"
 		>
 			{#each items as item}
 				<button

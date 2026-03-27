@@ -499,7 +499,7 @@
 			</div>
 			<div class="flex gap-1">
 				<button
-					class="px-2 py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition text-xs font-medium flex items-center gap-1"
+					class="px-2 py-1 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition text-xs font-medium flex items-center gap-1"
 					type="button"
 					on:click={() => {
 						showAddAccessModal = true;
@@ -519,7 +519,7 @@
 					<div class="flex items-center gap-2 w-full flex-1">
 						<!-- Placeholder for group icon vs user icon -->
 						<div
-							class="size-5 rounded-full bg-gray-100 dark:bg-gray-850 flex items-center justify-center text-xs"
+							class="size-5 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-xs"
 						>
 							{group.name.charAt(0).toUpperCase()}
 						</div>

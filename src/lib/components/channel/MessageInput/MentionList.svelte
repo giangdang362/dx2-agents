@@ -152,7 +152,7 @@
 
 {#if filteredItems.length}
 	<div
-		class="mention-list text-black dark:text-white rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-850 w-72 p-1"
+		class="mention-list text-black dark:text-white rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-slate-800 w-72 p-1"
 		id="suggestions-container"
 	>
 		<div class="overflow-y-auto scrollbar-thin max-h-60">
@@ -178,7 +178,7 @@
 						}}
 						class="flex items-center justify-between px-2.5 py-1.5 rounded-xl w-full text-left {i ===
 						selectedIndex
-							? 'bg-gray-50 dark:bg-gray-800 selected-command-option-button'
+							? 'bg-gray-50 dark:bg-slate-800 selected-command-option-button'
 							: ''}"
 						data-selected={i === selectedIndex}
 					>

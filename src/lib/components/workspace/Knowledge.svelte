@@ -187,7 +187,7 @@
 	</div>
 
 	<div
-		class="py-2 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
+		class="py-2 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
 	>
 		<div class=" flex w-full space-x-2 py-0.5 px-3.5 pb-2">
 			<div class="flex flex-1">
@@ -203,7 +203,7 @@
 				{#if query}
 					<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
 						<button
-							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+							class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							aria-label={$i18n.t('Clear search')}
 							on:click={() => {
 								query = '';
