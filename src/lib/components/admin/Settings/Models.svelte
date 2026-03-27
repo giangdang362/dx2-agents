@@ -360,7 +360,7 @@
 						/>
 
 						<button
-							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
 							disabled={modelsImportInProgress}
 							on:click={() => {
 								modelsImportInputElement.click();
@@ -375,7 +375,7 @@
 						</button>
 
 						<button
-							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
 							on:click={async () => {
 								downloadModels(models);
 							}}
@@ -387,7 +387,7 @@
 					{/if}
 
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
 						type="button"
 						on:click={() => {
 							showManageModal = true;
@@ -414,7 +414,7 @@
 		</div>
 
 		<div
-			class="py-2 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
+			class="py-2 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
 		>
 			<div class="px-3.5 flex flex-1 items-center w-full space-x-2 py-0.5 pb-2">
 				<div class="flex flex-1 items-center">
@@ -429,7 +429,7 @@
 					{#if searchValue}
 						<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
 							<button
-								class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+								class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 								on:click={() => {
 									searchValue = '';
 								}}
@@ -453,7 +453,7 @@
 				<Dropdown>
 					<Tooltip content={$i18n.t('Actions')}>
 						<button
-							class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+							class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 							type="button"
 						>
 							<EllipsisHorizontal className="size-4" />
@@ -462,7 +462,7 @@
 
 					<div slot="content">
 						<DropdownMenu.Content
-							class="w-full max-w-[170px] rounded-xl p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-sm"
+							class="w-full max-w-[170px] rounded-xl p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-slate-800 dark:text-white shadow-sm"
 							sideOffset={-2}
 							side="bottom"
 							align="end"

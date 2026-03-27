@@ -77,7 +77,7 @@
 			<div class="mx-2 mt-2">
 				<Tooltip content={user?.status_message}>
 					<div
-						class="w-full gap-2 px-2.5 py-1.5 rounded-xl bg-gray-50 dark:text-white dark:bg-gray-900/50 text-black transition text-xs flex items-center"
+						class="w-full gap-2 px-2.5 py-1.5 rounded-xl bg-gray-50 dark:text-white dark:bg-slate-900/50 text-black transition text-xs flex items-center"
 					>
 						{#if user?.status_emoji}
 							<div class=" self-center shrink-0">
@@ -106,7 +106,7 @@
 			<div class="mx-3.5 mt-2 flex gap-0.5">
 				{#each user.groups as group}
 					<div
-						class="px-1.5 py-0.5 rounded-lg bg-gray-50 dark:text-white dark:bg-gray-900/50 text-black transition text-xs"
+						class="px-1.5 py-0.5 rounded-lg bg-gray-50 dark:text-white dark:bg-slate-900/50 text-black transition text-xs"
 					>
 						{group.name}
 					</div>
@@ -119,7 +119,7 @@
 
 			<div class=" flex flex-col w-full px-2.5 items-center">
 				<button
-					class="w-full text-left px-3 py-1.5 rounded-xl border border-gray-100/50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-850 transition flex items-center gap-2 text-sm"
+					class="w-full text-left px-3 py-1.5 rounded-xl border border-gray-100/50 dark:border-gray-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 text-sm"
 					type="button"
 					on:click={() => {
 						directMessageHandler();

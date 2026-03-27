@@ -67,7 +67,7 @@
 			<Tooltip content={promptItem.name} placement="top-start">
 				<button
 					class=" px-3 py-1 rounded-xl w-full text-left {promptIdx === selectedPromptIdx
-						? '  bg-gray-50 dark:bg-gray-800 selected-command-option-button'
+						? '  bg-gray-50 dark:bg-slate-800 selected-command-option-button'
 						: ''} truncate"
 					type="button"
 					on:click={() => {

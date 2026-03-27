@@ -111,7 +111,7 @@
 				class=" absolute {showButtons ? '' : 'invisible group-hover:visible'} right-1 -top-2 z-10"
 			>
 				<div
-					class="flex gap-1 rounded-lg bg-white dark:bg-gray-850 shadow-md p-0.5 border border-gray-100/30 dark:border-gray-850/30"
+					class="flex gap-1 rounded-lg bg-white dark:bg-slate-800 shadow-md p-0.5 border border-gray-100/30 dark:border-gray-850/30"
 				>
 					{#if onReaction}
 						<EmojiPicker
@@ -123,7 +123,7 @@
 						>
 							<Tooltip content={$i18n.t('Add Reaction')}>
 								<button
-									class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-1"
+									class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-1"
 									on:click={() => {
 										showButtons = true;
 									}}
@@ -137,7 +137,7 @@
 					{#if onReply}
 						<Tooltip content={$i18n.t('Reply')}>
 							<button
-								class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-0.5"
+								class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-0.5"
 								on:click={() => {
 									onReply(message);
 								}}
@@ -149,7 +149,7 @@
 
 					<Tooltip content={message?.is_pinned ? $i18n.t('Unpin') : $i18n.t('Pin')}>
 						<button
-							class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-1"
+							class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-1"
 							on:click={() => {
 								onPin(message);
 							}}
@@ -165,7 +165,7 @@
 					{#if !thread && onThread}
 						<Tooltip content={$i18n.t('Reply in Thread')}>
 							<button
-								class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-1"
+								class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-1"
 								on:click={() => {
 									onThread(message.id);
 								}}
@@ -179,7 +179,7 @@
 						{#if onEdit}
 							<Tooltip content={$i18n.t('Edit')}>
 								<button
-									class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-1"
+									class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-1"
 									on:click={() => {
 										edit = true;
 										editedContent = message.content;
@@ -193,7 +193,7 @@
 						{#if onDelete}
 							<Tooltip content={$i18n.t('Delete')}>
 								<button
-									class="hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded-lg p-1"
+									class="hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-lg p-1"
 									on:click={() => (showDeleteConfirmDialog = true)}
 								>
 									<GarbageBin />

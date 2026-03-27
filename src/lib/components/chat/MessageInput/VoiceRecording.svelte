@@ -404,7 +404,7 @@
 <div
 	bind:clientWidth={containerWidth}
 	class="{loading
-		? ' bg-gray-100/50 dark:bg-gray-850/50'
+		? ' bg-gray-100/50 dark:bg-slate-800 '
 		: 'bg-indigo-300/10 dark:bg-indigo-500/10 '} rounded-full flex justify-between {className}"
 >
 	<div class="flex items-center mr-1">

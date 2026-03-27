@@ -42,7 +42,7 @@
 	<Tooltip content={$i18n.t('More')}>
 		<slot>
 			<button
-				class="p-1 rounded-lg text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+				class="p-1 rounded-lg text-gray-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 				aria-label={$i18n.t('More Options')}
 			>
 				<EllipsisHorizontal className="size-5" />
@@ -52,7 +52,7 @@
 
 	<div slot="content">
 		<DropdownMenu.Content
-			class="w-full max-w-[170px] rounded-2xl p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg"
+			class="w-full max-w-[170px] rounded-2xl p-1 border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-slate-800 dark:text-white shadow-lg"
 			sideOffset={-2}
 			side="bottom"
 			align="end"
