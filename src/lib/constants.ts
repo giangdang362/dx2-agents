@@ -3,7 +3,8 @@ import { browser, dev } from '$app/environment';
 
 export const APP_NAME = 'DX2';
 
-export const WEBUI_HOSTNAME = browser ? (dev ? `${location.hostname}:8080` : ``) : '';
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '8080';
+export const WEBUI_HOSTNAME = browser ? (dev ? `${location.hostname}:${BACKEND_PORT}` : ``) : '';
 export const WEBUI_BASE_URL = browser ? (dev ? `http://${WEBUI_HOSTNAME}` : ``) : ``;
 export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
 
