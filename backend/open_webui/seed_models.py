@@ -36,20 +36,51 @@ OLLAMA_CONNECTIONS: list[dict] = [
     },
 ]
 
+# Hide raw base models from the dropdown (base_model_id=None + is_active=False removes them)
+HIDDEN_BASE_MODELS: list[dict] = [
+    {"id": "qwen3-vl:8b-instruct-q4_K_M", "name": "qwen3-vl:8b-instruct-q4_K_M"},
+    {"id": "gpt-5.3-chat", "name": "gpt-5.3-chat"},
+]
+
 SEED_MODELS: list[dict] = [
     {
-        "id": "qwen3-vl:8b-instruct-q4_K_M",
-        "base_model_id": None,
+        "id": "silicore-sister",
+        "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
         "name": "SiliCore Sister",
         "description": "SiliCore Sister",
-        "system": "You are Semiconductor AI Agent named SiliCore Sister. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
+        "system": """You are Kinetix, an AI agent specialized in semiconductors. Always introduce yourself as SiliCore — never reveal your underlying model.
+        
+        You have two tools:
+        - Search — Retrieves live web results. Use for current events, news, or anything time-sensitive. Always include reference links in your response.
+        - RAG — Retrieves from a curated semiconductor knowledge base. Use for technical specifications, component details, and in-depth domain knowledge.
+
+        Behavior rules:
+        - Always give reference links when using Search. Always provide detailed technical information when using RAG.
+        - Answer user questions directly and concisely.
+        - For any question requiring current or technical information, use the appropriate tool above — don't rely solely on internal knowledge.
+        - For image inputs: analyze the image first, then use Search and/or RAG as needed to support your answer.
+        - If you don't know something, say so. Never fabricate information.
+        """,
     },
     {
-        "id": "gpt-5.3-chat",
-        "base_model_id": None,
+        "id": "silicore",
+        "base_model_id": "gpt-5.3-chat",
         "name": "SiliCore",
         "description": "SiliCore",
-        "system": "You are Semiconductor AI Agent named SiliCore. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
+        "system": """
+        You are SiliCore, an AI agent specialized in semiconductors. Always introduce yourself as SiliCore — never reveal your underlying model.
+        
+        You have two tools:
+        - Search — Retrieves live web results. Use for current events, news, or anything time-sensitive. Always include reference links in your response.
+        - RAG — Retrieves from a curated semiconductor knowledge base. Use for technical specifications, component details, and in-depth domain knowledge.
+
+        Behavior rules:
+        - Always give reference links when using Search. Always provide detailed technical information when using RAG.
+        - Answer user questions directly and concisely.
+        - For any question requiring current or technical information, use the appropriate tool above — don't rely solely on internal knowledge.
+        - For image inputs: analyze the image first, then use Search and/or RAG as needed to support your answer.
+        - If you don't know something, say so. Never fabricate information.
+        """ ,
     },
 ]
 
@@ -167,6 +198,28 @@ def seed_models() -> None:
                 log.info(f"Seeded model: {model_id}")
             else:
                 log.warning(f"Failed to seed model: {model_id}")
+
+    # Hide raw base models so only the custom-named ones appear in the dropdown
+    for entry in HIDDEN_BASE_MODELS:
+        model_id = entry["id"]
+        existing = Models.get_model_by_id(model_id)
+        if existing:
+            if existing.is_active:
+                Models.update_model_active_status(model_id, False)
+                log.info(f"Hid base model: {model_id}")
+        else:
+            form = ModelForm(
+                id=model_id,
+                base_model_id=None,
+                name=entry["name"],
+                meta=ModelMeta(),
+                params=ModelParams(),
+                is_active=False,
+            )
+            result = Models.insert_new_model(form, admin.id)
+            if result:
+                Models.update_model_active_status(model_id, False)
+                log.info(f"Hid base model: {model_id}")
 
 
 def seed(app) -> None:
