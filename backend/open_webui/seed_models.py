@@ -16,10 +16,7 @@ log = logging.getLogger(__name__)
 
 OPENAI_CONNECTIONS: list[dict] = [
     {
-        "base_url": os.environ.get(
-            "OPENAI_API_BASE_URL",
-            "https://htanh-mkdsva2o-eastus2.cognitiveservices.azure.com/openai/v1/",
-        ).rstrip("/"),
+        "base_url": os.environ.get("OPENAI_API_BASE_URL", "").rstrip("/"),
         "api_key": os.environ.get("OPENAI_API_KEY", ""),
         "config": {
             "enable": True,
@@ -31,7 +28,7 @@ OPENAI_CONNECTIONS: list[dict] = [
 
 OLLAMA_CONNECTIONS: list[dict] = [
     {
-        "base_url": "http://localhost:11434",
+        "base_url": os.environ.get("OLLAMA_BASE_URL", ""),
         "config": {
             "enable": True,
             "model_ids": ["qwen3-vl:8b-instruct-q4_K_M"],
