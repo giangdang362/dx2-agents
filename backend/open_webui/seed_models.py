@@ -42,12 +42,14 @@ SEED_MODELS: list[dict] = [
         "base_model_id": "qwen3-vl:8b",
         "name": "qwen3-vl:8b",
         "description": "qwen3-vl:8b",
+        "system": "You are DX2 AI Agent. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
     },
     {
         "id": "gpt-5.3-chat",
         "base_model_id": "gpt-5.3-chat",
         "name": "GPT-5.3 Chat",
         "description": "OpenAI GPT-5.3 Chat",
+        "system": "You are DX2 AI Agent. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
     },
 ]
 
@@ -142,10 +144,6 @@ def seed_models() -> None:
 
     for entry in SEED_MODELS:
         model_id = entry["id"]
-        existing = Models.get_model_by_id(model_id)
-        if existing:
-            continue
-
         form = ModelForm(
             id=model_id,
             base_model_id=entry.get("base_model_id"),
@@ -154,14 +152,21 @@ def seed_models() -> None:
                 description=entry.get("description"),
                 capabilities=entry.get("capabilities"),
             ),
-            params=ModelParams(),
+            params=ModelParams(system=entry.get("system", "")),
             is_active=True,
         )
-        result = Models.insert_new_model(form, admin.id)
-        if result:
-            log.info(f"Seeded model: {model_id}")
+
+        existing = Models.get_model_by_id(model_id)
+        if existing:
+            result = Models.update_model_by_id(model_id, form)
+            if result:
+                log.info(f"Updated model: {model_id}")
         else:
-            log.warning(f"Failed to seed model: {model_id}")
+            result = Models.insert_new_model(form, admin.id)
+            if result:
+                log.info(f"Seeded model: {model_id}")
+            else:
+                log.warning(f"Failed to seed model: {model_id}")
 
 
 def seed(app) -> None:
