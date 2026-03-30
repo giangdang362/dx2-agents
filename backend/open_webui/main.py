@@ -624,6 +624,11 @@ async def lifespan(app: FastAPI):
             # Disable signup since we now have an admin
             app.state.config.ENABLE_SIGNUP = False
 
+    # Seed API connections (from .env) and workspace models (from code)
+    from open_webui.seed_models import seed
+
+    seed(app)
+
     # This should be blocking (sync) so functions are not deactivated on first /get_models calls
     # when the first user lands on the / route.
     log.info("Installing external dependencies of functions and tools...")
