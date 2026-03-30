@@ -39,17 +39,17 @@ OLLAMA_CONNECTIONS: list[dict] = [
 SEED_MODELS: list[dict] = [
     {
         "id": "qwen3-vl:8b-instruct-q4_K_M",
-        "base_model_id": "qwen3-vl:8b",
-        "name": "qwen3-vl:8b",
-        "description": "qwen3-vl:8b",
-        "system": "You are DX2 AI Agent. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
+        "base_model_id": None,
+        "name": "SiliCore Sister",
+        "description": "SiliCore Sister",
+        "system": "You are Semiconductor AI Agent named SiliCore Sister. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
     },
     {
         "id": "gpt-5.3-chat",
-        "base_model_id": "gpt-5.3-chat",
-        "name": "GPT-5.3 Chat",
-        "description": "OpenAI GPT-5.3 Chat",
-        "system": "You are DX2 AI Agent. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
+        "base_model_id": None,
+        "name": "SiliCore",
+        "description": "SiliCore",
+        "system": "You are Semiconductor AI Agent named SiliCore. Your job is to help users with their tasks. Always respond in a helpful and concise manner. Always search tools when needed. If you don't know the answer, say you don't know. Never make up answers.",
     },
 ]
 
