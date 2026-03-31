@@ -1,7 +1,7 @@
 import { browser, dev } from '$app/environment';
 // import { version } from '../../package.json';
 
-export const APP_NAME = 'DX2';
+export const APP_NAME = '';
 
 const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '8080';
 export const WEBUI_HOSTNAME = browser ? (dev ? `${location.hostname}:${BACKEND_PORT}` : ``) : '';

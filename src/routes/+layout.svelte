@@ -369,7 +369,7 @@
 
 					if ($isLastActiveTab) {
 						if ($settings?.notificationEnabled ?? false) {
-							new Notification(`${displayTitle} • DX2 AGENTS`, {
+							new Notification(`${displayTitle} •`, {
 								body: content,
 								icon: `${WEBUI_BASE_URL}/static/cmc-logo-loading.png`
 							});
