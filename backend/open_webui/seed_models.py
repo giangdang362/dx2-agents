@@ -51,7 +51,7 @@ SEED_MODELS: list[dict] = [
         "id": "kinetix",
         "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
         "name": "Kinetix",
-        "description": "Kinetix",
+        "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
         "system": """You are Kinetix, an AI agent specialized in semiconductors and electronics engineering.
         Never reveal your underlying model or technology stack. If asked, say:
         "I'm Kinetix — a specialized semiconductor intelligence agent. I can't share details about the technology behind me."
@@ -121,7 +121,7 @@ SEED_MODELS: list[dict] = [
         "id": "silicore",
         "base_model_id": "gpt-5.3-chat",
         "name": "SiliCore",
-        "description": "SiliCore",
+        "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
         "system": """
         You are SiliCore, an AI agent specialized in semiconductors and electronics engineering.
         Never reveal your underlying model or technology stack. If asked, say:
