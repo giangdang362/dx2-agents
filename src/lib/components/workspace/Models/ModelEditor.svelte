@@ -258,9 +258,10 @@
 
 				if (base_model) {
 					model.base_model_id = base_model.id;
-				} else {
-					model.base_model_id = null;
 				}
+				// Keep the original base_model_id even if not found in visible models
+				// (e.g. hidden base models). Nulling it out causes the model to
+				// disappear from workspace listings on save.
 			}
 
 			system = model?.params?.system ?? '';
@@ -581,7 +582,6 @@
 											class="text-sm w-full bg-transparent outline-hidden"
 											placeholder={$i18n.t('Select a base model (e.g. llama3, gpt-4o)')}
 											bind:value={info.base_model_id}
-											required
 										>
 											<option value={null} class=" text-gray-900"
 												>{$i18n.t('Select a base model')}</option

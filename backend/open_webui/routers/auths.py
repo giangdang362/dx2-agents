@@ -723,6 +723,12 @@ async def signup_handler(
         user = Users.get_user_by_id(user.id, db=db)
         request.app.state.config.ENABLE_SIGNUP = False
 
+        # Seed workspace models now that the first admin exists.
+        # On a fresh DB the startup seeder skips because no admin is present yet.
+        from open_webui.seed_models import seed_models
+
+        seed_models()
+
     if request.app.state.config.WEBHOOK_URL:
         await post_webhook(
             request.app.state.WEBUI_NAME,
