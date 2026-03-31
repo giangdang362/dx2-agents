@@ -1599,6 +1599,10 @@ async def get_models(
         if "pipeline" in model and model["pipeline"].get("type", None) == "filter":
             continue
 
+        # Skip hidden base models (inactive overrides kept in MODELS for resolution)
+        if model.get("hidden"):
+            continue
+
         # Remove profile image URL to reduce payload size
         if model.get("info", {}).get("meta", {}).get("profile_image_url"):
             model["info"]["meta"].pop("profile_image_url", None)

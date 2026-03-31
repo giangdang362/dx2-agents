@@ -48,6 +48,14 @@ PUBLIC_ACCESS_GRANTS = [
 
 SEED_MODELS: list[dict] = [
     {
+        "id": "test-tool-agent",
+        "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
+        "name": "Test Tool Agent",
+        "description": "A test agent for validating tool integration and retrieval capabilities.",
+        "system": """
+        Before assuming that you understand user's intent and request, always trigger the interaction tool to ask user more details of what user's expected you to answer.""",
+    },
+    {
         "id": "kinetix",
         "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
         "name": "Kinetix",
