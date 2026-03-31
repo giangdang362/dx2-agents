@@ -1,4 +1,5 @@
 export CORS_ALLOW_ORIGIN="http://localhost:5173;http://localhost:8080"
+export WEBUI_URL="http://localhost:5173"
 PORT="${PORT:-8080}"
 
 while [ $# -gt 0 ]; do
