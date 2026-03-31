@@ -42,6 +42,10 @@ HIDDEN_BASE_MODELS: list[dict] = [
     {"id": "gpt-5.3-chat", "name": "gpt-5.3-chat"},
 ]
 
+PUBLIC_ACCESS_GRANTS = [
+    {"principal_type": "user", "principal_id": "*", "permission": "read"},
+]
+
 SEED_MODELS: list[dict] = [
     {
         "id": "kinetix",
@@ -286,6 +290,7 @@ def seed_models() -> None:
                 capabilities=entry.get("capabilities"),
             ),
             params=ModelParams(system=entry.get("system", "")),
+            access_grants=entry.get("access_grants", PUBLIC_ACCESS_GRANTS),
             is_active=True,
         )
 
