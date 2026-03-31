@@ -721,8 +721,7 @@ async def signup_handler(
     if Users.get_num_users(db=db) == 1:
         Users.update_user_role_by_id(user.id, "admin", db=db)
         user = Users.get_user_by_id(user.id, db=db)
-        request.app.state.config.ENABLE_SIGNUP = False
-
+        request.app.state.config.ENABLE_SIGNUP = True
         # Seed workspace models now that the first admin exists.
         # On a fresh DB the startup seeder skips because no admin is present yet.
         from open_webui.seed_models import seed_models
