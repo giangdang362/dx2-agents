@@ -2524,22 +2524,19 @@ async def process_chat_payload(request, form_data, user, metadata, model):
 
         if tools_dict:
             if metadata.get("params", {}).get("function_calling") == "native":
-                # If the function calling is native, then call the tools function calling handler
                 metadata["tools"] = tools_dict
                 form_data["tools"] = [
                     {"type": "function", "function": tool.get("spec", {})}
                     for tool in tools_dict.values()
                 ]
-
-        else:
-            # If the function calling is not native, then call the tools function calling handler
-            try:
-                form_data, flags = await chat_completion_tools_handler(
-                    request, form_data, extra_params, user, models, tools_dict
-                )
-                sources.extend(flags.get("sources", []))
-            except Exception as e:
-                log.exception(e)
+            else:
+                try:
+                    form_data, flags = await chat_completion_tools_handler(
+                        request, form_data, extra_params, user, models, tools_dict
+                    )
+                    sources.extend(flags.get("sources", []))
+                except Exception as e:
+                    log.exception(e)
 
     # Check if file context extraction is enabled for this model (default True)
     file_context_enabled = (

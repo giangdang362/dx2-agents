@@ -169,7 +169,7 @@
 			<div>
 				<div class="flex items-center gap-3 mb-1">
 					<h1 class="text-xl font-medium text-gray-900 dark:text-white">
-						{$i18n.t('Agent Directory')}
+						{$i18n.t('Agent Hub')}
 					</h1>
 					{#if !loading}
 						<span

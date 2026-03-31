@@ -1,4 +1,4 @@
-# DX2 Agents
+# Agents
 
 - This repo is inspired by OpenWebUI.
 - You can follow the documentation for setting up the development environment. See at [OpenWebUI documentation](https://docs.openwebui.com/getting-started/quick-start/)

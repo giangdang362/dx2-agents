@@ -128,9 +128,8 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
     # deep copy the base models to avoid modifying the original list
     models = [model.copy() for model in base_models]
 
-    # If there are no models, return an empty list
-    if len(models) == 0:
-        return []
+    # Even if no base models were fetched, continue so that custom/seed
+    # models (which have their own base_model_id) are still returned.
 
     # Add arena models
     if request.app.state.config.ENABLE_EVALUATION_ARENA_MODELS:
@@ -234,7 +233,10 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
                         model["action_ids"] = action_ids
                         model["filter_ids"] = filter_ids
                     else:
-                        models.remove(model)
+                        # Keep the model in MODELS so custom models that
+                        # reference it as base_model_id can still resolve,
+                        # but mark it hidden so it's excluded from UI lists.
+                        model["hidden"] = True
 
         elif custom_model.is_active and (
             custom_model.id not in [model["id"] for model in models]

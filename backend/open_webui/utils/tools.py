@@ -205,6 +205,15 @@ async def get_tools(
                 )
 
             for spec in tool.specs:
+                function_name = spec.get("name")
+                if not function_name or function_name.startswith("_"):
+                    continue
+                if not hasattr(module, function_name):
+                    log.warning(
+                        f"Tool spec {function_name} not found on tool module {tool_id}"
+                    )
+                    continue
+
                 # TODO: Fix hack for OpenAI API
                 # Some times breaks OpenAI but others don't. Leaving the comment
                 for val in spec.get("parameters", {}).get("properties", {}).values():
@@ -219,7 +228,6 @@ async def get_tools(
                 }
 
                 # convert to function that takes only model params and inserts custom params
-                function_name = spec["name"]
                 tool_function = getattr(module, function_name)
                 callable = get_async_tool_function_and_apply_extra_params(
                     tool_function,
@@ -676,8 +684,8 @@ def get_functions_from_tool(tool: object) -> list[Callable]:
             getattr(tool, func)
         )  # checks if the attribute is callable (a method or function).
         and not func.startswith(
-            "__"
-        )  # filters out special (dunder) methods like init, str, etc. — these are usually built-in functions of an object that you might not need to use directly.
+            "_"
+        )  # hide private/helper methods so only public tool entry points become callable specs.
         and not inspect.isclass(
             getattr(tool, func)
         )  # ensures that the callable is not a class itself, just a method or function.
