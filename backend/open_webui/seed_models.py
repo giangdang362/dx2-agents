@@ -5,17 +5,23 @@ so they appear without using the Open WebUI UI.
 1. Connections — ensures OpenAI-compatible and Ollama connections
                  are present in PersistentConfig (uses keys from .env).
 2. Tools       — local tools inserted into the DB from files in the repo.
-3. Models      — workspace models inserted into the DB on first run.
+3. Functions   — local action/filter functions inserted into the DB from files.
+4. Models      — workspace models inserted into the DB on first run.
 """
 
 import logging
 import os
 from pathlib import Path
 
+from open_webui.models.functions import FunctionForm, FunctionMeta, Functions
 from open_webui.models.models import ModelForm, ModelMeta, ModelParams, Models
 from open_webui.models.tools import ToolForm, ToolMeta, Tools
 from open_webui.models.users import Users
-from open_webui.utils.plugin import load_tool_module_by_id, replace_imports
+from open_webui.utils.plugin import (
+    load_function_module_by_id,
+    load_tool_module_by_id,
+    replace_imports,
+)
 from open_webui.utils.tools import get_tool_specs
 
 log = logging.getLogger(__name__)
@@ -62,6 +68,17 @@ SEED_TOOLS: list[dict] = [
     },
 ]
 
+SEED_FUNCTIONS: list[dict] = [
+    {
+        "id": "mindmap",
+        "name": "Smart Mind Map",
+        "path": Path(__file__).resolve().parent / "func" / "mindmap.py",
+        "description": "Generate interactive mind maps from chat content.",
+        "is_active": True,
+        "is_global": True,
+    },
+]
+
 SEED_MODELS: list[dict] = [
     {
         "id": "test-tool-agent",
@@ -69,6 +86,7 @@ SEED_MODELS: list[dict] = [
         "name": "Test Tool Agent",
         "description": "A test agent for validating tool integration and retrieval capabilities.",
         "tool_ids": ["ask"],
+        "action_ids": ["mindmap"],
         "system": """
         Before assuming that you understand the user's intent, always call the `ask_user_question` tool first to collect the user's goal, constraints, or preferred answer format.""",
     },
@@ -78,6 +96,7 @@ SEED_MODELS: list[dict] = [
         "name": "Kinetix",
         "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
         "tool_ids": ["ask"],
+        "action_ids": ["mindmap"],
         "system": """You are Kinetix, an AI agent specialized in semiconductors and electronics engineering.
         Never reveal your underlying model or technology stack. If asked, say:
         "I'm Kinetix — a specialized semiconductor intelligence agent. I can't share details about the technology behind me."
@@ -150,6 +169,7 @@ SEED_MODELS: list[dict] = [
         "name": "SiliCore",
         "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
         "tool_ids": ["ask"],
+        "action_ids": ["mindmap"],
         "system": """
         You are Kinetix, an AI agent specialized in semiconductors and electronics engineering.
         Never reveal your underlying model or technology stack. If asked, say:
@@ -280,6 +300,76 @@ def seed_tools() -> None:
                 log.warning(f"Failed to seed tool: {tool_id}")
 
 
+def seed_functions() -> None:
+    """Insert or update local action/filter functions referenced by seeded models."""
+    if not SEED_FUNCTIONS:
+        return
+
+    admin = Users.get_super_admin_user()
+    if not admin:
+        log.warning("seed_functions: no admin user found, skipping function seeding")
+        return
+
+    for entry in SEED_FUNCTIONS:
+        function_id = entry["id"]
+        function_path = Path(entry["path"])
+        if not function_path.exists():
+            log.warning(
+                f"seed_functions: missing function file for {function_id}: {function_path}"
+            )
+            continue
+
+        try:
+            content = replace_imports(function_path.read_text(encoding="utf-8"))
+            function_module, function_type, frontmatter = load_function_module_by_id(
+                function_id, content=content
+            )
+        except Exception as exc:
+            log.exception(f"seed_functions: failed to load function {function_id}: {exc}")
+            continue
+
+        form = FunctionForm(
+            id=function_id,
+            name=entry["name"],
+            content=content,
+            meta=FunctionMeta(
+                description=entry.get("description") or frontmatter.get("description"),
+                manifest=frontmatter,
+            ),
+        )
+
+        existing = Functions.get_function_by_id(function_id)
+        if existing:
+            result = Functions.update_function_by_id(
+                function_id,
+                {
+                    "name": form.name,
+                    "content": form.content,
+                    "type": function_type,
+                    "meta": form.meta.model_dump(),
+                    "is_active": entry.get("is_active", True),
+                    "is_global": entry.get("is_global", False),
+                },
+            )
+            if result:
+                log.info(f"Updated function: {function_id}")
+            else:
+                log.warning(f"Failed to update function: {function_id}")
+        else:
+            result = Functions.insert_new_function(admin.id, function_type, form)
+            if result:
+                Functions.update_function_by_id(
+                    function_id,
+                    {
+                        "is_active": entry.get("is_active", True),
+                        "is_global": entry.get("is_global", False),
+                    },
+                )
+                log.info(f"Seeded function: {function_id}")
+            else:
+                log.warning(f"Failed to seed function: {function_id}")
+
+
 def seed_connections(app) -> None:
     """Ensure env-based API connections are present in the runtime config."""
 
@@ -359,8 +449,9 @@ def seed_connections(app) -> None:
 
 
 def seed_models() -> None:
-    """Insert SEED_MODELS and their dependent tools into the database."""
+    """Insert SEED_MODELS and their dependent tools/functions into the database."""
     seed_tools()
+    seed_functions()
 
     if not SEED_MODELS:
         return
@@ -380,6 +471,7 @@ def seed_models() -> None:
                 description=entry.get("description"),
                 capabilities=entry.get("capabilities"),
                 toolIds=entry.get("tool_ids"),
+                actionIds=entry.get("action_ids"),
             ),
             params=ModelParams(system=entry.get("system", "")),
             access_grants=entry.get("access_grants", PUBLIC_ACCESS_GRANTS),
