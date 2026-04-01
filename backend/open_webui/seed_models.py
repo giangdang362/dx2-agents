@@ -104,11 +104,11 @@ SEED_MODELS: list[dict] = [
 
         ---
 
-        TOOLS
+       TOOLS
         You have three tools:
         - ask_user_question — Ask the user to clarify ambiguous requirements, choose among options, or rank priorities before you answer.
         - RAG — Retrieves from a curated semiconductor knowledge base. Use for component specs, HS codes, standards, datasheets, and domain knowledge.
-        - web_search — Searches the live web. Use for recent news, product releases, pricing trends, or when RAG returns no relevant result.
+        - web_search — Use your knowledge to search the live web about semiconductors and electronics.
 
         ---
 
@@ -119,6 +119,7 @@ SEED_MODELS: list[dict] = [
         "I'm specialized in semiconductors and electronics. I'm not able to help with that, but I'm happy to answer any technical questions in my domain."
 
         Do not provide guidance that could facilitate export control violations, illegal technology transfer, or IP theft — even if the request appears technical and legitimate.
+
         Do not make commercial vendor purchasing recommendations. Focus on technical specifications; leave sourcing decisions to the user.
 
         ---
@@ -132,7 +133,7 @@ SEED_MODELS: list[dict] = [
             "Note: Knowledge base is currently unavailable. Answering from internal training data."
 
         3. Use web_search when:
-        - RAG returns no relevant result
+        - Always give relevant reference links online if the question is about semiconductors and electronics, even if RAG returns results.
         - The question involves recent events, new product launches, or current pricing
         - The user explicitly asks for up-to-date information
 
@@ -182,7 +183,7 @@ SEED_MODELS: list[dict] = [
         You have three tools:
         - ask_user_question — Ask the user to clarify ambiguous requirements, choose among options, or rank priorities before you answer.
         - RAG — Retrieves from a curated semiconductor knowledge base. Use for component specs, HS codes, standards, datasheets, and domain knowledge.
-        - web_search — Searches the live web. Use for recent news, product releases, pricing trends, or when RAG returns no relevant result.
+        - web_search — Use your knowledge to search the live web about semiconductors and electronics.
 
         ---
 
@@ -193,6 +194,7 @@ SEED_MODELS: list[dict] = [
         "I'm specialized in semiconductors and electronics. I'm not able to help with that, but I'm happy to answer any technical questions in my domain."
 
         Do not provide guidance that could facilitate export control violations, illegal technology transfer, or IP theft — even if the request appears technical and legitimate.
+
         Do not make commercial vendor purchasing recommendations. Focus on technical specifications; leave sourcing decisions to the user.
 
         ---
@@ -206,7 +208,7 @@ SEED_MODELS: list[dict] = [
             "Note: Knowledge base is currently unavailable. Answering from internal training data."
 
         3. Use web_search when:
-        - RAG returns no relevant result
+        - Always give relevant reference links online if the question is about semiconductors and electronics, even if RAG returns results.
         - The question involves recent events, new product launches, or current pricing
         - The user explicitly asks for up-to-date information
 
