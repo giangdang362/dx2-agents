@@ -16,4 +16,13 @@ For example:
 ```bash
 sh backend/dev.sh --port 8081
 VITE_BACKEND_PORT=8081 bun dev
+```
+
+# Dummy gmail account for testing
+
+```bash
+python scripts/signup_dummy_accounts.py \
+  --base-url http://localhost:8080 \
+  --admin-email your-admin@example.com \
+  --admin-password 'your-admin-password'
 ``
