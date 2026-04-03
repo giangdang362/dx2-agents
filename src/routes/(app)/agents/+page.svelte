@@ -173,7 +173,7 @@
 	<div class="flex items-start justify-between mb-4">
 		<div>
 			<div class="flex items-center gap-3 mb-1">
-				<h1 class="text-xl font-medium text-gray-900 dark:text-white">{$i18n.t('Agent Directory')}</h1>
+				<h1 class="text-xl font-medium text-gray-900 dark:text-white">{$i18n.t('Agents Hub')}</h1>
 				{#if !loading}
 					<span
 						class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium {systemOnline
