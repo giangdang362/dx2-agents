@@ -650,6 +650,21 @@
 		}
 	})();
 
+	// Persist booking_list items to DB (handles updates emitted by the pipe)
+	let _bookingListSynced = false;
+	$: if (parsedBookingList && !_bookingListSynced) {
+		_bookingListSynced = true;
+		for (const item of parsedBookingList) {
+			if (item?.id) {
+				fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(item)
+				}).catch(console.error);
+			}
+		}
+	}
+
 	let _cancelTriggered = false;
 	$: if (parsedCancelBookingId && !_cancelTriggered) {
 		_cancelTriggered = true;
@@ -662,7 +677,9 @@
 				body: JSON.stringify({ status: 'cancelled' })
 			}).catch(console.error);
 		}
-		window.dispatchEvent(new CustomEvent('booking-cancelled', { detail: { id: parsedCancelBookingId } }));
+		window.dispatchEvent(
+			new CustomEvent('booking-cancelled', { detail: { id: parsedCancelBookingId } })
+		);
 	}
 
 	let _onBookingCancelled: (e: Event) => void;
@@ -673,12 +690,14 @@
 			.replace(BOOKING_BLOCK_RE, '')
 			.replace(CANCEL_BLOCK_RE, '')
 			.replace(BOOKING_LIST_RE, '')
+			.replace(/<tool_code>[\s\S]*?<\/tool_code>/g, '')
 			.trim();
 		if (message.done) return stripped;
 		return stripped
 			.replace(/```booking[\s\S]*$/, '')
 			.replace(/```cancel_booking[\s\S]*$/, '')
 			.replace(/```booking_list[\s\S]*$/, '')
+			.replace(/<tool_code>[\s\S]*$/, '')
 			.trim();
 	})();
 
@@ -695,13 +714,25 @@
 			.then((r) => (r.ok ? r.json() : null))
 			.then((saved) => {
 				if (saved && activeBooking) {
-					const hasChanges = ['title', 'date', 'start_time', 'end_time', 'capacity',
-						'room_name', 'room_code', 'location', 'client'].some(
-						(k) => parsedBooking[k] !== undefined && parsedBooking[k] !== saved[k]
-					);
+					const hasChanges = [
+						'title',
+						'date',
+						'start_time',
+						'end_time',
+						'capacity',
+						'room_name',
+						'room_code',
+						'location',
+						'client'
+					].some((k) => parsedBooking[k] !== undefined && parsedBooking[k] !== saved[k]);
 					activeBooking = { ...activeBooking, ...saved };
 					if (hasChanges) {
-						activeBooking = { ...activeBooking, ...parsedBooking, status: saved.status, requester: activeBooking!.requester };
+						activeBooking = {
+							...activeBooking,
+							...parsedBooking,
+							status: saved.status,
+							requester: activeBooking!.requester
+						};
 						fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
@@ -717,7 +748,9 @@
 				}
 				_bookingSynced = true;
 			})
-			.catch(() => { _bookingSynced = true; });
+			.catch(() => {
+				_bookingSynced = true;
+			});
 	}
 
 	function handleBookingAction(action: string, id: string, extra?: unknown): void {
@@ -1030,7 +1063,8 @@
 												handleBookingAction('order_catering', id, { items, total })}
 											onApproveCatering={(id) => handleBookingAction('approve_catering', id)}
 											onRejectCatering={(id) => handleBookingAction('reject_catering', id)}
-											onRoomSelect={(id, roomData) => handleBookingAction('room_select', id, roomData)}
+											onRoomSelect={(id, roomData) =>
+												handleBookingAction('room_select', id, roomData)}
 										/>
 									</div>
 								{/if}

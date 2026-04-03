@@ -29,21 +29,21 @@
 	$: activeBooking = booking;
 
 	const STATUS_CONFIG = {
-		draft: { label: 'Chờ xác nhận', color: '#6366f1', bg: 'indigo' },
-		pending: { label: 'Chờ duyệt', color: '#f59e0b', bg: 'amber' },
-		approved: { label: 'Đã duyệt', color: '#10b981', bg: 'emerald' },
-		rejected: { label: 'Từ chối', color: '#ef4444', bg: 'red' },
-		cancelled: { label: 'Đã hủy', color: '#6b7280', bg: 'gray' },
-		sent: { label: 'Đã gửi', color: '#3b82f6', bg: 'blue' }
+		draft: { label: 'Pending Confirmation', color: '#6366f1', bg: 'indigo' },
+		pending: { label: 'Pending Approval', color: '#f59e0b', bg: 'amber' },
+		approved: { label: 'Approved', color: '#10b981', bg: 'emerald' },
+		rejected: { label: 'Rejected', color: '#ef4444', bg: 'red' },
+		cancelled: { label: 'Cancelled', color: '#6b7280', bg: 'gray' },
+		sent: { label: 'Sent', color: '#3b82f6', bg: 'blue' }
 	};
 
 	const CATERING_OPTIONS = [
-		{ id: 'tea-coffee', name: 'Trà + Cà phê + Bánh', price: 35000 },
-		{ id: 'coffee', name: 'Cà phê + Bánh', price: 30000 },
-		{ id: 'water', name: 'Nước suối', price: 10000 },
-		{ id: 'buffet', name: 'Buffet Trưa', price: 150000 },
-		{ id: 'lunch-box', name: 'Cơm hộp', price: 50000 },
-		{ id: 'fruit', name: 'Trái cây', price: 25000 }
+		{ id: 'tea-coffee', name: 'Tea + Coffee + Pastries', price: 35000 },
+		{ id: 'coffee', name: 'Coffee + Pastries', price: 30000 },
+		{ id: 'water', name: 'Bottled Water', price: 10000 },
+		{ id: 'buffet', name: 'Lunch Buffet', price: 150000 },
+		{ id: 'lunch-box', name: 'Lunch Box', price: 50000 },
+		{ id: 'fruit', name: 'Fruit Platter', price: 25000 }
 	];
 
 	$: statusConfig = activeBooking
@@ -71,8 +71,8 @@
 		// const willApprove = Math.random() > 0.2;
 		const willApprove = true;
 		const mockNote = willApprove
-			? 'Đã xem xét và phê duyệt yêu cầu đặt phòng.'
-			: 'Thời gian yêu cầu bị trùng lịch. Vui lòng chọn khung giờ khác.';
+			? 'Reviewed and approved the room booking request.'
+			: 'The requested time slot conflicts with an existing booking. Please choose a different time.';
 		adminNote = mockNote;
 		if (onAddNote) onAddNote(activeBooking.id, mockNote);
 		if (willApprove) {
@@ -93,24 +93,30 @@
 	}
 
 	function handleAdminReject() {
-		if (!adminNote.trim()) { rejectNoteError = true; return; }
+		if (!adminNote.trim()) {
+			rejectNoteError = true;
+			return;
+		}
 		rejectNoteError = false;
 		if (onReject) onReject(activeBooking.id);
 	}
 
 	function handleCateringReject() {
-		if (!adminNote.trim()) { rejectNoteError = true; return; }
+		if (!adminNote.trim()) {
+			rejectNoteError = true;
+			return;
+		}
 		rejectNoteError = false;
 		if (onRejectCatering) onRejectCatering(activeBooking.id);
 	}
 
 	function formatDate(dateStr) {
-		if (!dateStr) return 'Chưa có ngày';
+		if (!dateStr) return 'No date';
 		try {
 			const [year, month, day] = dateStr.split('-');
 			return `${day}/${month}/${year}`;
 		} catch {
-			return dateStr || 'Chưa có ngày';
+			return dateStr || 'No date';
 		}
 	}
 
@@ -151,8 +157,14 @@
 	}
 
 	function validateInvitees() {
-		if (!invitees.trim()) { inviteesError = false; return; }
-		const emails = invitees.split(',').map((e) => e.trim()).filter(Boolean);
+		if (!invitees.trim()) {
+			inviteesError = false;
+			return;
+		}
+		const emails = invitees
+			.split(',')
+			.map((e) => e.trim())
+			.filter(Boolean);
 		const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		inviteesError = emails.some((e) => !emailRe.test(e));
 	}
@@ -164,7 +176,7 @@
 	function handleOrderCatering() {
 		// Only save locally — the actual order is dispatched together with user approval in handleConfirmStep2
 		expandedSection = null;
-		toast.success('Đã lưu lựa chọn catering!');
+		toast.success('Catering selection saved!');
 	}
 
 	function handleConfirmStep2() {
@@ -201,23 +213,23 @@
 	}
 
 	const EQUIPMENT_VI = {
-		projector: 'Máy chiếu',
-		tv: 'Tivi',
-		video_conf: 'Họp video',
-		phone: 'Điện thoại',
-		whiteboard: 'Bảng trắng',
-		ac: 'Điều hòa',
-		whiteboard_mark: 'Bút bảng',
-		sound: 'Hệ thống âm thanh',
-		mic: 'Micro',
+		projector: 'Projector',
+		tv: 'TV',
+		video_conf: 'Video Conference',
+		phone: 'Conference Phone',
+		whiteboard: 'Whiteboard',
+		ac: 'Air Conditioning',
+		whiteboard_mark: 'Whiteboard Markers',
+		sound: 'Sound System',
+		mic: 'Microphone',
 		laptop: 'Laptop',
-		water: 'Nước uống'
+		water: 'Drinking Water'
 	};
 
 	const LOCATION_NAMES = {
-		HN: 'Hà Nội',
-		HCM: 'TP.HCM',
-		DN: 'Đà Nẵng'
+		HN: 'Hanoi',
+		HCM: 'Ho Chi Minh City',
+		DN: 'Da Nang'
 	};
 
 	function translateEquipment(eq) {
@@ -244,9 +256,7 @@
 		}
 		if (b.admin_note) adminNote = b.admin_note;
 		if (b.invitees) {
-			invitees = typeof b.invitees === 'string'
-				? b.invitees
-				: b.invitees.join(', ');
+			invitees = typeof b.invitees === 'string' ? b.invitees : b.invitees.join(', ');
 		}
 		selectedDate = b.date ?? '';
 		selectedStartTime = b.start_time ?? '';
@@ -285,9 +295,9 @@
 						{statusConfig.label}
 					</span>
 				</div>
-				<div class="meeting-title-main">{activeBooking.title || 'Cuộc họp'}</div>
+				<div class="meeting-title-main">{activeBooking.title || 'Meeting'}</div>
 				<div class="requester-info">
-					<span class="requester-label">Người đặt:</span>
+					<span class="requester-label">Requested by:</span>
 					<span class="requester-name">{activeBooking.requester || '—'}</span>
 				</div>
 			</div>
@@ -304,7 +314,7 @@
 				<RoomList
 					embedded={true}
 					booking={activeBooking}
-					locked={activeBooking?.status !== "draft"}
+					locked={activeBooking?.status !== 'draft'}
 					on:select={handleRoomSelected}
 					on:close={handleRoomListClose}
 				/>
@@ -327,7 +337,7 @@
 							</svg>
 						</div>
 						<div class="info-text">
-							<div class="info-label">Ngày</div>
+							<div class="info-label">Date</div>
 							<input
 								type="date"
 								class="info-input"
@@ -353,7 +363,7 @@
 							</svg>
 						</div>
 						<div class="info-text">
-							<div class="info-label">Giờ</div>
+							<div class="info-label">Time</div>
 							<div class="info-value time-range">
 								<input
 									type="time"
@@ -391,8 +401,8 @@
 							</svg>
 						</div>
 						<div class="info-text">
-							<div class="info-label">Sức chứa</div>
-							<div class="info-value">{activeBooking.capacity || '—'} người</div>
+							<div class="info-label">Capacity</div>
+							<div class="info-value">{activeBooking.capacity || '—'} people</div>
 						</div>
 					</div>
 				</div>
@@ -400,40 +410,42 @@
 				<!-- Location -->
 				<div class="location-row">
 					<div class="location-item">
-						<span class="location-label">Khu vực</span>
-						<span class="location-value">{getLocationDisplay(activeBooking.location, activeBooking.room_building)}</span>
+						<span class="location-label">Area</span>
+						<span class="location-value"
+							>{getLocationDisplay(activeBooking.location, activeBooking.room_building)}</span
+						>
 					</div>
 					<div class="location-divider"></div>
 					<div class="location-item room-item">
-						<span class="location-label">Phòng</span>
-						<span class="location-value">{activeBooking.room_name || 'Chưa chọn'}</span>
-						{#if activeBooking.status === "draft"}
-						<button class="select-room-btn-small" on:click={handleSelectRoom}>
-							<svg
-								width="12"
-								height="12"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-							>
-								<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-								<polyline points="9 22 9 12 15 12 15 22"></polyline>
-							</svg>
-						</button>
+						<span class="location-label">Room</span>
+						<span class="location-value">{activeBooking.room_name || 'Not selected'}</span>
+						{#if activeBooking.status === 'draft'}
+							<button class="select-room-btn-small" on:click={handleSelectRoom}>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+									<polyline points="9 22 9 12 15 12 15 22"></polyline>
+								</svg>
+							</button>
 						{/if}
 					</div>
 					<div class="location-divider"></div>
 					<div class="location-item">
-						<span class="location-label">Tầng</span>
-						<span class="location-value">Tầng {activeBooking.room_floor || '—'}</span>
+						<span class="location-label">Floor</span>
+						<span class="location-value">Floor {activeBooking.room_floor || '—'}</span>
 					</div>
 				</div>
 
 				<!-- Equipment -->
 				<div class="section">
 					<div class="section-header">
-						<span class="section-title">Thiết bị</span>
+						<span class="section-title">Equipment</span>
 					</div>
 					<div class="equipment-tags">
 						{#if activeBooking.room_equipment?.length}
@@ -441,7 +453,7 @@
 								<span class="tag">{translateEquipment(eq)}</span>
 							{/each}
 						{:else}
-							<span class="no-equipment">Không cần thiết bị</span>
+							<span class="no-equipment">No equipment required</span>
 						{/if}
 					</div>
 				</div>
@@ -450,14 +462,16 @@
 				<div class="section">
 					<div
 						class="section-header"
-						on:click={() => { if (!isFrozen) expandedSection = expandedSection === 'catering' ? null : 'catering'; }}
+						on:click={() => {
+							if (!isFrozen) expandedSection = expandedSection === 'catering' ? null : 'catering';
+						}}
 					>
 						<div class="section-title-row">
 							<span class="section-title">Catering</span>
 							{#if noCatering}
-								<span class="no-catering-badge">Không cần</span>
+								<span class="no-catering-badge">Not required</span>
 							{:else if selectedCatering.length > 0}
-								<span class="catering-saved-badge">{selectedCatering.length} món đã chọn</span>
+								<span class="catering-saved-badge">{selectedCatering.length} item(s) selected</span>
 							{/if}
 						</div>
 						<svg
@@ -480,11 +494,14 @@
 								disabled={isFrozen}
 								on:click={() => {
 									noCatering = !noCatering;
-									if (noCatering) { selectedCatering = []; cateringTotal = 0; }
+									if (noCatering) {
+										selectedCatering = [];
+										cateringTotal = 0;
+									}
 								}}
 							>
 								<span class="check-icon">{noCatering ? '●' : '○'}</span>
-								<span class="item-name">Không cần catering</span>
+								<span class="item-name">No catering needed</span>
 							</button>
 
 							{#if !noCatering}
@@ -501,20 +518,30 @@
 											<span class="item-name">{item.name}</span>
 											{#if isSelected}
 												<div class="qty-stepper" on:click|stopPropagation>
-													<button class="qty-btn" on:click={() => changeQuantity(item.id, -1)} disabled={isFrozen}>−</button>
+													<button
+														class="qty-btn"
+														on:click={() => changeQuantity(item.id, -1)}
+														disabled={isFrozen}>−</button
+													>
 													<span class="qty-val">{qty}</span>
-													<button class="qty-btn" on:click={() => changeQuantity(item.id, 1)} disabled={isFrozen}>+</button>
+													<button
+														class="qty-btn"
+														on:click={() => changeQuantity(item.id, 1)}
+														disabled={isFrozen}>+</button
+													>
 												</div>
 											{:else}
-												<span class="item-price">{item.price.toLocaleString()} VNĐ</span>
+												<span class="item-price">{item.price.toLocaleString()} VND</span>
 											{/if}
 										</button>
 									{/each}
 								</div>
 								{#if selectedCatering.length > 0}
 									<div class="catering-footer">
-										<span>Tổng: <strong>{cateringTotal.toLocaleString()} VNĐ</strong></span>
-										<button class="order-btn" on:click={handleOrderCatering} disabled={isFrozen}>Đặt</button>
+										<span>Total: <strong>{cateringTotal.toLocaleString()} VND</strong></span>
+										<button class="order-btn" on:click={handleOrderCatering} disabled={isFrozen}
+											>Order</button
+										>
 									</div>
 								{/if}
 							{/if}
@@ -525,7 +552,7 @@
 				<!-- Invitees (visible to all users) -->
 				<div class="section">
 					<div class="section-header">
-						<span class="section-title">Người tham dự</span>
+						<span class="section-title">Attendees</span>
 					</div>
 					<input
 						type="text"
@@ -536,23 +563,23 @@
 						disabled={isFrozen}
 					/>
 					{#if inviteesError}
-						<div class="note-error">Email không hợp lệ. Vui lòng kiểm tra lại.</div>
+						<div class="note-error">Invalid email address. Please check and try again.</div>
 					{/if}
 				</div>
 
 				<!-- Admin Note (visible to admin role only) -->
 				{#if isAdmin}
-				<div class="section">
-					<div class="section-header">
-						<span class="section-title">Ghi chú từ Admin</span>
+					<div class="section">
+						<div class="section-header">
+							<span class="section-title">Admin Note</span>
+						</div>
+						<textarea
+							class="note-input"
+							placeholder="Add a note for admin..."
+							bind:value={adminNote}
+							on:blur={handleAddNote}
+						></textarea>
 					</div>
-					<textarea
-						class="note-input"
-						placeholder="Thêm ghi chú cho admin..."
-						bind:value={adminNote}
-						on:blur={handleAddNote}
-					></textarea>
-				</div>
 				{/if}
 
 				<!-- Workflow -->
@@ -562,7 +589,7 @@
 					</div>
 					{#if !isAdmin}
 						<div class="sim-toggle-row" style="display: none">
-							<span class="sim-toggle-label">🤖 Mô phỏng phê duyệt Admin</span>
+							<span class="sim-toggle-label">🤖 Simulate Admin Approval</span>
 							<label class="toggle-switch">
 								<input type="checkbox" bind:checked={autoSimulate} />
 								<span class="toggle-track" class:active={autoSimulate}>
@@ -597,7 +624,13 @@
 						</div>
 
 						<!-- Step 2 -->
-						<div class="workflow-step {activeBooking.status === 'draft' ? 'active' : activeBooking.status === 'cancelled' ? 'rejected' : 'completed'}">
+						<div
+							class="workflow-step {activeBooking.status === 'draft'
+								? 'active'
+								: activeBooking.status === 'cancelled'
+									? 'rejected'
+									: 'completed'}"
+						>
 							<div class="step-marker {activeBooking.status === 'draft' ? 'pulse' : ''}">
 								{#if activeBooking.status === 'cancelled'}
 									<svg
@@ -630,19 +663,20 @@
 								<div class="step-name">User Approval</div>
 								{#if activeBooking.status === 'draft'}
 									<div class="step-actions">
-										<button
-											class="action-btn confirm"
-											on:click={handleConfirmStep2}>Xác nhận</button
+										<button class="action-btn confirm" on:click={handleConfirmStep2}
+											>Confirm</button
 										>
 										<button
 											class="action-btn reject"
-											on:click={() => onCancel && onCancel(activeBooking.id)}>Từ chối</button
+											on:click={() => onCancel && onCancel(activeBooking.id)}>Cancel</button
 										>
 									</div>
 								{:else if activeBooking.status === 'cancelled'}
-									<div class="step-time reject-hint">Đã từ chối — Nhập lại thông tin trong chat để đặt phòng mới</div>
+									<div class="step-time reject-hint">
+										Cancelled — Enter new details in chat to make a new booking
+									</div>
 								{:else}
-									<div class="step-time">Đã xác nhận</div>
+									<div class="step-time">Confirmed</div>
 								{/if}
 							</div>
 						</div>
@@ -691,34 +725,36 @@
 										<span>{activeBooking.approver?.name}</span>
 									</div>
 									{#if isAdmin}
-									<div class="step-actions">
-										<button
-											class="action-btn approve"
-											on:click={() => onApprove && onApprove(activeBooking.id)}>Duyệt</button
-										>
-										<button
-											class="action-btn reject"
-											on:click={handleAdminReject}>Từ chối</button
-										>
-									</div>
-									{#if rejectNoteError}
-										<div class="note-error">Vui lòng thêm ghi chú lý do từ chối ở trên</div>
-									{/if}
+										<div class="step-actions">
+											<button
+												class="action-btn approve"
+												on:click={() => onApprove && onApprove(activeBooking.id)}>Approve</button
+											>
+											<button class="action-btn reject" on:click={handleAdminReject}>Reject</button
+											>
+										</div>
+										{#if rejectNoteError}
+											<div class="note-error">Please add a rejection reason in the note field above</div>
+										{/if}
 									{:else}
-									<div class="sim-processing">
-										<div class="sim-spinner"></div>
-										<span>{autoSimulate ? 'Đang xử lý... Admin sẽ phản hồi trong vài giây' : 'Đang chờ Admin phê duyệt...'}</span>
-									</div>
+										<div class="sim-processing">
+											<div class="sim-spinner"></div>
+											<span
+												>{autoSimulate
+													? 'Processing... Admin will respond in a few seconds'
+													: 'Waiting for Admin approval...'}</span
+											>
+										</div>
 									{/if}
 								{:else}
 									<div class="step-time">
 										{activeBooking.status === 'approved' || activeBooking.status === 'sent'
-											? 'Đã duyệt'
+											? 'Approved'
 											: activeBooking.status === 'rejected'
-												? 'Đã từ chối'
+												? 'Rejected'
 												: activeBooking.status === 'cancelled'
-													? 'Đã hủy'
-													: 'Chờ xác nhận đặt phòng'}
+													? 'Cancelled'
+													: 'Awaiting booking confirmation'}
 									</div>
 								{/if}
 							</div>
@@ -735,7 +771,10 @@
 										: 'pending'}"
 						>
 							<div
-								class="step-marker {activeBooking.catering?.status === 'pending' && activeBooking.status !== 'cancelled' ? 'pulse' : ''}"
+								class="step-marker {activeBooking.catering?.status === 'pending' &&
+								activeBooking.status !== 'cancelled'
+									? 'pulse'
+									: ''}"
 							>
 								{#if activeBooking.catering?.status === 'approved' && activeBooking.status !== 'cancelled'}
 									<svg
@@ -756,41 +795,42 @@
 								<div class="step-name">Catering Approval</div>
 								{#if activeBooking.catering?.status === 'pending'}
 									{#if isAdmin}
-									<div class="step-actions">
-										<button
-											class="action-btn approve"
-											on:click={() => onApproveCatering && onApproveCatering(activeBooking.id)}
-											>Duyệt</button
-										>
-										<button
-											class="action-btn reject"
-											on:click={handleCateringReject}
-											>Từ chối</button
-										>
-									</div>
-									{#if rejectNoteError}
-										<div class="note-error">Vui lòng thêm ghi chú lý do từ chối ở trên</div>
-									{/if}
+										<div class="step-actions">
+											<button
+												class="action-btn approve"
+												on:click={() => onApproveCatering && onApproveCatering(activeBooking.id)}
+												>Approve</button
+											>
+											<button class="action-btn reject" on:click={handleCateringReject}
+												>Reject</button
+											>
+										</div>
+										{#if rejectNoteError}
+											<div class="note-error">Please add a rejection reason in the note field above</div>
+										{/if}
 									{:else}
-									<div class="sim-processing">
-										<div class="sim-spinner"></div>
-										<span>{autoSimulate ? 'Đang xử lý catering... Sẽ phản hồi trong vài giây' : 'Đang chờ duyệt catering...'}</span>
-									</div>
+										<div class="sim-processing">
+											<div class="sim-spinner"></div>
+											<span
+												>{autoSimulate
+													? 'Processing catering... Will respond in a few seconds'
+													: 'Waiting for catering approval...'}</span
+											>
+										</div>
 									{/if}
 								{:else}
 									<div class="step-time">
 										{activeBooking.status === 'cancelled'
-											? 'Đã hủy'
+											? 'Cancelled'
 											: activeBooking.catering?.status === 'approved'
-												? 'Đã duyệt'
+												? 'Approved'
 												: activeBooking.catering?.items?.length
-													? 'Chờ xác nhận đặt phòng'
-													: 'Không có catering'}
+													? 'Awaiting booking confirmation'
+													: 'No catering'}
 									</div>
 								{/if}
 							</div>
 						</div>
-
 					</div>
 				</div>
 			{/if}
@@ -911,7 +951,9 @@
 	}
 
 	@keyframes spin {
-		to { transform: rotate(360deg); }
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.card-header {

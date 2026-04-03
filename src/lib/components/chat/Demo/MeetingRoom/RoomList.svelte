@@ -68,8 +68,8 @@
 			id: 'lotus',
 			name: 'Lotus',
 			location: 'HN',
-			building: 'CMC Tower Hà Nội',
-			address: 'Quận Cầu Giấy, Hà Nội',
+			building: 'CMC Tower Hanoi',
+			address: 'Cau Giay District, Hanoi',
 			lat: 21.0285,
 			lng: 105.8542,
 			floor: 6,
@@ -82,7 +82,7 @@
 			name: 'Orchid',
 			location: 'HN',
 			building: 'Lotte Center Hanoi',
-			address: 'Quận Ba Đình, Hà Nội',
+			address: 'Ba Dinh District, Hanoi',
 			lat: 21.0355,
 			lng: 105.8085,
 			floor: 8,
@@ -94,8 +94,8 @@
 			id: 'jasmine',
 			name: 'Jasmine',
 			location: 'DN',
-			building: 'CMC Global Đà Nẵng',
-			address: 'Quận Hải Châu, Đà Nẵng',
+			building: 'CMC Global Da Nang',
+			address: 'Hai Chau District, Da Nang',
 			lat: 16.0544,
 			lng: 108.2022,
 			floor: 3,
@@ -108,7 +108,7 @@
 			name: 'Tulip',
 			location: 'DN',
 			building: 'Blooming Tower',
-			address: 'Quận Ngũ Hành Sơn, Đà Nẵng',
+			address: 'Ngu Hanh Son District, Da Nang',
 			lat: 16.0013,
 			lng: 108.2635,
 			floor: 5,
@@ -119,21 +119,21 @@
 	];
 
 	const EQUIPMENT_VI = {
-		projector: 'Máy chiếu',
-		tv: 'Tivi',
-		video_conf: 'Họp video',
-		phone: 'Điện thoại',
-		whiteboard: 'Bảng trắng',
-		ac: 'Điều hòa',
-		sound: 'Âm thanh',
-		mic: 'Micro'
+		projector: 'Projector',
+		tv: 'TV',
+		video_conf: 'Video Conference',
+		phone: 'Conference Phone',
+		whiteboard: 'Whiteboard',
+		ac: 'Air Conditioning',
+		sound: 'Sound System',
+		mic: 'Microphone'
 	};
 
 	const LOCATIONS = [
-		{ id: 'all', name: 'Tất cả' },
-		{ id: 'HCM', name: 'TP. Hồ Chí Minh' },
-		{ id: 'HN', name: 'Hà Nội' },
-		{ id: 'DN', name: 'Đà Nẵng' }
+		{ id: 'all', name: 'All' },
+		{ id: 'HCM', name: 'Ho Chi Minh City' },
+		{ id: 'HN', name: 'Hanoi' },
+		{ id: 'DN', name: 'Da Nang' }
 	];
 
 	let selectedLocation = 'all';
@@ -311,7 +311,7 @@
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
 						<polyline points="9 22 9 12 15 12 15 22"></polyline>
 					</svg>
-					<h2>Chọn phòng họp</h2>
+					<h2>Select Meeting Room</h2>
 				</div>
 				<button class="close-btn" on:click={close}>
 					<svg
@@ -330,7 +330,7 @@
 			<div class="embedded-body">
 				<div class="sidebar">
 					<div class="filter-section">
-						<label class="filter-label">Khu vực</label>
+						<label class="filter-label">Area</label>
 						<div class="location-tabs">
 							{#each LOCATIONS as loc}
 								<button
@@ -354,7 +354,7 @@
 								<div class="room-image" style="background-image: url({room.image})">
 									<span class="room-location-badge">{room.location}</span>
 									{#if occupied}
-										<span class="occupied-badge">Đã đặt</span>
+										<span class="occupied-badge">Booked</span>
 									{:else if selectedRoom?.id === room.id}
 										<span class="selected-check">✓</span>
 									{/if}
@@ -396,7 +396,7 @@
 									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
 									<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
 								</svg>
-								Đã xác nhận: {selectedRoom.name}
+								Confirmed: {selectedRoom.name}
 							{:else if selectedRoom}
 								<svg
 									width="18"
@@ -408,7 +408,7 @@
 								>
 									<polyline points="20 6 9 17 4 12"></polyline>
 								</svg>
-								Xác nhận: {selectedRoom.name}
+								Confirm: {selectedRoom.name}
 							{:else}
 								<svg
 									width="18"
@@ -422,7 +422,7 @@
 									<line x1="12" y1="8" x2="12" y2="12"></line>
 									<line x1="12" y1="16" x2="12.01" y2="16"></line>
 								</svg>
-								Chọn phòng để tiếp tục
+								Select a room to continue
 							{/if}
 						</button>
 					</div>
@@ -431,15 +431,15 @@
 					<div bind:this={mapContainer} class="map"></div>
 					{#if selectedRoom}
 						<div class="room-preview-floating" transition:fly={{ y: 20, duration: 200 }}>
-							<div class="preview-badge">Đã chọn</div>
+							<div class="preview-badge">Selected</div>
 							<div class="preview-content">
 								<img src={selectedRoom.image} alt={selectedRoom.name} class="preview-image" />
 								<div class="preview-info">
 									<h3>{selectedRoom.name}</h3>
 									<p>{selectedRoom.address}</p>
 									<div class="preview-meta">
-										<span>👥 {selectedRoom.capacity} người</span>
-										<span>🏢 Tầng {selectedRoom.floor}</span>
+										<span>👥 {selectedRoom.capacity} people</span>
+										<span>🏢 Floor {selectedRoom.floor}</span>
 									</div>
 								</div>
 							</div>
@@ -456,7 +456,7 @@
 				on:click|stopPropagation
 			>
 				<div class="modal-header">
-					<h2>Chọn phòng họp</h2>
+					<h2>Select Meeting Room</h2>
 					<button class="close-btn" on:click={close}>
 						<svg
 							width="24"
@@ -475,7 +475,7 @@
 				<div class="modal-body">
 					<div class="sidebar">
 						<div class="filter-section">
-							<label class="filter-label">Khu vực</label>
+						<label class="filter-label">Area</label>
 							<div class="location-tabs">
 								{#each LOCATIONS as loc}
 									<button
@@ -501,8 +501,8 @@
 										<div class="room-name">{room.name}</div>
 										<div class="room-address">{room.address}</div>
 										<div class="room-details">
-											<span>👥 {room.capacity} người</span>
-											<span>🏢 Tầng {room.floor}</span>
+											<span>👥 {room.capacity} people</span>
+											<span>🏢 Floor {room.floor}</span>
 										</div>
 										<div class="room-equipment">
 											{#each room.equipment.slice(0, 4) as eq}
@@ -531,21 +531,21 @@
 								</div>
 								<div class="preview-details">
 									<div class="detail-item">
-										<span class="detail-label">Sức chứa</span>
-										<span class="detail-value">{selectedRoom.capacity} người</span>
+										<span class="detail-label">Capacity</span>
+										<span class="detail-value">{selectedRoom.capacity} people</span>
 									</div>
 									<div class="detail-item">
-										<span class="detail-label">Tầng</span>
+										<span class="detail-label">Floor</span>
 										<span class="detail-value">{selectedRoom.floor}</span>
 									</div>
 									<div class="detail-item">
-										<span class="detail-label">Thiết bị</span>
+										<span class="detail-label">Equipment</span>
 										<span class="detail-value"
 											>{selectedRoom.equipment.map((e) => translateEquipment(e)).join(', ')}</span
 										>
 									</div>
 								</div>
-								<button class="confirm-btn" on:click={confirmRoom}> Xác nhận chọn phòng </button>
+								<button class="confirm-btn" on:click={confirmRoom}> Confirm Room </button>
 							</div>
 						{/if}
 					</div>

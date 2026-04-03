@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { getModels } from '$lib/apis';
 	import { toast } from 'svelte-sonner';
-	import { user, models, showSidebar, WEBUI_NAME } from '$lib/stores';
+	import { user, showSidebar, WEBUI_NAME } from '$lib/stores';
 	import { updateModelById, deleteModelById } from '$lib/apis/models';
-
+	import { getAgentsList } from '$lib/apis/agents';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import EditAgentModal from '$lib/components/admin/Agents/EditAgentModal.svelte';
 
@@ -22,42 +21,26 @@
 	let showDeleteConfirm = false;
 
 	onMount(async () => {
-		// Instant render from cached store
-		if ($models.length > 0) {
-			buildAgentsFromStore();
-			loading = false;
+		if ($user?.role !== 'admin') {
+			goto('/');
+			return;
 		}
-
-		// Background refresh with cheap API calls only
-		await refreshData();
+		await loadData();
 	});
 
-	function buildAgentsFromStore() {
-		agents = normalizeAgents($models ?? []);
-	}
-
-	function normalizeAgents(modelList = []) {
-		return modelList
-			.filter((m) => m.info && !m.pipe && m.id !== 'orchestrator')
-			.map((m) => ({
-				...m,
-				source: 'workspace',
-				is_active: m.is_active ?? true,
+	async function loadData() {
+		loading = true;
+		try {
+			const res = await getAgentsList($user?.token);
+			agents = (res ?? []).map((a) => ({
+				...a,
 				meta: {
-					profile_image_url: m.info?.meta?.profile_image_url ?? null,
-					description: m.info?.meta?.description ?? null,
-					tags: [...(m.info?.meta?.tags ?? []), ...(m.tags ?? [])].map((t) =>
-						typeof t === 'string' ? { name: t } : t
-					)
+					profile_image_url: a.profile_image_url || null,
+					description: a.description || null,
+					tags: a.tags ?? []
 				}
 			}));
-	}
-
-	async function refreshData() {
-		try {
-			const accessibleModels = await getModels($user?.token);
-			agents = normalizeAgents(accessibleModels ?? []);
-		} catch {
+		} catch (e) {
 			toast.error($i18n.t('Failed to load agents'));
 		} finally {
 			loading = false;
@@ -65,34 +48,37 @@
 	}
 
 	async function handleSaveAgent(event) {
-		if (!isAdmin) return;
 		const model = event.detail;
 		try {
 			await updateModelById($user?.token, model.id, model);
 			toast.success($i18n.t('Agent saved'));
 			showEditModal = false;
-			await refreshData();
-		} catch {
+			await loadData();
+		} catch (e) {
 			toast.error($i18n.t('Failed to save agent'));
 		}
 	}
 
 	async function handleDeleteAgent(event) {
-		if (!isAdmin) return;
 		try {
 			await deleteModelById($user?.token, event.detail.id);
 			toast.success($i18n.t('Agent deleted'));
 			showEditModal = false;
-			await refreshData();
-		} catch {
+			await loadData();
+		} catch (e) {
 			toast.error($i18n.t('Failed to delete agent'));
 		}
 	}
 
 	function handleEditAgent(agent) {
-		if (!isAdmin) return;
+		// Only agents with a workspace model record can be edited via the modal
+		if (!agent.workspace_model_id) return;
 		selectedAgent = agent;
 		showEditModal = true;
+	}
+
+	function isSelectable(agent) {
+		return !!agent.workspace_model_id;
 	}
 
 	function handleCardClick(agent) {
@@ -102,6 +88,7 @@
 	}
 
 	function toggleSelect(agent) {
+		if (!isSelectable(agent)) return;
 		if (selectedIds.has(agent.id)) {
 			selectedIds.delete(agent.id);
 		} else {
@@ -110,53 +97,82 @@
 		selectedIds = selectedIds; // trigger reactivity
 	}
 
+	function toggleSelectAll() {
+		const selectableAgents = agents.filter(isSelectable);
+		if (selectedIds.size === selectableAgents.length) {
+			selectedIds = new Set();
+		} else {
+			selectedIds = new Set(selectableAgents.map((a) => a.id));
+		}
+	}
+
 	function exitSelectMode() {
 		selectMode = false;
 		selectedIds = new Set();
 	}
 
 	async function handleBulkDelete() {
-		if (!isAdmin) return;
-		const ids = [...selectedIds];
+		// Only delete selectable (workspace) agents
+		const ids = [...selectedIds].filter((id) => {
+			const agent = agents.find((a) => a.id === id);
+			return agent && isSelectable(agent);
+		});
 		if (ids.length === 0) return;
 		try {
 			await Promise.all(ids.map((id) => deleteModelById($user?.token, id)));
 			toast.success($i18n.t(`Deleted ${ids.length} agent(s)`));
 			exitSelectMode();
-			await refreshData();
-		} catch {
+			await loadData();
+		} catch (e) {
 			toast.error($i18n.t('Failed to delete some agents'));
-			await refreshData();
+			await loadData();
 		}
 	}
 
+	function isWorkspaceModel(agent) {
+		return !!agent.workspace_model_id;
+	}
+
 	$: systemOnline = agents.some((a) => a.is_active);
-	$: isAdmin = $user?.role === 'admin';
+	$: onlineCount = agents.filter((a) => a.is_active).length;
 
 	const TAG_BADGE_CLASS = 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300';
+
+	const SOURCE_BADGE = {
+		workspace: {
+			label: 'Workspace',
+			class: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+		},
+		external: {
+			label: 'External',
+			class: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+		},
+		function: {
+			label: 'Function',
+			class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
+		}
+	};
 </script>
 
 <svelte:head>
 	<title>Agents &bull; {$WEBUI_NAME}</title>
 </svelte:head>
 
-{#if isAdmin}
-	<ConfirmDialog
-		bind:show={showDeleteConfirm}
-		title={$i18n.t('Delete Agents')}
-		message={$i18n.t(
-			`Are you sure you want to delete ${selectedIds.size} agent(s)? This action cannot be undone.`
-		)}
-		onConfirm={handleBulkDelete}
-	/>
+<ConfirmDialog
+	bind:show={showDeleteConfirm}
+	title={$i18n.t('Delete Agents')}
+	message={$i18n.t(
+		`Are you sure you want to delete ${selectedIds.size} agent(s)? This action cannot be undone.`
+	)}
+	onConfirm={handleBulkDelete}
+/>
 
-	<EditAgentModal
-		bind:show={showEditModal}
-		model={selectedAgent}
-		on:save={handleSaveAgent}
-		on:delete={handleDeleteAgent}
-	/>
-{/if}
+<EditAgentModal
+	bind:show={showEditModal}
+	model={selectedAgent}
+	on:save={handleSaveAgent}
+	on:delete={handleDeleteAgent}
+/>
 
 <div
 	class="flex flex-col w-full h-screen max-h-[100dvh] transition-width duration-200 ease-in-out {$showSidebar
@@ -168,14 +184,12 @@
 		<div class="flex items-start justify-between mb-4">
 			<div>
 				<div class="flex items-center gap-3 mb-1">
-					<h1 class="text-xl font-medium text-gray-900 dark:text-white">
-						{$i18n.t('Agent Hub')}
-					</h1>
+					<h1 class="text-xl font-medium text-gray-900 dark:text-white">{$i18n.t('Agents Hub')}</h1>
 					{#if !loading}
 						<span
 							class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium {systemOnline
 								? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-								: 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-400'}"
+								: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}"
 						>
 							<span class="w-1.5 h-1.5 rounded-full {systemOnline ? 'bg-green-500' : 'bg-gray-400'}"
 							></span>
@@ -183,17 +197,77 @@
 						</span>
 					{/if}
 				</div>
-				<p class="text-sm text-gray-500 dark:text-gray-400">
-					{$i18n.t(
-						'Manage and monitor all specialist agents available in the orchestration network.'
-					)}
-				</p>
+				{#if isAdmin && !loading && agents.length > 0}
+					<div class="flex items-center gap-2">
+						{#if selectMode && selectedIds.size > 0}
+							<button
+								class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-gray-900 text-sm font-medium transition"
+								on:click={() => (showDeleteConfirm = true)}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-4"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+									/>
+								</svg>
+								{$i18n.t('Delete')}
+							</button>
+						{/if}
+						{#if selectMode}
+							<button
+								class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+								on:click={exitSelectMode}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-4"
+								>
+									<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+								</svg>
+								{$i18n.t('Deselect All')}
+							</button>
+						{:else}
+							<button
+								class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+								on:click={() => (selectMode = true)}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-4"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+									/>
+								</svg>
+								{$i18n.t('Select')}
+							</button>
+						{/if}
+					</div>
+				{/if}
 			</div>
-			{#if isAdmin && !loading && agents.length > 0}
+			{#if !loading && agents.length > 0}
 				<div class="flex items-center gap-2">
 					{#if selectMode && selectedIds.size > 0}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-gray-900 text-sm font-medium transition"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium transition"
 							on:click={() => (showDeleteConfirm = true)}
 						>
 							<svg
@@ -215,7 +289,7 @@
 					{/if}
 					{#if selectMode}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
 							on:click={exitSelectMode}
 						>
 							<svg
@@ -232,7 +306,7 @@
 						</button>
 					{:else}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
 							on:click={() => (selectMode = true)}
 						>
 							<svg
@@ -278,7 +352,7 @@
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<div
-						class="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-slate-800 border shadow-sm dark:shadow-gray-950/50 hover:shadow-md transition relative h-[10rem] cursor-pointer {selectedIds.has(
+						class="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border shadow-sm dark:shadow-gray-950/50 hover:shadow-md transition relative h-[10rem] cursor-pointer {selectedIds.has(
 							agent.id
 						)
 							? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800'
@@ -291,8 +365,8 @@
 							}
 						}}
 					>
-						<!-- Select checkbox (top-left, only in select mode) -->
-						{#if selectMode}
+						<!-- Select checkbox (top-left, only in select mode, only for selectable agents) -->
+						{#if selectMode && isSelectable(agent)}
 							<div class="absolute top-3 left-3 z-10">
 								<div
 									class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition {selectedIds.has(
@@ -329,9 +403,11 @@
 						></span>
 
 						<!-- Avatar + Name -->
-						<div class="flex items-center gap-3 pr-5 {selectMode ? 'pl-6' : ''}">
+						<div
+							class="flex items-center gap-3 pr-5 {selectMode && isSelectable(agent) ? 'pl-6' : ''}"
+						>
 							<img
-								src={agent.meta?.profile_image_url || '/static/cmc-favicon.png'}
+								src={agent.meta?.profile_image_url || '/static/favicon.png'}
 								alt={agent.name}
 								class="w-10 h-10 rounded-full object-cover shrink-0"
 							/>
@@ -340,6 +416,15 @@
 									{agent.name}
 								</span>
 								<div class="flex flex-wrap min-w-0 gap-1">
+									{#if agent.source && SOURCE_BADGE[agent.source]}
+										<span
+											class="inline-block text-[10px] font-medium uppercase px-2 py-0.5 mt-1 rounded-full {SOURCE_BADGE[
+												agent.source
+											].class}"
+										>
+											{$i18n.t(SOURCE_BADGE[agent.source].label)}
+										</span>
+									{/if}
 									{#each agent.meta?.tags ?? [] as tag, i}
 										{#if i < 2}
 											<span
@@ -349,7 +434,7 @@
 											</span>
 										{:else if i === 2}
 											<span
-												class="inline-block text-[10px] font-medium px-2 py-0.5 mt-1 rounded-full bg-gray-100 text-gray-500 dark:bg-slate-800 dark:text-gray-400"
+												class="inline-block text-[10px] font-medium px-2 py-0.5 mt-1 rounded-full bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
 											>
 												+{(agent.meta?.tags ?? []).length - 2}
 											</span>
@@ -402,7 +487,7 @@
 		<!-- Status Bar — always shown after loading -->
 		{#if !loading}
 			<div
-				class="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-gray-850 text-xs text-gray-500 dark:text-gray-400"
+				class="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-850 text-xs text-gray-500 dark:text-gray-400"
 			>
 				<div class="flex items-center gap-4">
 					<span class="flex items-center gap-1.5">
