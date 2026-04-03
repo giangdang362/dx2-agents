@@ -49,7 +49,7 @@
 		>
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger
-					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				>
 					<Download strokeWidth="2" />
 
@@ -62,7 +62,7 @@
 					align="end"
 				>
 					<DropdownMenu.Item
-						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 						on:click={() => {
 							onDownload('txt');
 						}}
@@ -71,7 +71,7 @@
 					</DropdownMenu.Item>
 
 					<DropdownMenu.Item
-						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 						on:click={() => {
 							onDownload('md');
 						}}
@@ -80,7 +80,7 @@
 					</DropdownMenu.Item>
 
 					<DropdownMenu.Item
-						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+						class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 						on:click={() => {
 							onDownload('pdf');
 						}}
@@ -93,7 +93,7 @@
 			{#if onCopyLink || onCopyToClipboard}
 				<DropdownMenu.Sub>
 					<DropdownMenu.SubTrigger
-						class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 					>
 						<Share strokeWidth="2" />
 
@@ -107,7 +107,7 @@
 					>
 						{#if onCopyLink}
 							<DropdownMenu.Item
-								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 								on:click={() => {
 									onCopyLink();
 								}}
@@ -119,7 +119,7 @@
 
 						{#if onCopyToClipboard}
 							<DropdownMenu.Item
-								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 								on:click={() => {
 									onCopyToClipboard();
 								}}
@@ -133,7 +133,7 @@
 			{/if}
 
 			<DropdownMenu.Item
-				class="select-none flex  gap-2  items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="select-none flex  gap-2  items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					onDelete();
 				}}

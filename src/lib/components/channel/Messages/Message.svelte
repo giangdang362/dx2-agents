@@ -93,7 +93,7 @@
 {#if message}
 	<div
 		id="message-{message.id}"
-		class="flex flex-col justify-between w-full max-w-full mx-auto group hover:bg-gray-300/5 dark:hover:bg-gray-700/5 transition relative {className
+		class="flex flex-col justify-between w-full max-w-full mx-auto group hover:bg-gray-300/5 dark:hover:bg-slate-700/5 transition relative {className
 			? className
 			: `px-5 ${
 					replyToMessage ? 'border-l-4 border-blue-500 bg-blue-100/10 dark:bg-blue-100/5 pl-4' : ''
@@ -393,7 +393,7 @@
 							<div class="flex space-x-1.5">
 								<button
 									id="close-edit-message-button"
-									class="px-3.5 py-1.5 bg-white dark:bg-gray-900 hover:bg-gray-100 text-gray-800 dark:text-gray-100 transition rounded-3xl"
+									class="px-3.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-gray-100 text-gray-800 dark:text-gray-100 transition rounded-3xl"
 									on:click={() => {
 										edit = false;
 										editedContent = null;

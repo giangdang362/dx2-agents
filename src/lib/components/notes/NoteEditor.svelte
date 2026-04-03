@@ -923,7 +923,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 									>
 										<button
 											id="sidebar-toggle-button"
-											class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition cursor-"
+											class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition cursor-"
 											on:click={() => {
 												showSidebar.set(!$showSidebar);
 											}}
@@ -1093,7 +1093,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 
 								{#if note?.write_access}
 									<button
-										class="shrink-0 bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2.5 py-1 rounded-full flex gap-1.5 items-center text-sm"
+										class="shrink-0 bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white transition px-2.5 py-1 rounded-full flex gap-1.5 items-center text-sm"
 										on:click={() => {
 											showAccessControlModal = true;
 										}}
@@ -1174,7 +1174,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 							<div
 								class="w-full h-full fixed top-0 left-0 {streaming
 									? ''
-									: ' backdrop-blur-xs  bg-white/10 dark:bg-gray-900/10'} flex items-center justify-center z-10 cursor-not-allowed"
+									: ' backdrop-blur-xs  bg-white/10 dark:bg-slate-800/10'} flex items-center justify-center z-10 cursor-not-allowed"
 							></div>
 						{/if}
 
@@ -1312,7 +1312,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 						<Tooltip content={$i18n.t('AI')} placement="top">
 							{#if editing}
 								<button
-									class="p-2 flex justify-center items-center hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition shrink-0"
+									class="p-2 flex justify-center items-center hover:bg-gray-50 dark:hover:bg-slate-700 rounded-full transition shrink-0"
 									on:click={() => {
 										stopResponseHandler();
 									}}
@@ -1331,7 +1331,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 									}}
 								>
 									<div
-										class="cursor-pointer p-2.5 flex rounded-full border border-gray-50 bg-white dark:border-none dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition shadow-xl"
+										class="cursor-pointer p-2.5 flex rounded-full border border-gray-50 bg-white dark:border-none dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition shadow-xl"
 									>
 										<SparklesSolid />
 									</div>
@@ -1388,7 +1388,7 @@ Provide the enhanced notes in markdown format. Use markdown syntax for headings,
 					>
 						<Tooltip content={$i18n.t('Record')} placement="top">
 							<div
-								class="cursor-pointer p-2.5 flex rounded-full border border-gray-50 bg-white dark:border-none dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition shadow-xl"
+								class="cursor-pointer p-2.5 flex rounded-full border border-gray-50 bg-white dark:border-none dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition shadow-xl"
 							>
 								<MicSolid className="size-4.5" />
 							</div>

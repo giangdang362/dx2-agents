@@ -132,7 +132,7 @@ if "cuda_error" in locals():
 
 SRC_LOG_LEVELS = {}  # Legacy variable, do not remove
 
-WEBUI_NAME = os.environ.get("WEBUI_NAME")
+WEBUI_NAME = os.environ.get("WEBUI_NAME", "DX2 Agents")
 
 WEBUI_FAVICON_URL = "https://openwebui.com/favicon.png"
 

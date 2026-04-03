@@ -36,9 +36,9 @@ async function loadPyodideAndPackages(packages: string[] = []) {
 			} else {
 				self.stderr = `${text}\n`;
 			}
-		},
-		packages: ['micropip']
+		}
 	});
+	await self.pyodide.loadPackage('micropip');
 
 	const mountDir = '/mnt';
 	self.pyodide.FS.mkdirTree(mountDir);

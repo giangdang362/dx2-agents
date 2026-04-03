@@ -371,7 +371,7 @@
 						>
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger
-									class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+									class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl select-none w-full"
 								>
 									<Download strokeWidth="1.5" />
 									<div class="flex items-center">{$i18n.t('Download')}</div>
@@ -382,7 +382,7 @@
 									sideOffset={8}
 								>
 									<DropdownMenu.Item
-										class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+										class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl select-none w-full"
 										disabled={messages.length === 0}
 										on:click={() => {
 											exportToJson();
@@ -393,7 +393,7 @@
 										</div>
 									</DropdownMenu.Item>
 									<DropdownMenu.Item
-										class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+										class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl select-none w-full"
 										disabled={messages.length === 0}
 										on:click={() => {
 											downloadTxt();
@@ -451,7 +451,7 @@
 						<div class="shrink-0">
 							<button
 								type="button"
-								class="px-3.5 py-1.5 text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-900 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition rounded-lg shrink-0 {($settings?.highContrastMode ??
+								class="px-3.5 py-1.5 text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition rounded-lg shrink-0 {($settings?.highContrastMode ??
 								false)
 									? ''
 									: 'outline-hidden'}"
@@ -489,7 +489,7 @@
 								{#if !loading}
 									<button
 										disabled={message === ''}
-										class="px-3.5 py-1.5 text-sm font-medium disabled:bg-gray-50 dark:disabled:hover:bg-gray-850 disabled:cursor-not-allowed bg-gray-50 hover:bg-gray-100 text-gray-900 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition rounded-lg"
+										class="px-3.5 py-1.5 text-sm font-medium disabled:bg-gray-50 dark:disabled:hover:bg-gray-850 disabled:cursor-not-allowed bg-gray-50 hover:bg-gray-100 text-gray-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition rounded-lg"
 										on:click={() => {
 											addHandler();
 											role = role === 'user' ? 'assistant' : 'user';
@@ -499,7 +499,7 @@
 									</button>
 
 									<button
-										class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-lg"
+										class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-lg"
 										on:click={() => {
 											submitHandler();
 										}}

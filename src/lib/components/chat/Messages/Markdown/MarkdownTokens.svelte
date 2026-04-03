@@ -138,7 +138,7 @@
 					dir="auto"
 				>
 					<thead
-						class="text-xs text-gray-700 uppercase bg-white dark:bg-gray-900 dark:text-gray-400 border-none"
+						class="text-xs text-gray-700 uppercase bg-white dark:bg-slate-800 dark:text-gray-400 border-none"
 					>
 						<tr class="">
 							{#each token.header as header, headerIdx}
@@ -164,7 +164,7 @@
 					</thead>
 					<tbody>
 						{#each token.rows as row, rowIdx}
-							<tr class="bg-white dark:bg-gray-900 text-xs">
+							<tr class="bg-white dark:bg-slate-800 text-xs">
 								{#each row ?? [] as cell, cellIdx}
 									<td
 										class="px-3! py-2! text-gray-900 dark:text-white w-max {token.rows.length -

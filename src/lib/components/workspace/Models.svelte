@@ -348,7 +348,7 @@
 			<div class="flex w-full justify-end gap-1.5">
 				{#if $user?.role === 'admin' || $user?.permissions?.workspace?.models_import}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 						on:click={() => {
 							modelsImportInputElement.click();
 						}}
@@ -361,7 +361,7 @@
 
 				{#if total && ($user?.role === 'admin' || $user?.permissions?.workspace?.models_export)}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 						on:click={async () => {
 							downloadModels(models);
 						}}
@@ -462,8 +462,8 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<div
 							class="flex transition rounded-2xl w-full p-2.5 {model.write_access
-								? 'cursor-pointer dark:hover:bg-gray-850/50 hover:bg-gray-50'
-								: 'dark:hover:bg-gray-850/50 hover:bg-gray-50'}"
+								? 'cursor-pointer dark:hover:bg-slate-700 hover:bg-gray-50'
+								: 'dark:hover:bg-slate-800/50 hover:bg-gray-50'}"
 							id="model-item-{model.id}"
 							on:click={() => {
 								if (model.write_access) {

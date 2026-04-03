@@ -303,7 +303,7 @@
 			{#if $user?.role === 'admin' || ($user.permissions?.chat?.share ?? true)}
 				<DropdownMenu.Item
 					draggable="false"
-					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700  rounded-xl"
 					on:click={() => {
 						shareHandler();
 					}}
@@ -316,7 +316,7 @@
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger
 					draggable="false"
-					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				>
 					<Download strokeWidth="1.5" />
 
@@ -330,7 +330,7 @@
 					{#if $user?.role === 'admin' || ($user.permissions?.chat?.export ?? true)}
 						<DropdownMenu.Item
 							draggable="false"
-							class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+							class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 							on:click={() => {
 								downloadJSONExport();
 							}}
@@ -341,7 +341,7 @@
 
 					<DropdownMenu.Item
 						draggable="false"
-						class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 						on:click={() => {
 							downloadTxt();
 						}}
@@ -351,7 +351,7 @@
 
 					<DropdownMenu.Item
 						draggable="false"
-						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl select-none w-full"
 						on:click={() => {
 							downloadPdf();
 						}}
@@ -363,7 +363,7 @@
 
 			<DropdownMenu.Item
 				draggable="false"
-				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					renameHandler();
 				}}
@@ -376,7 +376,7 @@
 
 			<DropdownMenu.Item
 				draggable="false"
-				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					pinHandler();
 				}}
@@ -392,7 +392,7 @@
 
 			<DropdownMenu.Item
 				draggable="false"
-				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					cloneChatHandler();
 				}}
@@ -405,7 +405,7 @@
 				<DropdownMenu.Sub>
 					<DropdownMenu.SubTrigger
 						draggable="false"
-						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl select-none w-full"
 					>
 						<Folder />
 
@@ -419,7 +419,7 @@
 						{#each $folders.sort((a, b) => b.updated_at - a.updated_at) as folder}
 							<DropdownMenu.Item
 								draggable="false"
-								class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+								class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 								on:click={() => {
 									moveChatHandler(chatId, folder.id);
 								}}
@@ -435,7 +435,7 @@
 
 			<DropdownMenu.Item
 				draggable="false"
-				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					archiveChatHandler();
 				}}
@@ -446,7 +446,7 @@
 
 			<DropdownMenu.Item
 				draggable="false"
-				class="flex  gap-2  items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+				class="flex  gap-2  items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"
 				on:click={() => {
 					deleteHandler();
 				}}

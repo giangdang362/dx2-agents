@@ -188,7 +188,9 @@ def start_logger():
     for uvicorn_logger_name in ["uvicorn", "uvicorn.error"]:
         uvicorn_logger = logging.getLogger(uvicorn_logger_name)
         uvicorn_logger.setLevel(GLOBAL_LOG_LEVEL)
-        uvicorn_logger.handlers = []
+        # Keep Uvicorn lifecycle logs visible after Loguru takes over stdout.
+        uvicorn_logger.handlers = [InterceptHandler()]
+        uvicorn_logger.propagate = False
 
     for uvicorn_logger_name in AUDIT_UVICORN_LOGGER_NAMES:
         uvicorn_logger = logging.getLogger(uvicorn_logger_name)

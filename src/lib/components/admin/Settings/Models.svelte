@@ -360,7 +360,7 @@
 						/>
 
 						<button
-							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 							disabled={modelsImportInProgress}
 							on:click={() => {
 								modelsImportInputElement.click();
@@ -375,7 +375,7 @@
 						</button>
 
 						<button
-							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+							class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 							on:click={async () => {
 								downloadModels(models);
 							}}
@@ -387,7 +387,7 @@
 					{/if}
 
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 						type="button"
 						on:click={() => {
 							showManageModal = true;
@@ -399,7 +399,7 @@
 					</button>
 
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black transition font-medium"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-black transition font-medium"
 						type="button"
 						on:click={() => {
 							showConfigModal = true;
@@ -469,7 +469,7 @@
 							transition={flyAndScale}
 						>
 							<DropdownMenu.Item
-								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md"
 								on:click={() => {
 									enableAllHandler();
 								}}
@@ -479,7 +479,7 @@
 							</DropdownMenu.Item>
 
 							<DropdownMenu.Item
-								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+								class="select-none flex gap-2 items-center px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md"
 								on:click={() => {
 									disableAllHandler();
 								}}

@@ -29,6 +29,7 @@ const initializePyodide = async () => {
 		self.pyodide = await loadPyodide({
 			indexURL: self.indexURL
 		});
+		await self.pyodide.loadPackage('micropip');
 	}
 };
 

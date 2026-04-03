@@ -134,7 +134,7 @@
 						{#if input}
 							{#if inputType === 'password'}
 								<div
-									class="w-full mt-2 rounded-lg px-4 py-2 text-sm dark:text-gray-300 dark:bg-gray-900"
+									class="w-full mt-2 rounded-lg px-4 py-2 text-sm dark:text-gray-300 dark:bg-slate-800"
 								>
 									<SensitiveInput
 										id="event-confirm-input"
@@ -149,7 +149,7 @@
 								<textarea
 									bind:value={inputValue}
 									placeholder={inputPlaceholder ? inputPlaceholder : $i18n.t('Enter your message')}
-									class="w-full mt-2 rounded-lg px-4 py-2 text-sm dark:text-gray-300 dark:bg-gray-900 outline-hidden resize-none"
+									class="w-full mt-2 rounded-lg px-4 py-2 text-sm dark:text-gray-300 dark:bg-slate-800 outline-hidden resize-none"
 									rows="3"
 									required
 								/>
@@ -160,7 +160,7 @@
 
 				<div class="mt-6 flex justify-between gap-1.5">
 					<button
-						class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white font-medium w-full py-2 rounded-3xl transition"
+						class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white font-medium w-full py-2 rounded-3xl transition"
 						on:click={() => {
 							show = false;
 							dispatch('cancel');

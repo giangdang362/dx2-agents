@@ -278,7 +278,7 @@
 								<SensitiveInput value={localStorage.token} readOnly={true} />
 
 								<button
-									class="ml-1.5 px-1.5 py-1 dark:hover:bg-gray-850 transition rounded-lg"
+									class="ml-1.5 px-1.5 py-1 dark:hover:bg-slate-800 transition rounded-lg"
 									aria-label={$i18n.t('Copy Token')}
 									on:click={() => {
 										copyToClipboard(localStorage.token);
@@ -337,7 +337,7 @@
 									<SensitiveInput value={APIKey} readOnly={true} />
 
 									<button
-										class="ml-1.5 px-1.5 py-1 dark:hover:bg-gray-850 transition rounded-lg"
+										class="ml-1.5 px-1.5 py-1 dark:hover:bg-slate-800 transition rounded-lg"
 										aria-label={$i18n.t('Copy API Key')}
 										on:click={() => {
 											copyToClipboard(APIKey);
@@ -383,7 +383,7 @@
 
 									<Tooltip content={$i18n.t('Create new key')}>
 										<button
-											class=" px-1.5 py-1 dark:hover:bg-gray-850transition rounded-lg"
+											class=" px-1.5 py-1 dark:hover:bg-slate-800transition rounded-lg"
 											aria-label={$i18n.t('Create new key')}
 											on:click={() => {
 												createAPIKeyHandler();
@@ -407,7 +407,7 @@
 									</Tooltip>
 								{:else}
 									<button
-										class="flex gap-1.5 items-center font-medium px-3.5 py-1.5 rounded-lg bg-gray-100/70 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-850 transition"
+										class="flex gap-1.5 items-center font-medium px-3.5 py-1.5 rounded-lg bg-gray-100/70 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition"
 										on:click={() => {
 											createAPIKeyHandler();
 										}}
@@ -427,7 +427,7 @@
 
 	<div class="flex justify-end pt-3 text-sm font-medium">
 		<button
-			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full"
 			on:click={async () => {
 				const res = await submitHandler();
 

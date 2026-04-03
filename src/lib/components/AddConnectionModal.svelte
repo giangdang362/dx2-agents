@@ -329,7 +329,7 @@
 
 							<Tooltip content={$i18n.t('Verify Connection')} className="self-end -mb-1">
 								<button
-									class="self-center p-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-850 rounded-lg transition"
+									class="self-center p-1 bg-transparent hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition"
 									on:click={() => {
 										verifyHandler();
 									}}
@@ -374,7 +374,7 @@
 									<div class="flex-shrink-0 self-start">
 										<select
 											id="select-bearer-or-session"
-											class={`dark:bg-gray-900 w-full text-sm bg-transparent pr-5 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+											class={`dark:bg-slate-800 w-full text-sm bg-transparent pr-5 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
 											bind:value={auth_type}
 										>
 											<option value="none">{$i18n.t('None')}</option>
@@ -699,7 +699,7 @@
 						{/if}
 
 						<button
-							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full flex flex-row space-x-1 items-center {loading
+							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full flex flex-row space-x-1 items-center {loading
 								? ' cursor-not-allowed'
 								: ''}"
 							type="submit"

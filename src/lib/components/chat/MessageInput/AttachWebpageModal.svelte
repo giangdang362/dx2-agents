@@ -79,7 +79,7 @@
 
 				<div class="flex justify-end gap-2 pt-3 bg-gray-50 dark:bg-slate-900/50">
 					<button
-						class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-800 text-white dark:bg-white dark:text-black dark:hover:bg-gray-200 transition rounded-full"
+						class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-800 text-white dark:bg-white dark:text-black dark:hover:bg-slate-200 transition rounded-full"
 						type="submit"
 					>
 						{$i18n.t('Add')}

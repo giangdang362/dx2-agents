@@ -263,7 +263,7 @@
 
 				{#if $user?.role === 'admin' || $user?.permissions?.workspace?.skills}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 						on:click={() => {
 							importInputElement.click();
 						}}
@@ -276,7 +276,7 @@
 
 				{#if total && ($user?.role === 'admin' || $user?.permissions?.workspace?.skills)}
 					<button
-						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-200 transition"
+						class="flex text-xs items-center space-x-1 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 transition"
 						on:click={async () => {
 							const _skills = await exportSkills(localStorage.token).catch((error) => {
 								toast.error(`${error}`);
@@ -374,7 +374,7 @@
 					<Tooltip content={skill?.description ?? skill?.id}>
 						<div
 							class=" flex space-x-4 text-left w-full px-3 py-2.5 transition rounded-2xl {skill.write_access
-								? 'cursor-pointer dark:hover:bg-gray-850/50 hover:bg-gray-50'
+								? 'cursor-pointer dark:hover:bg-slate-700 hover:bg-gray-50'
 								: 'cursor-not-allowed opacity-60'}"
 						>
 							{#if skill.write_access}

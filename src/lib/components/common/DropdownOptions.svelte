@@ -38,7 +38,7 @@
 		>
 			{#each items as item}
 				<button
-					class="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 {value ===
+					class="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-slate-700 {value ===
 					item.value
 						? ' '
 						: '  text-gray-500 dark:text-gray-400'}"

@@ -106,7 +106,7 @@
 			style="left:{Math.min(Math.max((mouseX / w) * 100, 8), 92)}%"
 		>
 			<div
-				class="min-w-[140px] -translate-x-1/2 rounded border border-gray-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+				class="min-w-[140px] -translate-x-1/2 rounded border border-gray-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-gray-800 dark:bg-slate-800"
 			>
 				<div class="mb-1.5 text-[10px] text-gray-400">
 					{#if hovered.date?.includes(':')}

@@ -689,7 +689,7 @@
 
 {#if !$mobile && !$showSidebar}
 	<div
-		class=" pt-[7px] pb-2 px-2 flex flex-col justify-between text-black dark:text-white hover:bg-gray-50/30 dark:hover:bg-gray-950/30 h-full z-10 transition-all border-e-[0.5px] border-gray-50 dark:border-gray-850/30"
+		class=" pt-[7px] pb-2 px-2 flex flex-col justify-between text-black dark:text-white hover:bg-gray-50/30 dark:hover:bg-slate-900/30 h-full z-10 transition-all border-e-[0.5px] border-gray-50 dark:border-gray-850/30"
 		id="sidebar"
 	>
 		<button
@@ -704,7 +704,7 @@
 					placement="right"
 				>
 					<button
-						class="flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group {isWindows
+						class="flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group {isWindows
 							? 'cursor-pointer'
 							: 'cursor-[e-resize]'}"
 						aria-label={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
@@ -726,7 +726,7 @@
 				<div class="">
 					<Tooltip content={$i18n.t('New Chat')} placement="right">
 						<a
-							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 							href="/"
 							draggable="false"
 							on:click={async (e) => {
@@ -748,7 +748,7 @@
 				<div>
 					<Tooltip content={$i18n.t('Search')} placement="right">
 						<button
-							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 							on:click={(e) => {
 								e.stopImmediatePropagation();
 								e.preventDefault();
@@ -769,7 +769,7 @@
 					<div class="">
 						<Tooltip content={$i18n.t('Notes')} placement="right">
 							<a
-								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 								href="/notes"
 								on:click={async (e) => {
 									e.stopImmediatePropagation();
@@ -793,7 +793,7 @@
 					<div class="">
 						<Tooltip content={$i18n.t('Workspace')} placement="right">
 							<a
-								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 								href="/workspace"
 								on:click={async (e) => {
 									e.stopImmediatePropagation();
@@ -829,7 +829,7 @@
 				<div class="">
 					<Tooltip content={$i18n.t('Agents')} placement="right">
 						<a
-							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 							href="/agents"
 							on:click={async (e) => {
 								e.stopImmediatePropagation();
@@ -878,7 +878,7 @@
 							}}
 						>
 							<div
-								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+								class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition group"
 							>
 								<div class="self-center relative">
 									<img
@@ -934,7 +934,7 @@
 				class="sidebar px-[0.5625rem] pt-2 pb-1.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 sticky top-0 z-10 -mb-3"
 			>
 				<a
-					class="flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-gray-100/50 dark:hover:bg-gray-850/50 transition no-drag-region"
+					class="flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-gray-100/50 dark:hover:bg-slate-800/50 transition no-drag-region"
 					href="/"
 					draggable="false"
 					on:click={newChatHandler}
@@ -960,7 +960,7 @@
 					placement="bottom"
 				>
 					<button
-						class="flex rounded-xl size-8.5 justify-center items-center hover:bg-gray-100/50 dark:hover:bg-gray-850/50 transition {isWindows
+						class="flex rounded-xl size-8.5 justify-center items-center hover:bg-gray-100/50 dark:hover:bg-slate-800/50 transition {isWindows
 							? 'cursor-pointer'
 							: 'cursor-[w-resize]'}"
 						on:click={() => {
@@ -1478,7 +1478,7 @@
 							}}
 						>
 							<div
-								class=" flex items-center rounded-2xl py-2 px-1.5 w-full hover:bg-gray-100/50 dark:hover:bg-gray-900/50 transition"
+								class=" flex items-center rounded-2xl py-2 px-1.5 w-full hover:bg-gray-100/50 dark:hover:bg-slate-900 transition"
 							>
 								<div class=" self-center mr-3 relative">
 									<img

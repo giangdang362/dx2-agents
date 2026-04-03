@@ -83,6 +83,6 @@
 			</div>
 		{/if}
 	</Tooltip>
-	<Handle type="target" position={Position.Top} class="w-2 rounded-full dark:bg-gray-900" />
-	<Handle type="source" position={Position.Bottom} class="w-2 rounded-full dark:bg-gray-900" />
+	<Handle type="target" position={Position.Top} class="w-2 rounded-full dark:bg-slate-800" />
+	<Handle type="source" position={Position.Bottom} class="w-2 rounded-full dark:bg-slate-800" />
 </div>

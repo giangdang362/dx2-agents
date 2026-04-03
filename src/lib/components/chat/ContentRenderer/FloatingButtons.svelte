@@ -255,7 +255,7 @@
 				{#each actions as action}
 					<button
 						aria-label={action.label}
-						class="px-1.5 py-[1px] hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl flex items-center gap-1 min-w-fit transition"
+						class="px-1.5 py-[1px] hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl flex items-center gap-1 min-w-fit transition"
 						on:click={async () => {
 							selectedText = window.getSelection().toString();
 							selectedAction = action;
@@ -305,7 +305,7 @@
 					<button
 						aria-label={$i18n.t('Submit question')}
 						class="{floatingInputValue !== ''
-							? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 '
+							? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-slate-100 '
 							: 'text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled'} transition rounded-full p-1.5 m-0.5 self-center"
 						on:click={() => {
 							actionHandler(selectedAction?.id);
@@ -353,7 +353,7 @@
 					{#if responseDone}
 						<div class="flex justify-end pt-3 text-sm font-medium">
 							<button
-								class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+								class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full"
 								on:click={addHandler}
 							>
 								{$i18n.t('Add')}

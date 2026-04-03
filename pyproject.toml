@@ -1,8 +1,8 @@
 [project]
-name = "open-webui"
-description = "Open WebUI"
+name = "dx2-agents"
+description = "DX2 Agents"
 authors = [
-    { name = "Timothy Jaeryang Baek", email = "tim@openwebui.com" }
+    { name = "CMC", email = "[EMAIL_ADDRESS]" }
 ]
 license = { file = "LICENSE" }
 dependencies = [
