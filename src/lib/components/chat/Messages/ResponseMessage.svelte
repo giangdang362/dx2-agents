@@ -650,6 +650,21 @@
 		}
 	})();
 
+	// Persist booking_list items to DB (handles updates emitted by the pipe)
+	let _bookingListSynced = false;
+	$: if (parsedBookingList && !_bookingListSynced) {
+		_bookingListSynced = true;
+		for (const item of parsedBookingList) {
+			if (item?.id) {
+				fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(item)
+				}).catch(console.error);
+			}
+		}
+	}
+
 	let _cancelTriggered = false;
 	$: if (parsedCancelBookingId && !_cancelTriggered) {
 		_cancelTriggered = true;
@@ -673,12 +688,14 @@
 			.replace(BOOKING_BLOCK_RE, '')
 			.replace(CANCEL_BLOCK_RE, '')
 			.replace(BOOKING_LIST_RE, '')
+			.replace(/<tool_code>[\s\S]*?<\/tool_code>/g, '')
 			.trim();
 		if (message.done) return stripped;
 		return stripped
 			.replace(/```booking[\s\S]*$/, '')
 			.replace(/```cancel_booking[\s\S]*$/, '')
 			.replace(/```booking_list[\s\S]*$/, '')
+			.replace(/<tool_code>[\s\S]*$/, '')
 			.trim();
 	})();
 
