@@ -556,7 +556,7 @@
 
 								<div class="shrink-0">
 									<button
-										class="bg-gray-50 shrink-0 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
+										class="bg-gray-50 shrink-0 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
 										type="button"
 										on:click={() => {
 											showAccessControlModal = true;
@@ -830,8 +830,8 @@
 					<div class="my-2 flex justify-end">
 						<button
 							class=" text-sm px-3 py-2 transition rounded-lg {loading
-								? ' cursor-not-allowed bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black'
-								: 'bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black'} flex w-full justify-center"
+								? ' cursor-not-allowed bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-black'
+								: 'bg-black hover:bg-gray-900 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-black'} flex w-full justify-center"
 							type="submit"
 							disabled={loading}
 						>

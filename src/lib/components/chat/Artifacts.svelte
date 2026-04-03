@@ -176,7 +176,7 @@
 
 					<div class="flex items-center gap-1.5">
 						<button
-							class="copy-code-button bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition rounded-md px-1.5 py-0.5"
+							class="copy-code-button bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition rounded-md px-1.5 py-0.5"
 							on:click={() => {
 								copyToClipboard(contents[selectedContentIdx].content);
 								copied = true;
@@ -189,7 +189,7 @@
 
 						<Tooltip content={$i18n.t('Download')}>
 							<button
-								class=" bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition rounded-md p-0.5"
+								class=" bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition rounded-md p-0.5"
 								on:click={downloadArtifact}
 							>
 								<Download className="size-3.5" />
@@ -199,7 +199,7 @@
 						{#if contents[selectedContentIdx].type === 'iframe'}
 							<Tooltip content={$i18n.t('Open in full screen')}>
 								<button
-									class=" bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition rounded-md p-0.5"
+									class=" bg-none border-none text-xs bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition rounded-md p-0.5"
 									on:click={showFullScreen}
 								>
 									<ArrowsPointingOut className="size-3.5" />

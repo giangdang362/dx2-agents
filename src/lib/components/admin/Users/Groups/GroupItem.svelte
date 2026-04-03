@@ -62,7 +62,7 @@
 />
 
 <button
-	class="flex space-x-4 cursor-pointer text-left w-full px-3.5 py-2.5 dark:hover:bg-gray-850/50 hover:bg-gray-50 transition rounded-2xl"
+	class="flex space-x-4 cursor-pointer text-left w-full px-3.5 py-2.5 dark:hover:bg-slate-800/50 hover:bg-gray-50 transition rounded-2xl"
 	on:click={() => {
 		showEdit = true;
 	}}

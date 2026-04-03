@@ -366,7 +366,7 @@
 					<div class=" flex items-center gap-2 px-1 pb-1">
 						<button
 							type="button"
-							class="rounded-lg p-1 transition outline-gray-200 hover:bg-gray-100 dark:outline-gray-700 dark:hover:bg-gray-800"
+							class="rounded-lg p-1 transition outline-gray-200 hover:bg-gray-100 dark:outline-gray-700 dark:hover:bg-slate-700"
 							on:click={() => {
 								textScale = Math.max(1, parseFloat((textScale - 0.1).toFixed(2)));
 								setTextScaleHandler(textScale);
@@ -399,7 +399,7 @@
 
 						<button
 							type="button"
-							class="rounded-lg p-1 transition outline-gray-200 hover:bg-gray-100 dark:outline-gray-700 dark:hover:bg-gray-800"
+							class="rounded-lg p-1 transition outline-gray-200 hover:bg-gray-100 dark:outline-gray-700 dark:hover:bg-slate-700"
 							on:click={() => {
 								textScale = Math.min(1.5, parseFloat((textScale + 0.1).toFixed(2)));
 								setTextScaleHandler(textScale);
@@ -1377,7 +1377,7 @@
 
 	<div class="flex justify-end text-sm font-medium">
 		<button
-			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full"
 			type="submit"
 		>
 			{$i18n.t('Save')}

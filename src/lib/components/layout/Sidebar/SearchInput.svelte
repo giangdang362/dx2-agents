@@ -322,7 +322,7 @@
 							<button
 								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-slate-800 w-full rounded {selectedIdx ===
 								itemIdx
-									? 'bg-gray-100 dark:bg-gray-900'
+									? 'bg-gray-100 dark:bg-slate-800'
 									: ''}"
 								data-selected={selectedIdx === itemIdx}
 								id="search-item-{itemIdx}"
@@ -358,7 +358,7 @@
 							<button
 								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-slate-800 w-full rounded {selectedIdx ===
 								optionIdx
-									? 'bg-gray-100 dark:bg-gray-900'
+									? 'bg-gray-100 dark:bg-slate-800'
 									: ''}"
 								id="search-option-{optionIdx}"
 								on:click|stopPropagation={async () => {

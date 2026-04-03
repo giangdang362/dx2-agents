@@ -135,7 +135,7 @@
 						<div class=" shrink-0 mr-2">
 							<Tooltip content={$i18n.t('Back')}>
 								<button
-									class="w-full text-left text-sm py-1.5 px-1 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
+									class="w-full text-left text-sm py-1.5 px-1 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-slate-800"
 									aria-label={$i18n.t('Back')}
 									on:click={() => {
 										goto('/workspace/skills');
@@ -165,7 +165,7 @@
 						<div class="self-center shrink-0">
 							{#if !disabled}
 								<button
-									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
+									class="bg-gray-50 hover:bg-gray-100 text-black dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white transition px-2 py-1 rounded-full flex gap-1 items-center"
 									type="button"
 									on:click={() => (showAccessControlModal = true)}
 								>
@@ -229,7 +229,7 @@
 				<div class="mb-2 flex-1 overflow-auto h-0 rounded-lg">
 					<div class="h-full flex flex-col">
 						<div
-							class="bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100/50 dark:border-gray-850/50 flex-1 min-h-0 overflow-hidden flex flex-col"
+							class="bg-gray-50 dark:bg-slate-800 rounded-xl border border-gray-100/50 dark:border-gray-850/50 flex-1 min-h-0 overflow-hidden flex flex-col"
 						>
 							{#if disabled}
 								<div class="px-4 py-3 overflow-y-auto flex-1">
@@ -251,7 +251,7 @@
 				<div class="pb-3 flex justify-end">
 					{#if !disabled}
 						<button
-							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full flex items-center"
+							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full flex items-center"
 							type="submit"
 							disabled={loading}
 						>

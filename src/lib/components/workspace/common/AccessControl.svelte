@@ -549,7 +549,7 @@
 						</button>
 
 						<button
-							class=" rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+							class=" rounded-full p-1 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							type="button"
 							on:click={() => {
 								removePrincipal('group', group.id);
@@ -596,7 +596,7 @@
 						</button>
 
 						<button
-							class=" rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+							class=" rounded-full p-1 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							type="button"
 							on:click={() => {
 								removePrincipal('user', user.id);

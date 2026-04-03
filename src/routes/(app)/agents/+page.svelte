@@ -193,7 +193,7 @@
 				<div class="flex items-center gap-2">
 					{#if selectMode && selectedIds.size > 0}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium transition"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-gray-900 text-sm font-medium transition"
 							on:click={() => (showDeleteConfirm = true)}
 						>
 							<svg
@@ -215,7 +215,7 @@
 					{/if}
 					{#if selectMode}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
 							on:click={exitSelectMode}
 						>
 							<svg
@@ -232,7 +232,7 @@
 						</button>
 					{:else}
 						<button
-							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+							class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-sm font-medium transition text-gray-700 dark:text-gray-300"
 							on:click={() => (selectMode = true)}
 						>
 							<svg
@@ -369,7 +369,7 @@
 						<!-- Gear icon (bottom-right, hidden in select mode) -->
 						{#if isAdmin && !selectMode}
 							<button
-								class="absolute bottom-3 right-3 p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+								class="absolute bottom-3 right-3 p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
 								title={$i18n.t('Edit Agent')}
 								on:click|stopPropagation={() => handleEditAgent(agent)}
 							>

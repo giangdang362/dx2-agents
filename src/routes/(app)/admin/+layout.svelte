@@ -42,7 +42,7 @@
 						>
 							<button
 								id="sidebar-toggle-button"
-								class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition cursor-"
+								class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition cursor-"
 								on:click={() => {
 									showSidebar.set(!$showSidebar);
 								}}
@@ -100,7 +100,6 @@
 								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition select-none"
 							href="/admin/settings">{$i18n.t('Settings')}</a
 						>
-
 					</div>
 				</div>
 			</div>
