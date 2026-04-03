@@ -181,7 +181,7 @@
 						>
 							<Tooltip content={onAddLabel}>
 								<button
-									class="p-0.5 dark:hover:bg-gray-850 rounded-lg touch-auto"
+									class="p-0.5 dark:hover:bg-slate-800 rounded-lg touch-auto"
 									on:click={(e) => {}}
 								>
 									<Plus className=" size-3" strokeWidth="2.5" />

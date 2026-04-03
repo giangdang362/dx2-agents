@@ -123,7 +123,7 @@
 				<button
 					class=" text-sm px-4 py-2 transition rounded-lg {loading
 						? ' cursor-not-allowed bg-gray-100 dark:bg-gray-800'
-						: ' bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800'} flex"
+						: ' bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700'} flex"
 					type="submit"
 					disabled={loading}
 				>

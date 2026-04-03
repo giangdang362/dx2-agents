@@ -650,7 +650,7 @@ input[type='number'] {
 }
 
 .tiptap tr {
-	@apply bg-white dark:bg-gray-900 dark:border-gray-850 text-xs;
+	@apply bg-white dark:bg-slate-800 dark:border-gray-850 text-xs;
 }
 
 .tippy-box[data-theme~='transparent'] {

@@ -1316,7 +1316,7 @@
 											<div class="mt-2.5 mr-3">
 												<button
 													type="button"
-													class="p-1 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
+													class="p-1 rounded-lg hover:bg-gray-100/50 dark:hover:bg-slate-700/50"
 													aria-label="Expand input"
 													on:click={async () => {
 														showInputModal = true;
@@ -1553,7 +1553,7 @@
 									>
 										<div
 											id="input-menu-button"
-											class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+											class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-slate-700 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
 										>
 											<PlusAlt className="size-5.5" />
 										</div>
@@ -1592,7 +1592,7 @@
 										>
 											<div
 												id="integration-menu-button"
-												class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+												class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-slate-700 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
 											>
 												<Component className="size-4.5" strokeWidth="1.5" />
 											</div>
@@ -1605,7 +1605,7 @@
 												<button
 													type="button"
 													id="model-valves-button"
-													class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+													class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-slate-700 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
 													on:click={() => {
 														selectedValvesType = 'function';
 														selectedValvesItemId = selectedModelIds[0]?.split('.')[0];
@@ -1655,7 +1655,7 @@
 															filterId
 														)
 															? 'text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-600/10 border border-sky-200/40 dark:border-sky-500/20'
-															: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '} capitalize"
+															: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 '} capitalize"
 													>
 														{#if filter?.icon}
 															<div class="size-4 items-center flex justify-center">
@@ -1687,7 +1687,7 @@
 													class="group p-[7px] flex gap-1.5 items-center text-sm rounded-full transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden {webSearchEnabled ||
 													($settings?.webSearch ?? false) === 'always'
 														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-600/10 border border-sky-200/40 dark:border-sky-500/20'
-														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '}"
+														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 '}"
 												>
 													<GlobeAlt className="size-4" strokeWidth="1.75" />
 													<div class="hidden group-hover:block">
@@ -1705,7 +1705,7 @@
 													type="button"
 													class="group p-[7px] flex gap-1.5 items-center text-sm rounded-full transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden {imageGenerationEnabled
 														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-700/10 border border-sky-200/40 dark:border-sky-500/20'
-														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '}"
+														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 '}"
 												>
 													<Photo className="size-4" strokeWidth="1.75" />
 													<div class="hidden group-hover:block">
@@ -1727,7 +1727,7 @@
 													type="button"
 													class=" group p-[7px] flex gap-1.5 items-center text-sm transition-colors duration-300 max-w-full overflow-hidden {codeInterpreterEnabled
 														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-700/10 border border-sky-200/40 dark:border-sky-500/20'
-														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '} {($settings?.highContrastMode ??
+														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 '} {($settings?.highContrastMode ??
 													false)
 														? 'm-1'
 														: 'focus:outline-hidden rounded-full'}"
@@ -1748,7 +1748,7 @@
 										<div class=" flex items-center">
 											<Tooltip content={$i18n.t('Stop')}>
 												<button
-													class="bg-white hover:bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-1.5"
+													class="bg-white hover:bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-slate-700 transition rounded-full p-1.5"
 													on:click={() => {
 														stopResponse();
 													}}
@@ -1841,7 +1841,7 @@
 												<!-- {$i18n.t('Call')} -->
 												<Tooltip content={$i18n.t('Voice mode')}>
 													<button
-														class=" bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full p-1.5 self-center"
+														class=" bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full p-1.5 self-center"
 														type="button"
 														on:click={async () => {
 															if (selectedModels.length > 1) {
@@ -1905,7 +1905,7 @@
 													<button
 														id="send-message-button"
 														class="{!(prompt === '' && files.length === 0)
-															? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 '
+															? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-slate-100 '
 															: 'text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled'} transition rounded-full p-1.5 self-center"
 														type="submit"
 														disabled={prompt === '' && files.length === 0}

@@ -187,7 +187,7 @@
 
 							{#if $config?.features?.enable_version_update_check}
 								<button
-									class=" text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition rounded-lg font-medium"
+									class=" text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition rounded-lg font-medium"
 									type="button"
 									on:click={() => {
 										checkForVersionUpdates();
@@ -292,7 +292,7 @@
 							</div>
 
 							<!-- <button
-								class="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 transition rounded-lg font-medium"
+								class="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition rounded-lg font-medium"
 							>
 								{$i18n.t('Activate')}
 							</button> -->
@@ -880,7 +880,7 @@
 
 	<div class="flex justify-end pt-3 text-sm font-medium">
 		<button
-			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 transition rounded-full"
 			type="submit"
 		>
 			{$i18n.t('Save')}

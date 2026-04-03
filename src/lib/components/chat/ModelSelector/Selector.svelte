@@ -583,7 +583,7 @@
 							</div>
 							<a
 								href="/admin/settings/connections"
-								class="px-4 py-1.5 rounded-xl text-xs font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition"
+								class="px-4 py-1.5 rounded-xl text-xs font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-slate-100 transition"
 								on:click={() => {
 									show = false;
 								}}

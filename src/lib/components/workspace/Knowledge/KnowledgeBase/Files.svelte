@@ -27,9 +27,9 @@
 <div class=" max-h-full flex flex-col w-full gap-[0.5px]">
 	{#each files as file (file?.id ?? file?.itemId ?? file?.tempId)}
 		<div
-			class=" flex cursor-pointer w-full px-1.5 py-0.5 bg-transparent dark:hover:bg-gray-850/50 hover:bg-white rounded-xl transition {selectedFileId
+			class=" flex cursor-pointer w-full px-1.5 py-0.5 bg-transparent dark:hover:bg-slate-800/50 hover:bg-white rounded-xl transition {selectedFileId
 				? ''
-				: 'hover:bg-gray-100 dark:hover:bg-gray-850'}"
+				: 'hover:bg-gray-100 dark:hover:bg-slate-800'}"
 		>
 			<button
 				class="relative group flex items-center gap-1 rounded-xl p-2 text-left flex-1 justify-between"
@@ -89,7 +89,7 @@
 				<div class="flex items-center">
 					<Tooltip content={$i18n.t('Delete')}>
 						<button
-							class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+							class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
 							type="button"
 							on:click={() => {
 								onDelete(file?.id ?? file?.tempId);

@@ -105,7 +105,7 @@
 <ModelModal bind:show={showModal} model={selectedModel} onClose={closeModal} />
 
 <div
-	class="pt-0.5 pb-1 gap-1 flex flex-col md:flex-row justify-between sticky top-0 z-10 bg-white dark:bg-gray-900"
+	class="pt-0.5 pb-1 gap-1 flex flex-col md:flex-row justify-between sticky top-0 z-10 bg-white dark:bg-slate-800"
 >
 	<div class="flex items-center text-xl font-medium px-0.5 gap-2 shrink-0">
 		{$i18n.t('Leaderboard')}
@@ -169,7 +169,7 @@
 			<tbody>
 				{#each sortedModels as model, idx (model.id)}
 					<tr
-						class="bg-white dark:bg-gray-900 text-xs group cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+						class="bg-white dark:bg-slate-800 text-xs group cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition"
 						on:click={() => openModal(model)}
 					>
 						<td class="px-3 py-1.5 font-medium text-gray-900 dark:text-white">

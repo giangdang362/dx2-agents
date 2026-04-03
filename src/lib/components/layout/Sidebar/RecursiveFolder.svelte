@@ -517,7 +517,7 @@
 				}}
 			>
 				<button
-					class="text-gray-500 dark:text-gray-500 transition-all p-1 hover:bg-gray-200 dark:hover:bg-gray-850 rounded-lg"
+					class="text-gray-500 dark:text-gray-500 transition-all p-1 hover:bg-gray-200 dark:hover:bg-slate-800 rounded-lg"
 					on:click={(e) => {
 						e.stopPropagation();
 						e.stopImmediatePropagation();
@@ -594,7 +594,7 @@
 							exportHandler();
 						}}
 					>
-						<div class="p-1 dark:hover:bg-gray-850 rounded-lg touch-auto">
+						<div class="p-1 dark:hover:bg-slate-800 rounded-lg touch-auto">
 							<EllipsisHorizontal className="size-4" strokeWidth="2.5" />
 						</div>
 					</FolderMenu>

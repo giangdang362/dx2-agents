@@ -650,7 +650,7 @@
 						</div>
 						<Tooltip content={$i18n.t('Pull Model')} placement="top">
 							<button
-								class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-100 rounded-lg transition"
+								class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-100 rounded-lg transition"
 								on:click={() => {
 									pullModelHandler();
 								}}
@@ -827,7 +827,7 @@
 						</div>
 						<Tooltip content={$i18n.t('Delete Model')} placement="top">
 							<button
-								class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-100 rounded-lg transition"
+								class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-100 rounded-lg transition"
 								on:click={() => {
 									showModelDeleteConfirm = true;
 								}}
@@ -875,7 +875,7 @@
 						<div class="flex self-start">
 							<Tooltip content={$i18n.t('Create Model')} placement="top">
 								<button
-									class="px-2.5 py-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-100 rounded-lg transition disabled:cursor-not-allowed"
+									class="px-2.5 py-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-100 rounded-lg transition disabled:cursor-not-allowed"
 									on:click={() => {
 										createModelHandler();
 									}}
@@ -1016,7 +1016,7 @@
 							{#if (modelUploadMode === 'file' && modelInputFile && modelInputFile.length > 0) || (modelUploadMode === 'url' && modelFileUrl !== '')}
 								<Tooltip content={$i18n.t('Upload Model')} placement="top">
 									<button
-										class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-gray-100 rounded-lg disabled:cursor-not-allowed transition"
+										class="px-2.5 bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-100 rounded-lg disabled:cursor-not-allowed transition"
 										type="submit"
 										disabled={modelLoading}
 									>
