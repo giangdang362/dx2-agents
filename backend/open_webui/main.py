@@ -98,6 +98,7 @@ from open_webui.routers import (
     scim,
     orchestration,
 )
+from open_webui.routers.demo import meeting_rooms as demo_meeting_rooms
 
 from open_webui.routers.retrieval import (
     get_embedding_function,
@@ -1560,6 +1561,9 @@ app.include_router(
 if ENABLE_ADMIN_ANALYTICS:
     app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
+
+# Demo routers
+app.include_router(demo_meeting_rooms.router, prefix="/api/v1/meeting-rooms", tags=["meeting-rooms"])
 
 # SCIM 2.0 API for identity management
 if ENABLE_SCIM:

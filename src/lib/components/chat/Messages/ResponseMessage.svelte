@@ -39,7 +39,8 @@
 	} from '$lib/utils';
 	import { WEBUI_API_BASE_URL, WEBUI_BASE_URL } from '$lib/constants';
 
-	const GEMINI_PROXY_URL = 'http://localhost:4000';
+	import MeetingCard from '$lib/components/chat/Demo/MeetingRoom/MeetingCard.svelte';
+	import BookingList from '$lib/components/chat/Demo/MeetingRoom/BookingList.svelte';
 
 	import Name from './Name.svelte';
 	import ProfileImage from './ProfileImage.svelte';
@@ -584,6 +585,16 @@
 		if (contentContainerElement) {
 			contentContainerElement.addEventListener('copy', contentCopyHandler);
 		}
+
+		// Listen for cross-bubble cancellation events so booking cards in this bubble
+		// update immediately when another bubble's agent emits a cancel_booking block.
+		_onBookingCancelled = (e: Event) => {
+			const id = (e as CustomEvent<{ id: string }>).detail.id;
+			if (activeBooking?.id === id && activeBooking.status !== 'cancelled') {
+				activeBooking = { ...activeBooking, status: 'cancelled' };
+			}
+		};
+		window.addEventListener('booking-cancelled', _onBookingCancelled);
 	});
 
 	onDestroy(() => {
@@ -594,7 +605,183 @@
 		if (contentContainerElement) {
 			contentContainerElement.removeEventListener('copy', contentCopyHandler);
 		}
+
+		if (_onBookingCancelled) {
+			window.removeEventListener('booking-cancelled', _onBookingCancelled);
+		}
 	});
+
+	// ─── Booking Card ─────────────────────────────────────────────────────────
+	const BOOKING_BLOCK_RE = /```booking\n([\s\S]*?)\n```/;
+	const CANCEL_BLOCK_RE = /```cancel_booking\n([\s\S]*?)\n```/;
+	const BOOKING_LIST_RE = /```booking_list\n([\s\S]*?)\n```/;
+
+	$: parsedBooking = (() => {
+		if (!message.done) return null;
+		const m = BOOKING_BLOCK_RE.exec(message.content ?? '');
+		if (!m) return null;
+		try {
+			return JSON.parse(m[1]);
+		} catch {
+			return null;
+		}
+	})();
+
+	$: parsedCancelBookingId = (() => {
+		if (!message.done) return null;
+		const m = CANCEL_BLOCK_RE.exec(message.content ?? '');
+		if (!m) return null;
+		try {
+			return (JSON.parse(m[1]).id as string) ?? null;
+		} catch {
+			return null;
+		}
+	})();
+
+	$: parsedBookingList = (() => {
+		if (!message.done) return null;
+		const m = BOOKING_LIST_RE.exec(message.content ?? '');
+		if (!m) return null;
+		try {
+			const parsed = JSON.parse(m[1]);
+			return Array.isArray(parsed) ? parsed : null;
+		} catch {
+			return null;
+		}
+	})();
+
+	let _cancelTriggered = false;
+	$: if (parsedCancelBookingId && !_cancelTriggered) {
+		_cancelTriggered = true;
+		if (activeBooking?.id === parsedCancelBookingId) {
+			handleBookingAction('cancel', parsedCancelBookingId);
+		} else {
+			fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings/${parsedCancelBookingId}`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ status: 'cancelled' })
+			}).catch(console.error);
+		}
+		window.dispatchEvent(new CustomEvent('booking-cancelled', { detail: { id: parsedCancelBookingId } }));
+	}
+
+	let _onBookingCancelled: (e: Event) => void;
+
+	$: displayContent = (() => {
+		const raw = message.content ?? '';
+		const stripped = raw
+			.replace(BOOKING_BLOCK_RE, '')
+			.replace(CANCEL_BLOCK_RE, '')
+			.replace(BOOKING_LIST_RE, '')
+			.trim();
+		if (message.done) return stripped;
+		return stripped
+			.replace(/```booking[\s\S]*$/, '')
+			.replace(/```cancel_booking[\s\S]*$/, '')
+			.replace(/```booking_list[\s\S]*$/, '')
+			.trim();
+	})();
+
+	let activeBooking: Record<string, unknown> | null = null;
+	$: if (parsedBooking !== null && (!activeBooking || activeBooking.id !== parsedBooking.id)) {
+		activeBooking = { ...parsedBooking, requester: $user?.email ?? parsedBooking.requester };
+	}
+
+	let _bookingFetched = false;
+	let _bookingSynced = false;
+	$: if (parsedBooking?.id && !_bookingFetched) {
+		_bookingFetched = true;
+		fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings/${parsedBooking.id}`)
+			.then((r) => (r.ok ? r.json() : null))
+			.then((saved) => {
+				if (saved && activeBooking) {
+					const hasChanges = ['title', 'date', 'start_time', 'end_time', 'capacity',
+						'room_name', 'room_code', 'location', 'client'].some(
+						(k) => parsedBooking[k] !== undefined && parsedBooking[k] !== saved[k]
+					);
+					activeBooking = { ...activeBooking, ...saved };
+					if (hasChanges) {
+						activeBooking = { ...activeBooking, ...parsedBooking, status: saved.status, requester: activeBooking!.requester };
+						fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(activeBooking)
+						}).catch(console.error);
+					}
+				} else if (activeBooking) {
+					fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(activeBooking)
+					}).catch(console.error);
+				}
+				_bookingSynced = true;
+			})
+			.catch(() => { _bookingSynced = true; });
+	}
+
+	function handleBookingAction(action: string, id: string, extra?: unknown): void {
+		if (!activeBooking) return;
+
+		switch (action) {
+			case 'confirm': {
+				const confirmInv = (extra as any)?.invitees || [];
+				activeBooking = { ...activeBooking, status: 'pending', invitees: confirmInv };
+				break;
+			}
+			case 'cancel':
+				activeBooking = { ...activeBooking, status: 'cancelled' };
+				break;
+			case 'approve':
+				activeBooking = { ...activeBooking, status: 'approved' };
+				toast.success('Yeu cau dat phong da duoc phe duyet!');
+				submitMessage(message?.id, `[BOOKING_APPROVED] ${JSON.stringify(activeBooking)}`);
+				break;
+			case 'reject':
+				activeBooking = { ...activeBooking, status: 'rejected' };
+				toast.error('Yeu cau dat phong da bi tu choi.');
+				break;
+			case 'send_calendar': {
+				const inv = (extra as any)?.invitees || [];
+				activeBooking = { ...activeBooking, status: 'sent', email_sent: true, invitees: inv };
+				break;
+			}
+			case 'add_note':
+				activeBooking = { ...activeBooking, admin_note: extra as string };
+				break;
+			case 'room_select':
+				activeBooking = { ...activeBooking, ...(extra as object) };
+				break;
+			case 'order_catering': {
+				const { items, total } = extra as { items: unknown[]; total: number };
+				activeBooking = { ...activeBooking, catering: { items, total, status: 'pending' } };
+				break;
+			}
+			case 'approve_catering':
+				activeBooking = {
+					...activeBooking,
+					catering: { ...(activeBooking.catering as object), status: 'approved' }
+				};
+				toast.success('Catering da duoc duyet!');
+				break;
+			case 'reject_catering':
+				activeBooking = {
+					...activeBooking,
+					catering: { ...(activeBooking.catering as object), status: 'rejected' }
+				};
+				toast.error('Catering da bi tu choi.');
+				break;
+		}
+
+		if (activeBooking) {
+			fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(activeBooking)
+			}).catch(console.error);
+		}
+	}
+	// ─── End Booking Card ─────────────────────────────────────────────────────
 </script>
 
 <DeleteConfirmDialog
@@ -770,7 +957,7 @@
 									messageId={message.id}
 									{history}
 									{selectedModels}
-									content={message.content}
+									content={displayContent}
 									sources={message.sources}
 									floatingButtons={message?.done &&
 										!readOnly &&
@@ -822,6 +1009,37 @@
 
 							{#if message.code_executions}
 								<CodeExecutions codeExecutions={message.code_executions} />
+							{/if}
+
+							{#if activeBooking && message.done}
+								{#if !isLastMessage && _bookingSynced && activeBooking.status === 'draft'}
+									<div class="meeting-card-cancelled">
+										<span class="cancelled-badge">Cancelled</span>
+										<span class="cancelled-title">{activeBooking.title || 'Meeting'}</span>
+									</div>
+								{:else}
+									<div class="meeting-card-wrapper">
+										<MeetingCard
+											booking={activeBooking}
+											onConfirm={(id, inv) => handleBookingAction('confirm', id, { invitees: inv })}
+											onCancel={(id) => handleBookingAction('cancel', id)}
+											onApprove={(id) => handleBookingAction('approve', id)}
+											onReject={(id) => handleBookingAction('reject', id)}
+											onAddNote={(id, note) => handleBookingAction('add_note', id, note)}
+											onOrderCatering={(id, items, total) =>
+												handleBookingAction('order_catering', id, { items, total })}
+											onApproveCatering={(id) => handleBookingAction('approve_catering', id)}
+											onRejectCatering={(id) => handleBookingAction('reject_catering', id)}
+											onRoomSelect={(id, roomData) => handleBookingAction('room_select', id, roomData)}
+										/>
+									</div>
+								{/if}
+							{/if}
+
+							{#if parsedBookingList && message.done}
+								<div class="booking-list-wrapper">
+									<BookingList bookings={parsedBookingList} />
+								</div>
 							{/if}
 						</div>
 					</div>
@@ -1453,6 +1671,59 @@
 {/key}
 
 <style>
+	.meeting-card-cancelled {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 14px;
+		margin: 12px 0;
+		border-radius: 10px;
+		background: #f1f5f9;
+		border: 1px solid #e2e8f0;
+	}
+
+	.cancelled-badge {
+		display: inline-block;
+		padding: 2px 8px;
+		border-radius: 6px;
+		background: #ef4444;
+		color: white;
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.3px;
+	}
+
+	.cancelled-title {
+		font-size: 13px;
+		color: #94a3b8;
+		text-decoration: line-through;
+	}
+
+	.meeting-card-wrapper {
+		position: relative;
+		z-index: 1;
+		pointer-events: auto;
+		width: 100%;
+		max-width: 100%;
+		margin: 16px 0;
+	}
+
+	.meeting-card-wrapper :global(*) {
+		pointer-events: auto;
+		max-width: 100%;
+	}
+
+	.meeting-card-wrapper :global(.meeting-card) {
+		pointer-events: auto;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.meeting-card-wrapper :global(.room-selector-embedded) {
+		width: 100%;
+		max-width: 100%;
+	}
+
 	.buttons::-webkit-scrollbar {
 		display: none; /* for Chrome, Safari and Opera */
 	}

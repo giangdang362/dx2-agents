@@ -52,7 +52,9 @@
 		: 'max-w-5xl'} mx-auto rounded-lg group"
 >
 	{#if history.messages[messageId]}
-		{#if history.messages[messageId].role === 'user'}
+		{#if history.messages[messageId].role === 'user' && (history.messages[messageId].content ?? '').startsWith('[BOOKING_APPROVED]')}
+			<!-- Hidden system-triggered message -->
+		{:else if history.messages[messageId].role === 'user'}
 			<UserMessage
 				{user}
 				{chatId}
