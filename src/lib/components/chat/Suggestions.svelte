@@ -1,10 +1,19 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	type SelectedModel = {
+		id?: string;
+		name?: string;
+	} | null;
+
+	type SuggestionQuestion = {
+		content: string;
+		category?: string;
+	};
 
 	export let suggestionPrompts = [];
 	export let className = '';
 	export let inputValue = '';
-	export let onSelect = (e) => {};
+	export let onSelect = () => {};
+	export let selectedModel: SelectedModel = null;
 
 	const SEMICONDUCTOR_QUESTIONS = [
 		'What was the approximate size of the global logic IC market in 2024, and what is it projected to reach in 2025?',
@@ -191,14 +200,8 @@
 		'How does Wiegand wire technology enable battery-free multi-turn absolute position tracking in encoders?'
 	];
 
-	// Build tagged pool from both categories
-	const ALL_QUESTIONS = [
-		...SEMICONDUCTOR_QUESTIONS.map((q) => ({ content: q, category: 'Semiconductor' })),
-		...KINETIX_QUESTIONS.map((q) => ({ content: q, category: 'Kinetix' }))
-	];
-
 	// Fisher-Yates shuffle
-	function shuffle(arr) {
+	function shuffle<T>(arr: T[]): T[] {
 		const a = [...arr];
 		for (let i = a.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
@@ -207,11 +210,89 @@
 		return a;
 	}
 
-	let displayedQuestions = [];
+	function normalizeAgentValue(value?: string) {
+		return (value ?? '').trim().toLowerCase();
+	}
 
-	onMount(() => {
-		displayedQuestions = shuffle(ALL_QUESTIONS).slice(0, 4);
-	});
+	function getConfiguredQuestions(): SuggestionQuestion[] {
+		return (suggestionPrompts ?? [])
+			.map((prompt) => {
+				if (typeof prompt === 'string') {
+					return prompt;
+				}
+
+				return prompt?.content ?? '';
+			})
+			.map((content) => content.trim())
+			.filter((content) => content.length > 0)
+			.map((content) => ({ content }));
+	}
+
+	function getSelectedAgentKey(model: SelectedModel) {
+		const modelId = normalizeAgentValue(model?.id);
+		const modelName = normalizeAgentValue(model?.name);
+
+		if (modelId === 'silicore' || modelName === 'silicore') {
+			return 'silicore';
+		}
+
+		if (modelId === 'kinetix' || modelName === 'kinetix') {
+			return 'kinetix';
+		}
+
+		if (
+			modelId === 'meeting-room-agent' ||
+			modelName === 'meeting room agent' ||
+			modelName.includes('meeting room')
+		) {
+			return 'meeting-room-agent';
+		}
+
+		return null;
+	}
+
+	function getQuestionsForSelectedAgent(model: SelectedModel): SuggestionQuestion[] {
+		const agentKey = getSelectedAgentKey(model);
+
+		if (agentKey === 'silicore') {
+			return SEMICONDUCTOR_QUESTIONS.map((question) => ({
+				content: question,
+				category: 'Semiconductor'
+			}));
+		}
+
+		if (agentKey === 'kinetix') {
+			return KINETIX_QUESTIONS.map((question) => ({
+				content: question,
+				category: 'Kinetix'
+			}));
+		}
+
+		if (agentKey === 'meeting-room-agent') {
+			return [];
+		}
+
+		return getConfiguredQuestions();
+	}
+
+	function getCategoryClass(category?: string) {
+		if (category === 'Semiconductor') {
+			return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300';
+		}
+
+		if (category === 'Kinetix') {
+			return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300';
+		}
+
+		return '';
+	}
+
+	let displayedQuestions: SuggestionQuestion[] = [];
+
+	$: displayedQuestions =
+		inputValue.trim().length > 0
+			? []
+			: shuffle(getQuestionsForSelectedAgent(selectedModel)).slice(0, 4);
 </script>
 
 {#if displayedQuestions.length > 0}
@@ -223,21 +304,21 @@
 		<div role="list" class="flex flex-col gap-1 {className}">
 			{#each displayedQuestions as question, idx}
 				<button
-					role="listitem"
 					class="waterfall flex items-start gap-2.5 w-full text-left
 					       px-3 py-2.5 rounded-xl bg-transparent hover:bg-black/5
 					       dark:hover:bg-white/5 transition group"
 					style="animation-delay: {idx * 60}ms"
 					on:click={() => onSelect({ type: 'prompt', data: question.content })}
 				>
-					<span
-						class="shrink-0 mt-0.5 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded
-						       {question.category === 'Semiconductor'
-							? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-							: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'}"
-					>
-						{question.category}
-					</span>
+					{#if question.category}
+						<span
+							class="shrink-0 mt-0.5 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded {getCategoryClass(
+								question.category
+							)}"
+						>
+							{question.category}
+						</span>
+					{/if}
 					<span
 						class="text-sm dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-2"
 					>
