@@ -242,6 +242,7 @@
 						models[selectedModelIdx]?.info?.meta?.suggestion_prompts ??
 						$config?.default_prompt_suggestions ??
 						[]}
+					selectedModel={atSelectedModel ?? models[selectedModelIdx] ?? null}
 					inputValue={prompt}
 					{onSelect}
 				/>
