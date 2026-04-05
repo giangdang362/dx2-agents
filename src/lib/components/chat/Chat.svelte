@@ -46,6 +46,15 @@
 	} from '$lib/stores';
 
 	import {
+		connectOrchestrationWS,
+		disconnectOrchestrationWS,
+		resetOrchestrationSession,
+		pushDirectAgentStep,
+		startDirectAgentSession,
+		completeDirectAgentSession
+	} from '$lib/utils/orchestration-ws';
+
+	import {
 		convertMessagesToHistory,
 		copyToClipboard,
 		getMessageContentParts,
@@ -170,6 +179,9 @@
 
 	const navigateHandler = async () => {
 		loading = true;
+
+		// Reset orchestration state for new chat
+		resetOrchestrationSession();
 
 		// Save current queue to sessionStorage before navigating away
 		if (messageQueue.length > 0 && $chatId) {
@@ -405,10 +417,12 @@
 				const data = event?.data?.data ?? null;
 
 				if (type === 'status') {
-					if (message?.statusHistory) {
-						message.statusHistory.push(data);
-					} else {
-						message.statusHistory = [data];
+					// Push status to thinking sidebar only (not stored in chat message)
+					if (data?.description || data?.action) {
+						pushDirectAgentStep(
+							data.action || 'status',
+							data.description || data.action || 'Processing...'
+						);
 					}
 				} else if (type === 'chat:completion') {
 					chatCompletionEventHandler(data, message, event.chat_id);
@@ -609,6 +623,9 @@
 		window.addEventListener('message', onMessageHandler);
 		$socket?.on('events', chatEventHandler);
 
+		// Connect orchestration WebSocket for pipeline/thinking sidebar
+		connectOrchestrationWS();
+
 		audioQueue.set(new AudioQueue(document.getElementById('audioElement')));
 
 		pageSubscribe = page.subscribe(async (p) => {
@@ -700,6 +717,7 @@
 			window.removeEventListener('message', onMessageHandler);
 			$socket?.off('events', chatEventHandler);
 			$audioQueue?.destroy();
+			disconnectOrchestrationWS();
 		} catch (e) {
 			console.error(e);
 		}
@@ -1584,6 +1602,12 @@
 		if (done) {
 			message.done = true;
 
+			// Complete thinking sidebar session for direct agent mode
+			completeDirectAgentSession({
+				prompt_tokens: usage?.prompt_tokens ?? 0,
+				completion_tokens: usage?.completion_tokens ?? 0
+			});
+
 			if ($settings.responseAutoCopy) {
 				copyToClipboard(message.content);
 			}
@@ -1979,6 +2003,13 @@
 			})
 		);
 		await tick();
+
+		// Start a direct agent session for the thinking sidebar (skip for orchestrator)
+		const isOrchestrator = model.id?.includes('orchestrator');
+		if (!isOrchestrator) {
+			resetOrchestrationSession();
+			startDirectAgentSession(model.id, model.name ?? model.id);
+		}
 
 		let userLocation;
 		if ($settings?.userLocation) {

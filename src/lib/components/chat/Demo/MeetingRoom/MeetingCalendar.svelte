@@ -103,21 +103,21 @@
 	}
 </script>
 
-<div class="meeting-calendar bg-white rounded-lg shadow-sm border p-4">
+<div class="meeting-calendar bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4">
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-4">
-		<button on:click={prevMonth} class="p-2 hover:bg-gray-100 rounded-lg transition"> ◀ </button>
-		<h3 class="font-semibold text-lg text-gray-800">
+		<button on:click={prevMonth} class="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition text-gray-700 dark:text-slate-200"> ◀ </button>
+		<h3 class="font-semibold text-lg text-gray-800 dark:text-slate-100">
 			{MONTH_NAMES[currentMonth - 1]}
 			{currentYear}
 		</h3>
-		<button on:click={nextMonth} class="p-2 hover:bg-gray-100 rounded-lg transition"> ▶ </button>
+		<button on:click={nextMonth} class="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition text-gray-700 dark:text-slate-200"> ▶ </button>
 	</div>
 
 	<!-- Weekday Headers -->
 	<div class="grid grid-cols-7 gap-1 mb-2">
 		{#each WEEKDAY_NAMES as weekday}
-			<div class="text-center text-xs font-medium text-gray-500 py-2">
+			<div class="text-center text-xs font-medium text-gray-500 dark:text-slate-400 py-2">
 				{weekday}
 			</div>
 		{/each}
@@ -133,11 +133,11 @@
 					on:click={() => selectDay(dayObj)}
 					class="h-20 p-1 border rounded-lg transition flex flex-col
 						{dayObj.isToday
-						? 'border-blue-500 bg-blue-50'
-						: 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}
-						{dayObj.hasMeeting ? 'bg-blue-50/50' : ''}"
+						? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400'
+						: 'border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-slate-700/50'}
+						{dayObj.hasMeeting && !dayObj.isToday ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''}"
 				>
-					<span class="text-sm font-medium {dayObj.isToday ? 'text-blue-600' : 'text-gray-700'}">
+					<span class="text-sm font-medium {dayObj.isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-slate-300'}">
 						{dayObj.day}
 					</span>
 
@@ -150,7 +150,7 @@
 								></div>
 							{/each}
 							{#if dayObj.bookings.length > 3}
-								<span class="text-xs text-gray-400">+{dayObj.bookings.length - 3}</span>
+								<span class="text-xs text-gray-400 dark:text-slate-500">+{dayObj.bookings.length - 3}</span>
 							{/if}
 						</div>
 					{/if}
@@ -160,22 +160,22 @@
 	</div>
 
 	<!-- Legend -->
-	<div class="mt-4 pt-3 border-t flex flex-wrap gap-4 justify-center text-xs">
+	<div class="mt-4 pt-3 border-t border-gray-200 dark:border-slate-700 flex flex-wrap gap-4 justify-center text-xs">
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-			<span class="text-gray-600">Pending Approval</span>
+			<span class="text-gray-600 dark:text-slate-400">Pending Approval</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-green-400"></span>
-			<span class="text-gray-600">Approved</span>
+			<span class="text-gray-600 dark:text-slate-400">Approved</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-red-400"></span>
-			<span class="text-gray-600">Rejected</span>
+			<span class="text-gray-600 dark:text-slate-400">Rejected</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-blue-400"></span>
-			<span class="text-gray-600">Completed</span>
+			<span class="text-gray-600 dark:text-slate-400">Completed</span>
 		</div>
 	</div>
 </div>

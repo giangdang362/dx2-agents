@@ -162,6 +162,9 @@
 		position: relative;
 		overflow: hidden;
 	}
+	:global(.dark) .list-header {
+		background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 50%, #2e1065 100%);
+	}
 
 	.list-header::before {
 		content: '';
@@ -349,5 +352,63 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	/* ══════════════════════════════════════
+	   Dark mode overrides
+	   ══════════════════════════════════════ */
+
+	:global(.dark) .booking-list-card {
+		background: linear-gradient(145deg, rgba(30, 41, 59, 0.97) 0%, rgba(15, 23, 42, 0.97) 100%);
+		border-color: rgba(51, 65, 85, 0.8);
+		box-shadow:
+			0 4px 6px -1px rgba(0, 0, 0, 0.2),
+			0 10px 15px -3px rgba(0, 0, 0, 0.3),
+			0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Header gradient is unchanged — it already reads well on dark backgrounds */
+
+	:global(.dark) .empty-state {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .empty-state p {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .booking-row {
+		background: #1e293b;
+		border-color: #334155;
+	}
+
+	:global(.dark) .booking-row:hover {
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+
+	:global(.dark) .client-name {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .meta-item {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .meta-icon {
+		color: #475569;
+	}
+
+	:global(.dark) .catering-indicator.has-catering {
+		color: #fde68a;
+		background: rgba(146, 64, 14, 0.35);
+	}
+
+	:global(.dark) .catering-indicator.no-catering {
+		color: #94a3b8;
+		background: rgba(51, 65, 85, 0.6);
+	}
+
+	:global(.dark) .booking-title {
+		color: #475569;
 	}
 </style>

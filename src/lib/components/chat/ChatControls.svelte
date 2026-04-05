@@ -10,7 +10,8 @@
 		showCallOverlay,
 		showOverview,
 		showArtifacts,
-		showEmbeds
+		showEmbeds,
+		showThinkingSidebar
 	} from '$lib/stores';
 
 	import Controls from './Controls/Controls.svelte';
@@ -18,6 +19,7 @@
 	import Drawer from '../common/Drawer.svelte';
 	import Artifacts from './Artifacts.svelte';
 	import Embeds from './ChatControls/Embeds.svelte';
+	import ThinkingSidebar from './ThinkingSidebar.svelte';
 
 	export let history;
 	export let models = [];
@@ -140,6 +142,7 @@
 		showOverview.set(false);
 		showArtifacts.set(false);
 		showEmbeds.set(false);
+		showThinkingSidebar.set(false);
 
 		if ($showCallOverlay) {
 			showCallOverlay.set(false);
@@ -180,6 +183,8 @@
 							}}
 						/>
 					</div>
+				{:else if $showThinkingSidebar}
+					<ThinkingSidebar />
 				{:else if $showEmbeds}
 					<Embeds />
 				{:else if $showArtifacts}
@@ -251,7 +256,7 @@
 		{#if $showControls}
 			<div class="flex max-h-full min-h-full">
 				<div
-					class="w-full {($showOverview || $showArtifacts || $showEmbeds) && !$showCallOverlay
+					class="w-full {($showOverview || $showArtifacts || $showEmbeds || $showThinkingSidebar) && !$showCallOverlay
 						? ' '
 						: 'px-4 py-3 bg-white dark:shadow-lg dark:bg-slate-800 '} z-40 pointer-events-auto overflow-y-auto scrollbar-hidden"
 					id="controls-container"
@@ -270,6 +275,8 @@
 								}}
 							/>
 						</div>
+					{:else if $showThinkingSidebar}
+						<ThinkingSidebar />
 					{:else if $showEmbeds}
 						<Embeds overlay={dragged} />
 					{:else if $showArtifacts}

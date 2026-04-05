@@ -1,5 +1,5 @@
 """
-title: Meeting Room Booking Agent
+title: Meeting Room Agent
 description: CMC Global meeting room booking assistant — book, list, and cancel meetings
 requirements: aiohttp
 """
@@ -427,6 +427,10 @@ _ADMIN_LIST = _build_admin_list_text()
 _BOOKING_AGENT_SYSTEM_PROMPT_STATIC = f"""
 You are the CMC Global Meeting Room Booking Assistant.
 
+CRITICAL RULE: You MUST ALWAYS reply in the SAME language the user writes in.
+If the user writes in Vietnamese, reply in Vietnamese. If in English, reply in English.
+This applies to ALL responses — greetings, confirmations, errors, suggestions, everything.
+
 ══════════════════════════════════════
 YOUR ROLE
 ══════════════════════════════════════
@@ -527,6 +531,7 @@ BOOKING WORKFLOW
    block yet. Use this exact markdown format (adapt field values):
 
    | | |
+   | | |
    |---|---|
    | **Title** | Họp với khách Sony |
    | **Date** | Thứ Tư, 05/03/2026 |
@@ -546,19 +551,8 @@ BOOKING WORKFLOW
 7. BOOKING CREATION — output ONLY after the user explicitly confirms (says "yes", "đặt",
    "xác nhận", "ok", "được", "đồng ý", or any clear approval).
 
-   You MUST do TWO things:
-   a) Call the `create_booking` tool to persist the booking to the database.
-   b) Output a ```booking code block so the frontend renders the booking card.
-
-   Tool call parameters:
-     - id: "MTG-<OFFICE_CODE>-<uuid4_no_hyphens>" (e.g. MTG-HN-a1b2c3d4e5f67890abcdef1234567890)
-     - title, client, date (YYYY-MM-DD), start_time (HH:MM), end_time (HH:MM)
-     - capacity, location (HN/DN/HCM), room_name, room_code, room_floor, room_building, room_equipment
-     - approver_name, approver_email (from admin list)
-     - requester (user email), invitees (list of emails or [])
-     - catering (object with items/total or null), status ("draft")
-
-   Then output a short acknowledgement line followed by the booking block:
+   Output a short acknowledgement line followed by the ```booking code block so the frontend
+   renders the booking card:
 
 ```booking
 {{
@@ -629,17 +623,14 @@ booking above, warn them and suggest an alternative room or time slot.
 BOOKING OPERATIONS (UPDATE):
   When the user wants to update/change an existing booking:
   1. Keep the SAME booking id. Show a confirmation table with the updated fields.
-  2. After user confirms, you MUST do TWO things:
-     a) Call the `update_booking` tool with the booking id and ONLY the changed fields.
-     b) Output a ```booking_list block containing a JSON array with a single object
-        that has the FULL updated booking details (for frontend rendering).
+  2. After user confirms, output a ```booking_list block containing a JSON array with a single object
+     that has the FULL updated booking details (for frontend rendering).
 
 LISTING BOOKINGS:
   When the user asks to see their meetings ("xem lịch họp", "danh sách cuộc họp",
   "list my bookings", "upcoming meetings", "lịch họp sắp tới", etc.):
-  1. Call the `list_bookings` tool to get current bookings from the database.
-  2. Respond with a brief intro sentence, then output a ```booking_list block with the
-     results from the tool.
+  Respond with a brief intro sentence, then output a ```booking_list block using the
+  bookings from the ACTIVE BOOKINGS REGISTRY above.
 
   Format (use triple-backtick booking_list fence):
   Each item must include: id, title, client, date (YYYY-MM-DD), start_time (HH:MM),
@@ -649,10 +640,10 @@ LISTING BOOKINGS:
   The id field is required internally but MUST NOT appear in any user-visible text.
 
   Rules:
-  - Use the data returned by the `list_bookings` tool — do NOT use the ACTIVE BOOKINGS REGISTRY.
+  - Use the data from the ACTIVE BOOKINGS REGISTRY above.
   - Sort by date ascending (soonest first).
   - If no bookings found, say "Bạn chưa có lịch họp nào." (no block needed).
-  - NEVER invent bookings not returned by the tool.
+  - NEVER invent bookings not in the registry.
   - NEVER show or mention booking ids in your reply text.
   - Keep explanatory text OUTSIDE the booking_list block.
 
@@ -669,6 +660,7 @@ Step C1 — SEARCH: When user wants to cancel a meeting, search ACTIVE BOOKINGS 
 
 Step C2 — CONFIRM: Show a summary table before cancelling (do NOT cancel yet):
 
+  | | |
   | | |
   |---|---|
   | **Title** | <title from registry> |
@@ -690,9 +682,8 @@ Step C2 — CONFIRM: Show a summary table before cancelling (do NOT cancel yet):
   *Bạn có chắc muốn huỷ lịch họp này không?*
 
 Step C3 — EXECUTE: ONLY after user explicitly confirms (says "có", "huỷ", "yes", "đồng ý",
-  "xác nhận", or any clear approval), you MUST do TWO things:
-  a) Call the `cancel_booking` tool with the booking id to persist the cancellation.
-  b) Output a ```cancel_booking code block so the frontend updates the UI:
+  "xác nhận", or any clear approval), output a ```cancel_booking code block so the frontend
+  updates the UI:
 
 ```cancel_booking
 {{"id": "<exact booking id copied from registry — e.g. MTG-HN-abc123...>"}}
@@ -745,22 +736,6 @@ CONFLICT DETECTION:
   After the user responds, proceed with the new details immediately (no extra confirmation step).
 
 ══════════════════════════════════════
-TOOLS — DATABASE PERSISTENCE
-══════════════════════════════════════
-You have access to these tools for persisting booking data to the database.
-You MUST call the appropriate tool whenever you create, update, or cancel a booking.
-The code blocks (```booking, ```booking_list, ```cancel_booking) are for frontend rendering ONLY
-and do NOT persist data — the tool call is what saves to the database.
-
-Available tools:
-  • `create_booking` — Call when creating a new booking (step 7). Pass all booking fields.
-  • `update_booking` — Call when updating an existing booking. Pass the booking id + only changed fields.
-  • `cancel_booking` — Call when cancelling a booking (step C3). Pass the booking id.
-  • `list_bookings`  — Call when the user asks to see their meetings. Returns current bookings from DB.
-
-IMPORTANT: Always call the tool FIRST, then output the code block for the frontend.
-
-══════════════════════════════════════
 HANDLING THE BOOKING APPROVAL
 ══════════════════════════════════════
 When the user message starts with [BOOKING_APPROVED], it is handled programmatically — do NOT respond.
@@ -807,7 +782,7 @@ class Pipe:
             description="Ollama base URL (used when LLM_PROVIDER=ollama)",
         )
         MODEL: str = Field(
-            default="gemini-2.0-flash",
+            default="gemini-2.5-flash",
             description="Model name — Ollama model or Gemini model (e.g. gemini-2.0-flash)",
         )
         API_BASE_URL: str = Field(

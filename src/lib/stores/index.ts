@@ -96,6 +96,14 @@ export const artifactContents = writable(null);
 
 export const embed = writable(null);
 
+export { orchestrationSession, showThinkingSidebar } from './orchestration';
+export type {
+	OrchestrationSession,
+	OrchestrationStep,
+	PipelineNode,
+	OrchestrationTokens
+} from './orchestration';
+
 export const temporaryChatEnabled = writable(false);
 export const scrollPaginationEnabled = writable(false);
 export const currentChatPage = writable(1);

@@ -77,19 +77,35 @@ SEED_FUNCTIONS: list[dict] = [
         "is_active": True,
         "is_global": True,
     },
+    {
+        "id": "orchestrator_pipe",
+        "name": "C-Agents Orchestrator",
+        "path": Path(__file__).resolve().parent / "func" / "orchestrator_pipe.py",
+        "description": "Routes user requests to the appropriate specialist agent using LLM-based intent analysis.",
+        "is_active": True,
+        "is_global": False,
+    },
+    {
+        "id": "meeting_room_agent_pipe",
+        "name": "Meeting Room Agent",
+        "path": Path(__file__).resolve().parent / "func" / "meeting_room_agent_pipe.py",
+        "description": "CMC Global meeting room booking assistant — book, list, and cancel meetings.",
+        "is_active": True,
+        "is_global": False,
+    },
 ]
 
 SEED_MODELS: list[dict] = [
-    {
-        "id": "test-tool-agent",
-        "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
-        "name": "Test Tool Agent",
-        "description": "A test agent for validating tool integration and retrieval capabilities.",
-        "tool_ids": ["ask"],
-        "action_ids": ["mindmap"],
-        "system": """
-        Before assuming that you understand the user's intent, always call the `ask_user_question` tool first to collect the user's goal, constraints, or preferred answer format.""",
-    },
+    # {
+    #     "id": "test-tool-agent",
+    #     "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
+    #     "name": "Test Tool Agent",
+    #     "description": "A test agent for validating tool integration and retrieval capabilities.",
+    #     "tool_ids": ["ask"],
+    #     "action_ids": ["mindmap"],
+    #     "system": """
+    #     Before assuming that you understand the user's intent, always call the `ask_user_question` tool first to collect the user's goal, constraints, or preferred answer format.""",
+    # },
     {
         "id": "kinetix",
         "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
