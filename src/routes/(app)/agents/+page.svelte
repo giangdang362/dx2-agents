@@ -139,18 +139,9 @@
 	const TAG_BADGE_CLASS = 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300';
 
 	const SOURCE_BADGE = {
-		workspace: {
-			label: 'Workspace',
-			class: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-		},
-		external: {
-			label: 'External',
-			class: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-		},
-		function: {
-			label: 'Function',
-			class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-		}
+		workspace: { label: 'Workspace', class: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' },
+		external: { label: 'External', class: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' },
+		function: { label: 'Function', class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' }
 	};
 </script>
 
@@ -161,9 +152,7 @@
 <ConfirmDialog
 	bind:show={showDeleteConfirm}
 	title={$i18n.t('Delete Agents')}
-	message={$i18n.t(
-		`Are you sure you want to delete ${selectedIds.size} agent(s)? This action cannot be undone.`
-	)}
+	message={$i18n.t(`Are you sure you want to delete ${selectedIds.size} agent(s)? This action cannot be undone.`)}
 	onConfirm={handleBulkDelete}
 />
 
@@ -329,22 +318,54 @@
 				</div>
 			{/if}
 		</div>
-
-		<!-- Agent Grid -->
-		{#if loading}
-			<div class="flex-1 flex items-center justify-center">
-				<div class="text-sm text-gray-400 dark:text-gray-500">{$i18n.t('Loading agents...')}</div>
+		{#if !loading && agents.length > 0}
+			<div class="flex items-center gap-2">
+				{#if selectMode && selectedIds.size > 0}
+					<button
+						class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium transition"
+						on:click={() => (showDeleteConfirm = true)}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+						</svg>
+						{$i18n.t('Delete')}
+					</button>
+				{/if}
+				{#if selectMode}
+					<button
+						class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+						on:click={exitSelectMode}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+						</svg>
+						{$i18n.t('Deselect All')}
+					</button>
+				{:else}
+					<button
+						class="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium transition text-gray-700 dark:text-gray-300"
+						on:click={() => (selectMode = true)}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+						</svg>
+						{$i18n.t('Select')}
+					</button>
+				{/if}
 			</div>
-		{:else if agents.length === 0}
-			<div class="flex-1 flex items-center justify-center">
-				<div class="text-center">
-					<div class="text-sm text-gray-400 dark:text-gray-500 mb-1">
-						{$i18n.t('No agents found')}
-					</div>
-					<div class="text-xs text-gray-300 dark:text-gray-600">
-						{$i18n.t('Create custom models in Workspace → Models to register agents.')}
-					</div>
-				</div>
+		{/if}
+	</div>
+
+	<!-- Agent Grid -->
+	{#if loading}
+		<div class="flex-1 flex items-center justify-center">
+			<div class="text-sm text-gray-400 dark:text-gray-500">{$i18n.t('Loading agents...')}</div>
+		</div>
+	{:else if agents.length === 0}
+		<div class="flex-1 flex items-center justify-center">
+			<div class="text-center">
+				<div class="text-sm text-gray-400 dark:text-gray-500 mb-1">{$i18n.t('No agents found')}</div>
+				<div class="text-xs text-gray-300 dark:text-gray-600">{$i18n.t('Create custom models in Workspace → Models to register agents.')}</div>
 			</div>
 		{:else}
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
@@ -393,14 +414,15 @@
 									{/if}
 								</div>
 							</div>
-						{/if}
+						</div>
+					{/if}
 
-						<!-- Online dot -->
-						<span
-							class="absolute top-4 right-4 w-2.5 h-2.5 rounded-full {agent.is_active
-								? 'bg-green-500'
-								: 'bg-gray-300 dark:bg-gray-600'}"
-						></span>
+					<!-- Online dot -->
+					<span
+						class="absolute top-4 right-4 w-2.5 h-2.5 rounded-full {agent.is_active
+							? 'bg-green-500'
+							: 'bg-gray-300 dark:bg-gray-600'}"
+					></span>
 
 						<!-- Avatar + Name -->
 						<div
@@ -443,13 +465,12 @@
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<!-- Description -->
-						<p
-							class="flex-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3 leading-relaxed overflow-hidden"
-						>
-							{agent.meta?.description ?? ''}
-						</p>
+					<!-- Description -->
+					<p class="flex-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3 leading-relaxed overflow-hidden">
+						{agent.meta?.description ?? ''}
+					</p>
 
 						<!-- Gear icon (bottom-right, hidden in select mode) -->
 						{#if isAdmin && !selectMode}
@@ -499,8 +520,26 @@
 						{$i18n.t('Offline')}
 					</span>
 				</div>
-				<span>{agents.length} {$i18n.t('agents registered')}</span>
+			{/each}
+		</div>
+	{/if}
+
+	<!-- Status Bar — always shown after loading -->
+	{#if !loading}
+		<div class="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-850 text-xs text-gray-500 dark:text-gray-400">
+			<div class="flex items-center gap-4">
+				<span class="flex items-center gap-1.5">
+					<span class="w-2 h-2 rounded-full bg-green-500"></span>
+					{$i18n.t('Online')}
+				</span>
+				<span class="flex items-center gap-1.5">
+					<span class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+					{$i18n.t('Offline')}
+				</span>
 			</div>
-		{/if}
-	</div>
+			<span>{agents.length} {$i18n.t('agents registered')}</span>
+		</div>
+	{/if}
+</div>
+
 </div>

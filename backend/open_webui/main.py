@@ -97,6 +97,7 @@ from open_webui.routers import (
     utils,
     scim,
     orchestration,
+    agents,
 )
 from open_webui.routers.demo import meeting_rooms as demo_meeting_rooms
 
@@ -1561,6 +1562,8 @@ app.include_router(
 if ENABLE_ADMIN_ANALYTICS:
     app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
+
+app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
 
 # Demo routers
 app.include_router(demo_meeting_rooms.router, prefix="/api/v1/meeting-rooms", tags=["meeting-rooms"])
