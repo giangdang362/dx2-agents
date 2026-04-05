@@ -14,32 +14,32 @@
 
 	const STATUS_CONFIG = {
 		draft: {
-			label: 'Chờ xác nhận',
+			label: 'Pending Confirmation',
 			color: 'bg-slate-100 text-slate-700 border-slate-300',
 			bgColor: 'bg-slate-50'
 		},
 		pending: {
-			label: 'Chờ duyệt',
+			label: 'Pending Approval',
 			color: 'bg-amber-100 text-amber-700 border-amber-300',
 			bgColor: 'bg-amber-50'
 		},
 		approved: {
-			label: 'Đã duyệt',
+			label: 'Approved',
 			color: 'bg-emerald-100 text-emerald-700 border-emerald-300',
 			bgColor: 'bg-emerald-50'
 		},
 		rejected: {
-			label: 'Từ chối',
+			label: 'Rejected',
 			color: 'bg-red-100 text-red-700 border-red-300',
 			bgColor: 'bg-red-50'
 		},
 		cancelled: {
-			label: 'Đã hủy',
+			label: 'Cancelled',
 			color: 'bg-slate-100 text-slate-500 border-slate-300',
 			bgColor: 'bg-slate-50'
 		},
 		sent: {
-			label: 'Đã gửi',
+			label: 'Sent',
 			color: 'bg-blue-100 text-blue-700 border-blue-300',
 			bgColor: 'bg-blue-50'
 		}
@@ -55,12 +55,12 @@
 	};
 
 	const CATERING_OPTIONS = [
-		{ id: 'tea-coffee', name: 'Trà + Cà phê + Bánh', price: 35000 },
-		{ id: 'coffee', name: 'Cà phê + Bánh', price: 30000 },
-		{ id: 'water', name: 'Nước suối', price: 10000 },
-		{ id: 'buffet', name: 'Buffet Trưa', price: 150000 },
-		{ id: 'lunch-box', name: 'Cơm hộp', price: 50000 },
-		{ id: 'fruit', name: 'Trái cây', price: 25000 }
+		{ id: 'tea-coffee', name: 'Tea + Coffee + Pastries', price: 35000 },
+		{ id: 'coffee', name: 'Coffee + Pastries', price: 30000 },
+		{ id: 'water', name: 'Bottled Water', price: 10000 },
+		{ id: 'buffet', name: 'Lunch Buffet', price: 150000 },
+		{ id: 'lunch-box', name: 'Lunch Box', price: 50000 },
+		{ id: 'fruit', name: 'Fruit Platter', price: 25000 }
 	];
 
 	$: statusConfig = booking
@@ -146,7 +146,7 @@
 			<div class="detail-section">
 				<div class="detail-label">Meeting Title</div>
 				<div class="detail-value title-value">
-					{booking.title || 'Cuộc họp'}
+					{booking.title || 'Meeting'}
 				</div>
 			</div>
 
@@ -218,14 +218,14 @@
 						>
 							<span class="catering-check">{isSelected ? '☑' : '☐'}</span>
 							<span class="catering-name">{item.name}</span>
-							<span class="catering-price">{item.price.toLocaleString()} VNĐ</span>
+							<span class="catering-price">{item.price.toLocaleString()} VND</span>
 						</button>
 					{/each}
 				</div>
 				{#if selectedCatering.length > 0}
 					<div class="catering-total">
 						<span>Total:</span>
-						<span class="total-amount">{cateringTotal.toLocaleString()} VNĐ</span>
+						<span class="total-amount">{cateringTotal.toLocaleString()} VND</span>
 					</div>
 				{/if}
 			</div>

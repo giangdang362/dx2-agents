@@ -677,7 +677,9 @@
 				body: JSON.stringify({ status: 'cancelled' })
 			}).catch(console.error);
 		}
-		window.dispatchEvent(new CustomEvent('booking-cancelled', { detail: { id: parsedCancelBookingId } }));
+		window.dispatchEvent(
+			new CustomEvent('booking-cancelled', { detail: { id: parsedCancelBookingId } })
+		);
 	}
 
 	let _onBookingCancelled: (e: Event) => void;
@@ -712,13 +714,25 @@
 			.then((r) => (r.ok ? r.json() : null))
 			.then((saved) => {
 				if (saved && activeBooking) {
-					const hasChanges = ['title', 'date', 'start_time', 'end_time', 'capacity',
-						'room_name', 'room_code', 'location', 'client'].some(
-						(k) => parsedBooking[k] !== undefined && parsedBooking[k] !== saved[k]
-					);
+					const hasChanges = [
+						'title',
+						'date',
+						'start_time',
+						'end_time',
+						'capacity',
+						'room_name',
+						'room_code',
+						'location',
+						'client'
+					].some((k) => parsedBooking[k] !== undefined && parsedBooking[k] !== saved[k]);
 					activeBooking = { ...activeBooking, ...saved };
 					if (hasChanges) {
-						activeBooking = { ...activeBooking, ...parsedBooking, status: saved.status, requester: activeBooking!.requester };
+						activeBooking = {
+							...activeBooking,
+							...parsedBooking,
+							status: saved.status,
+							requester: activeBooking!.requester
+						};
 						fetch(`${WEBUI_API_BASE_URL}/meeting-rooms/bookings`, {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
@@ -734,7 +748,9 @@
 				}
 				_bookingSynced = true;
 			})
-			.catch(() => { _bookingSynced = true; });
+			.catch(() => {
+				_bookingSynced = true;
+			});
 	}
 
 	function handleBookingAction(action: string, id: string, extra?: unknown): void {
@@ -1047,7 +1063,8 @@
 												handleBookingAction('order_catering', id, { items, total })}
 											onApproveCatering={(id) => handleBookingAction('approve_catering', id)}
 											onRejectCatering={(id) => handleBookingAction('reject_catering', id)}
-											onRoomSelect={(id, roomData) => handleBookingAction('room_select', id, roomData)}
+											onRoomSelect={(id, roomData) =>
+												handleBookingAction('room_select', id, roomData)}
 										/>
 									</div>
 								{/if}

@@ -4,16 +4,16 @@
 	export let bookings: any[] = [];
 
 	const STATUS_CONFIG = {
-		draft:     { label: 'Chờ xác nhận', color: '#6366f1' },
-		pending:   { label: 'Chờ duyệt',    color: '#f59e0b' },
-		approved:  { label: 'Đã duyệt',     color: '#10b981' },
-		rejected:  { label: 'Từ chối',      color: '#ef4444' },
-		cancelled: { label: 'Đã hủy',       color: '#6b7280' },
-		sent:      { label: 'Đã gửi',       color: '#3b82f6' }
+		draft:     { label: 'Pending Confirmation', color: '#6366f1' },
+		pending:   { label: 'Pending Approval',    color: '#f59e0b' },
+		approved:  { label: 'Approved',     color: '#10b981' },
+		rejected:  { label: 'Rejected',      color: '#ef4444' },
+		cancelled: { label: 'Cancelled',       color: '#6b7280' },
+		sent:      { label: 'Sent',       color: '#3b82f6' }
 	};
 
-	const LOCATION_NAMES = { HN: 'Hà Nội', HCM: 'TP.HCM', DN: 'Đà Nẵng' };
-	const DAY_NAMES = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+	const LOCATION_NAMES = { HN: 'Hanoi', HCM: 'Ho Chi Minh City', DN: 'Da Nang' };
+	const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 	function formatDate(dateStr: string) {
 		if (!dateStr) return '—';
@@ -32,7 +32,7 @@
 	}
 
 	function clientDisplay(b: any) {
-		return b.client?.trim() || 'Nội bộ';
+		return b.client?.trim() || 'Internal';
 	}
 
 	function getStatus(b: any) {
@@ -44,7 +44,7 @@
 			return null;
 		}
 		if (typeof b.catering === 'object' && b.catering.items?.length) {
-			return `${b.catering.items.length} món`;
+			return `${b.catering.items.length} item(s)`;
 		}
 		return null;
 	}
@@ -62,10 +62,10 @@
 			</svg>
 			<div>
 				<div class="header-label">CMC GLOBAL</div>
-				<div class="header-title">Lịch họp của bạn</div>
+				<div class="header-title">Your Meeting Schedule</div>
 			</div>
 		</div>
-		<div class="header-count">{bookings.length} cuộc họp</div>
+		<div class="header-count">{bookings.length} meeting(s)</div>
 	</div>
 
 	<!-- Body -->
@@ -78,7 +78,7 @@
 					<line x1="8" y1="2" x2="8" y2="6"></line>
 					<line x1="3" y1="10" x2="21" y2="10"></line>
 				</svg>
-				<p>Không có lịch họp sắp tới.</p>
+				<p>No upcoming meetings.</p>
 			</div>
 		{:else}
 			{#each bookings as booking, i}
@@ -122,7 +122,7 @@
 							</div>
 							<div class="meta-item">
 								<span class="catering-indicator {cateringDisplay(booking) ? 'has-catering' : 'no-catering'}">
-									{cateringDisplay(booking) ? `☕ ${cateringDisplay(booking)}` : '☕ Không'}
+									{cateringDisplay(booking) ? `☕ ${cateringDisplay(booking)}` : '☕ None'}
 								</span>
 							</div>
 						</div>

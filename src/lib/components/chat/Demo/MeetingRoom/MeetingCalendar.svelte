@@ -9,21 +9,21 @@
 	let currentYear = currentDate.getFullYear();
 
 	const MONTH_NAMES = [
-		'Tháng 1',
-		'Tháng 2',
-		'Tháng 3',
-		'Tháng 4',
-		'Tháng 5',
-		'Tháng 6',
-		'Tháng 7',
-		'Tháng 8',
-		'Tháng 9',
-		'Tháng 10',
-		'Tháng 11',
-		'Tháng 12'
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
 	];
 
-	const WEEKDAY_NAMES = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+	const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 	$: daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
 	$: firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay();
@@ -163,19 +163,19 @@
 	<div class="mt-4 pt-3 border-t flex flex-wrap gap-4 justify-center text-xs">
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-			<span class="text-gray-600">Chờ duyệt</span>
+			<span class="text-gray-600">Pending Approval</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-green-400"></span>
-			<span class="text-gray-600">Đã duyệt</span>
+			<span class="text-gray-600">Approved</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-red-400"></span>
-			<span class="text-gray-600">Từ chối</span>
+			<span class="text-gray-600">Rejected</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<span class="w-3 h-3 rounded-full bg-blue-400"></span>
-			<span class="text-gray-600">Hoàn thành</span>
+			<span class="text-gray-600">Completed</span>
 		</div>
 	</div>
 </div>

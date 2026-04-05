@@ -118,7 +118,7 @@ ADMINS = [
         "id": "admin-hn",
         "name": "Lê Thuý Loan",
         "email": "ltloan@cmcglobal.vn",
-        "role": "Admin Văn phòng Hà Nội",
+        "role": "Hanoi Office Admin",
         "department_code": "HN",
         "floor": 6,
     },
@@ -126,7 +126,7 @@ ADMINS = [
         "id": "admin-dn",
         "name": "Nguyễn Thị Tình Yên",
         "email": "nttyen@cmcglobal.vn",
-        "role": "Admin Văn phòng Đà Nẵng",
+        "role": "Da Nang Office Admin",
         "department_code": "DN",
         "floor": 3,
     },
@@ -134,7 +134,7 @@ ADMINS = [
         "id": "admin-hcm",
         "name": "Lê Thị Tuyết Hảo",
         "email": "ltthao1@cmcglobal.vn",
-        "role": "Admin Văn phòng TP.HCM",
+        "role": "Ho Chi Minh City Office Admin",
         "department_code": "HCM",
         "floor": 3,
     },
@@ -143,42 +143,42 @@ ADMINS = [
 CATERING_OPTIONS = [
     {
         "id": "tea-coffee",
-        "name": "Trà + Cà phê + Bánh",
+        "name": "Tea + Coffee + Pastries",
         "price": 35000,
         "per_person": True,
         "icon": "☕",
     },
     {
         "id": "coffee",
-        "name": "Cà phê + Bánh",
+        "name": "Coffee + Pastries",
         "price": 30000,
         "per_person": True,
         "icon": "🥐",
     },
     {
         "id": "water",
-        "name": "Nước suối",
+        "name": "Mineral Water",
         "price": 10000,
         "per_person": True,
         "icon": "💧",
     },
     {
         "id": "buffet",
-        "name": "Buffet Trưa",
+        "name": "Lunch Buffet",
         "price": 150000,
         "per_person": True,
         "icon": "🍱",
     },
     {
         "id": "lunch-box",
-        "name": "Cơm hộp",
+        "name": "Lunch Box",
         "price": 50000,
         "per_person": True,
         "icon": "🍚",
     },
     {
         "id": "fruit",
-        "name": "Trái cây",
+        "name": "Fresh Fruits",
         "price": 25000,
         "per_person": True,
         "icon": "🍎",
@@ -188,63 +188,63 @@ CATERING_OPTIONS = [
 DEPARTMENTS = [
     {
         "id": "dept-hno-1",
-        "name": "Phòng Kỹ Thuật",
+        "name": "Technical Department",
         "code": "HNO",
         "floor": 1,
         "admin_id": "admin-hno",
     },
     {
         "id": "dept-hno-2",
-        "name": "Phòng Kinh Doanh",
+        "name": "Business Department",
         "code": "HNO",
         "floor": 1,
         "admin_id": "admin-hno",
     },
     {
         "id": "dept-hno-3",
-        "name": "Phòng Marketing",
+        "name": "Marketing Department",
         "code": "HNO",
         "floor": 1,
         "admin_id": "admin-hno",
     },
     {
         "id": "dept-dno-1",
-        "name": "Phòng Marketing",
+        "name": "Marketing Department",
         "code": "DNO",
         "floor": 2,
         "admin_id": "admin-dno",
     },
     {
         "id": "dept-dno-2",
-        "name": "Phòng HR",
+        "name": "HR Department",
         "code": "DNO",
         "floor": 2,
         "admin_id": "admin-dno",
     },
     {
         "id": "dept-dno-3",
-        "name": "Phòng Sale",
+        "name": "Sales Department",
         "code": "DNO",
         "floor": 2,
         "admin_id": "admin-dno",
     },
     {
         "id": "dept-hcmo-1",
-        "name": "Phòng Tài Chính",
+        "name": "Finance Department",
         "code": "HCMO",
         "floor": 3,
         "admin_id": "admin-hcmo",
     },
     {
         "id": "dept-hcmo-2",
-        "name": "Phòng Pháp lý",
+        "name": "Legal Department",
         "code": "HCMO",
         "floor": 3,
         "admin_id": "admin-hcmo",
     },
     {
         "id": "dept-hcmo-3",
-        "name": "Phòng Đối ngoại",
+        "name": "External Affairs Department",
         "code": "HCMO",
         "floor": 3,
         "admin_id": "admin-hcmo",
@@ -286,10 +286,10 @@ async def _fetch_active_bookings_text(api_base_url: str, user_email: str = "") -
                 timeout=aiohttp.ClientTimeout(total=10),
             ) as resp:
                 if resp.status != 200:
-                    return "  (Không có lịch họp nào đang hoạt động)"
+                    return "  (No active meetings)"
                 bookings = await resp.json()
     except Exception:
-        return "  (Không có lịch họp nào đang hoạt động)"
+        return "  (No active meetings)"
 
     active = [
         b
@@ -300,7 +300,7 @@ async def _fetch_active_bookings_text(api_base_url: str, user_email: str = "") -
     active.sort(key=lambda b: (b.get("date", ""), b.get("start_time", "")))
 
     if not active:
-        return "  (Không có lịch họp nào đang hoạt động)"
+        return "  (No active meetings)"
     lines = []
     for b in active:
         client = b.get("client") or ""
@@ -325,13 +325,13 @@ async def _fetch_active_bookings_text(api_base_url: str, user_email: str = "") -
 def _get_current_datetime():
     now = datetime.now()
     day_names = [
-        "Thứ Hai",
-        "Thứ Ba",
-        "Thứ Tư",
-        "Thứ Năm",
-        "Thứ Sáu",
-        "Thứ Bảy",
-        "Chủ Nhật",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
     ]
 
     def _nwd(wd: int) -> str:
@@ -578,7 +578,7 @@ BOOKING WORKFLOW
   "requester": "<user name or email>",
   "invitees": ["email1@cmcglobal.vn"],
   "catering": {{
-    "items": [{{"id": "tea-coffee", "name": "Trà + Cà phê + Bánh", "price": 35000, "quantity": 1}}],
+    "items": [{{"id": "tea-coffee", "name": "Tea + Coffee + Pastries", "price": 35000, "quantity": 1}}],
     "total": 35000
   }},
   "status": "draft",
@@ -836,7 +836,7 @@ class Pipe:
             )
         except Exception as e:
             print(f"[meeting-room-agent] LLM error: {e!r}", flush=True)
-            return "Xin lỗi, có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại."
+            return "Sorry, an error occurred while processing your request. Please try again."
 
     @staticmethod
     def _extract_last_user_message(messages: list) -> str:
@@ -909,12 +909,12 @@ class Pipe:
             # Use <br> for line breaks inside markdown table cells
             catering_br = catering_lines.replace("\n", "<br>")
             description = (
-                f"Nhờ {office_code}O support đặt teabreak theo thông tin như sau "
-                f"để {summary_lower}:<br>{catering_br}"
+                f"Please {office_code}O support arrange tea break as follows "
+                f"for {summary_lower}:<br>{catering_br}"
             )
         else:
             description = (
-                f"{title} | {date_str} {start}–{end} | {room_name} | {capacity} người"
+                f"{title} | {date_str} {start}–{end} | {room_name} | {capacity} people"
             )
 
         # Build JIRA section only if catering was ordered
@@ -942,7 +942,7 @@ class Pipe:
             )
 
         return (
-            f"**Yêu cầu đặt phòng đã được phê duyệt!**\n\n"
+            f"**Booking Request Approved!**\n\n"
             f"{jira_section}"
             f"**OMS Ticket Information**\n\n"
             f"| | |\n"
@@ -977,7 +977,7 @@ class Pipe:
                 print(
                     f"[meeting-room-agent] Ticket generation error: {e!r}", flush=True
                 )
-                return "Đã phê duyệt thành công nhưng không thể tạo thông tin ticket."
+                return "Approved successfully but unable to generate ticket information."
 
         user_email = (__user__ or {}).get("email", "")
 
