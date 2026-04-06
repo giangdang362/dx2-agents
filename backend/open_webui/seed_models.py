@@ -29,7 +29,7 @@ from open_webui.utils.tools import get_tool_specs
 log = logging.getLogger(__name__)
 
 SEED_MODEL_SYSTEM_PROMPTS_PATH = Path(__file__).resolve().with_name(
-    "seed_model_system_prompts.yml"
+    "system_prompts.yml"
 )
 
 

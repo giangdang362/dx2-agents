@@ -39,6 +39,35 @@ EMAIL_TAKEN_MARKERS = (
     "email is already",
 )
 
+MANAGER_WORKSPACE_PERMISSIONS = {
+    "workspace": {
+        "models": True,
+        "knowledge": True,
+        "prompts": True,
+        "tools": True,
+        "skills": True,
+        "models_import": True,
+        "models_export": True,
+        "prompts_import": True,
+        "prompts_export": True,
+        "tools_import": True,
+        "tools_export": True,
+    }
+}
+
+EMPLOYEE_GROUP_PERMISSIONS = {
+    "workspace": {
+        "models": True,
+        "knowledge": True,
+        "prompts": True,
+        "tools": True,
+        "skills": True,
+    }
+}
+
+
+PermissionProfile = Literal["auto", "manager", "employee"]
+
 
 @dataclass(frozen=True)
 class SignupAccount:
@@ -113,6 +142,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Disable TLS certificate verification.",
     )
+    parser.add_argument(
+        "--permission-profile",
+        choices=("auto", "manager", "employee"),
+        default="auto",
+        help=(
+            "Permission preset to apply to created/updated groups. "
+            "Use 'manager' or 'employee' to force a preset for all groups, "
+            "or 'auto' to infer from the group name."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -180,6 +219,35 @@ def read_required_str(
 
 def build_url(base_url: str, path: str) -> str:
     return f"{base_url.rstrip('/')}{path}"
+
+
+def merge_nested_dicts(base: dict[str, Any], overrides: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+
+    for key, value in overrides.items():
+        existing = merged.get(key)
+        if isinstance(existing, dict) and isinstance(value, dict):
+            merged[key] = merge_nested_dicts(existing, value)
+        else:
+            merged[key] = value
+
+    return merged
+
+
+def get_group_permissions(
+    permission_profile: PermissionProfile, group_name: str
+) -> dict[str, Any]:
+    if permission_profile == "manager":
+        return MANAGER_WORKSPACE_PERMISSIONS
+
+    if permission_profile == "employee":
+        return EMPLOYEE_GROUP_PERMISSIONS
+
+    normalized_group_name = group_name.strip().lower()
+    if "manager" in normalized_group_name:
+        return MANAGER_WORKSPACE_PERMISSIONS
+
+    return EMPLOYEE_GROUP_PERMISSIONS
 
 
 def send_request(
@@ -362,10 +430,13 @@ def get_or_create_group(
     session: requests.Session,
     base_url: str,
     group_name: str,
+    permission_profile: PermissionProfile,
     admin_headers: dict[str, str],
     timeout: float,
     verify_tls: bool,
 ) -> str:
+    target_permissions = get_group_permissions(permission_profile, group_name)
+
     response = send_request(
         session=session,
         method="GET",
@@ -387,7 +458,35 @@ def get_or_create_group(
         if isinstance(item, dict) and item.get("name") == group_name and item.get("id")
     ]
     if exact_matches:
-        return str(exact_matches[0]["id"])
+        existing_group = exact_matches[0]
+        group_id = str(existing_group["id"])
+        existing_permissions = existing_group.get("permissions") or {}
+        merged_permissions = merge_nested_dicts(
+            existing_permissions, target_permissions
+        )
+
+        if merged_permissions != existing_permissions:
+            update_response = send_request(
+                session=session,
+                method="POST",
+                url=build_url(base_url, f"/api/v1/groups/id/{group_id}/update"),
+                headers=admin_headers,
+                json={
+                    "name": existing_group.get("name") or group_name,
+                    "description": existing_group.get("description") or "",
+                    "permissions": merged_permissions,
+                    "data": existing_group.get("data"),
+                },
+                timeout=timeout,
+                verify_tls=verify_tls,
+            )
+            if not update_response.ok:
+                raise RuntimeError(
+                    f"Could not update group '{group_name}' permissions: "
+                    f"{extract_error_detail(update_response)}"
+                )
+
+        return group_id
 
     create_response = send_request(
         session=session,
@@ -396,7 +495,8 @@ def get_or_create_group(
         headers=admin_headers,
         json={
             "name": group_name,
-            "description": f"Dummy batch group imported from {DEFAULT_DATA_FILE.name}",
+            "description": f"Dummy accounts group for {group_name}",
+            "permissions": target_permissions,
         },
         timeout=timeout,
         verify_tls=verify_tls,
@@ -542,6 +642,7 @@ def main() -> int:
                     session=session,
                     base_url=args.base_url,
                     group_name=group_name,
+                    permission_profile=args.permission_profile,
                     admin_headers=admin_headers,
                     timeout=args.timeout,
                     verify_tls=verify_tls,

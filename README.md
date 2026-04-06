@@ -16,8 +16,8 @@ Following are the default ports for the backend and frontend components, along w
 For example:
 
 ```bash
-sh backend/dev.sh --port 8081
-VITE_BACKEND_PORT=8081 bun dev
+sh backend/dev.sh --port 8082
+VITE_BACKEND_PORT=8082 bun dev
 ```
 
 # Mandatory: create data directory
@@ -30,8 +30,25 @@ mkdir data
 # Dummy gmail account for testing
 
 ```bash
-python scripts/signup_dummy_accounts.py \
+python3 scripts/signup_dummy_accounts.py \
   --base-url http://localhost:8080 \
   --admin-email your-admin@example.com \
-  --admin-password 'your-admin-password'
-``
+  --admin-password 'your-admin-password' \
+  --permission-profile manager
+```
+
+```bash
+python3 scripts/signup_dummy_accounts.py \
+  --base-url http://localhost:8080 \
+  --admin-email your-admin@example.com \
+  --admin-password 'your-admin-password' \
+  --permission-profile employee
+```
+
+```bash
+python3 scripts/signup_dummy_accounts.py \
+  --base-url http://localhost:8080 \
+  --admin-email your-admin@example.com \
+  --admin-password 'your-admin-password' \
+  --permission-profile auto
+```
