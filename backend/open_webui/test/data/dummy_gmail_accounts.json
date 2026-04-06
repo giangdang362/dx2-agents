@@ -1,56 +1,56 @@
 {
-  "group_a": [
+  "Managers": [
     {
-      "name": "Dummy Group A User 01",
-      "email": "dummy.groupa.user01@gmail.com",
-      "password": "GrpA01!Test"
+      "name": "Emma Johnson",
+      "email": "emma.johnson.dev@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 02",
-      "email": "dummy.groupa.user02@gmail.com",
-      "password": "GrpA02!Test"
+      "name": "Noah Williams",
+      "email": "noah.williams.team@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 03",
-      "email": "dummy.groupa.user03@gmail.com",
-      "password": "GrpA03!Test"
+      "name": "Olivia Brown",
+      "email": "olivia.brown.work@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 04",
-      "email": "dummy.groupa.user04@gmail.com",
-      "password": "GrpA04!Test"
+      "name": "Liam Davis",
+      "email": "liam.davis.office@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 05",
-      "email": "dummy.groupa.user05@gmail.com",
-      "password": "GrpA05!Test"
+      "name": "Sophia Miller",
+      "email": "sophia.miller.staff@gmail.com",
+      "password": "1"
     }
   ],
-  "group_b": [
+  "Employees": [
     {
-      "name": "Dummy Group B User 01",
-      "email": "dummy.groupb.user01@gmail.com",
-      "password": "GrpB01!Test"
+      "name": "James Wilson",
+      "email": "james.wilson.biz@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 02",
-      "email": "dummy.groupb.user02@gmail.com",
-      "password": "GrpB02!Test"
+      "name": "Ava Moore",
+      "email": "ava.moore.mail@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 03",
-      "email": "dummy.groupb.user03@gmail.com",
-      "password": "GrpB03!Test"
+      "name": "Benjamin Taylor",
+      "email": "benjamin.taylor.pro@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 04",
-      "email": "dummy.groupb.user04@gmail.com",
-      "password": "GrpB04!Test"
+      "name": "Mia Anderson",
+      "email": "mia.anderson.contact@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 05",
-      "email": "dummy.groupb.user05@gmail.com",
-      "password": "GrpB05!Test"
+      "name": "Lucas Thomas",
+      "email": "lucas.thomas.user@gmail.com",
+      "password": "1"
     }
   ]
 }
