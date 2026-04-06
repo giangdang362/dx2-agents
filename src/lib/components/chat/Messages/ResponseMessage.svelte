@@ -767,12 +767,12 @@
 				break;
 			case 'approve':
 				activeBooking = { ...activeBooking, status: 'approved' };
-				toast.success('Yeu cau dat phong da duoc phe duyet!');
+				toast.success('Booking request approved');
 				submitMessage(message?.id, `[BOOKING_APPROVED] ${JSON.stringify(activeBooking)}`);
 				break;
 			case 'reject':
 				activeBooking = { ...activeBooking, status: 'rejected' };
-				toast.error('Yeu cau dat phong da bi tu choi.');
+				toast.error('Booking request rejected');
 				break;
 			case 'send_calendar': {
 				const inv = (extra as any)?.invitees || [];
@@ -795,14 +795,14 @@
 					...activeBooking,
 					catering: { ...(activeBooking.catering as object), status: 'approved' }
 				};
-				toast.success('Catering da duoc duyet!');
+				toast.success('Catering order approved');
 				break;
 			case 'reject_catering':
 				activeBooking = {
 					...activeBooking,
 					catering: { ...(activeBooking.catering as object), status: 'rejected' }
 				};
-				toast.error('Catering da bi tu choi.');
+				toast.error('Catering order rejected');
 				break;
 		}
 

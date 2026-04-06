@@ -13,6 +13,10 @@
 		showArchivedChats,
 		showControls,
 		showSidebar,
+		showThinkingSidebar,
+		showOverview,
+		showArtifacts,
+		showEmbeds,
 		temporaryChatEnabled,
 		user
 	} from '$lib/stores';
@@ -50,7 +54,7 @@
 
 	export let chat;
 	export let history;
-	export let selectedModels;
+	export let selectedModels: string[] = [];
 	export let selectedModelId = '';
 	export let showModelSelector = true;
 
@@ -222,6 +226,38 @@
 						</Menu>
 					{/if}
 
+					<Tooltip content={$showThinkingSidebar ? $i18n.t('Hide Thinking') : $i18n.t('Show Thinking')}>
+						<button
+							class="flex cursor-pointer px-2 py-2 rounded-xl transition
+								{$showThinkingSidebar
+								? 'bg-blue-500/10 text-blue-500 hover:bg-blue-500/20'
+								: 'hover:bg-slate-100 dark:hover:bg-slate-800'}"
+							on:click={async () => {
+								if ($showThinkingSidebar) {
+									showThinkingSidebar.set(false);
+									showControls.set(false);
+								} else {
+									showOverview.set(false);
+									showArtifacts.set(false);
+									showEmbeds.set(false);
+									showThinkingSidebar.set(true);
+									showControls.set(true);
+								}
+							}}
+							aria-label="Toggle thinking sidebar"
+						>
+							<div class="m-auto self-center">
+								<svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.3 5 7.4V19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.6c2.9-1.1 5-4 5-7.4a8 8 0 0 0-8-8Z" />
+									<path d="M10 22h4" />
+									<path d="M12 2v4" />
+									<path d="M8.5 7.5 6 5" />
+									<path d="M15.5 7.5 18 5" />
+								</svg>
+							</div>
+						</button>
+					</Tooltip>
+
 					{#if $user?.role === 'admin' || ($user?.permissions.chat?.controls ?? true)}
 						<Tooltip content={$i18n.t('Controls')}>
 							<button
@@ -329,4 +365,5 @@
 			</div>
 		{/if}
 	</div>
+
 </nav>

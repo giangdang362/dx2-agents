@@ -4,8 +4,9 @@ WebSocket endpoint for real-time orchestration events.
 
 import asyncio
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
 from open_webui.utils.orchestration_broadcast import subscribe, unsubscribe
 
@@ -14,7 +15,10 @@ router = APIRouter()
 
 
 @router.websocket("/ws")
-async def orchestration_ws(ws: WebSocket):
+async def orchestration_ws(
+    ws: WebSocket,
+    session_id: Optional[str] = Query(None),
+):
     await ws.accept()
     q = subscribe()
     try:
@@ -22,6 +26,9 @@ async def orchestration_ws(ws: WebSocket):
         while True:
             try:
                 event = await asyncio.wait_for(q.get(), timeout=20)
+                # If session_id filter is provided, only forward matching events
+                if session_id and event.get("session_id") and event["session_id"] != session_id:
+                    continue
                 await ws.send_json(event)
             except asyncio.TimeoutError:
                 # Keep-alive ping

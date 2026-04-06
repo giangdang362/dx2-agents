@@ -15,33 +15,33 @@
 	const STATUS_CONFIG = {
 		draft: {
 			label: 'Pending Confirmation',
-			color: 'bg-slate-100 text-slate-700 border-slate-300',
-			bgColor: 'bg-slate-50'
+			color: 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-500',
+			bgColor: 'bg-slate-50 dark:bg-slate-800'
 		},
 		pending: {
 			label: 'Pending Approval',
-			color: 'bg-amber-100 text-amber-700 border-amber-300',
-			bgColor: 'bg-amber-50'
+			color: 'bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-600',
+			bgColor: 'bg-amber-50 dark:bg-amber-900/20'
 		},
 		approved: {
 			label: 'Approved',
-			color: 'bg-emerald-100 text-emerald-700 border-emerald-300',
-			bgColor: 'bg-emerald-50'
+			color: 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-600',
+			bgColor: 'bg-emerald-50 dark:bg-emerald-900/20'
 		},
 		rejected: {
 			label: 'Rejected',
-			color: 'bg-red-100 text-red-700 border-red-300',
-			bgColor: 'bg-red-50'
+			color: 'bg-red-100 text-red-700 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-600',
+			bgColor: 'bg-red-50 dark:bg-red-900/20'
 		},
 		cancelled: {
 			label: 'Cancelled',
-			color: 'bg-slate-100 text-slate-500 border-slate-300',
-			bgColor: 'bg-slate-50'
+			color: 'bg-slate-100 text-slate-500 border-slate-300 dark:bg-slate-700 dark:text-slate-400 dark:border-slate-500',
+			bgColor: 'bg-slate-50 dark:bg-slate-800'
 		},
 		sent: {
 			label: 'Sent',
-			color: 'bg-blue-100 text-blue-700 border-blue-300',
-			bgColor: 'bg-blue-50'
+			color: 'bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-600',
+			bgColor: 'bg-blue-50 dark:bg-blue-900/20'
 		}
 	};
 
@@ -453,6 +453,9 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+	:global(.dark) .card-header {
+		background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
+	}
 
 	.header-left {
 		display: flex;
@@ -842,5 +845,175 @@
 		50% {
 			opacity: 0.6;
 		}
+	}
+
+	/* ══════════════════════════════════════
+	   Dark mode overrides
+	   ══════════════════════════════════════ */
+
+	:global(.dark) .meeting-booking-card {
+		background: #1e293b;
+		border-color: #334155;
+	}
+
+	/* card-header gradient stays — reads well on dark */
+
+	:global(.dark) .card-body {
+		background: #1e293b;
+	}
+
+	:global(.dark) .detail-label {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .detail-value {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .info-item {
+		background: #0f172a;
+	}
+
+	:global(.dark) .info-label {
+		color: #475569;
+	}
+
+	:global(.dark) .info-value {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .divider {
+		background: #334155;
+	}
+
+	:global(.dark) .equipment-tag {
+		background: #334155;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .no-equipment {
+		color: #475569;
+	}
+
+	:global(.dark) .catering-item {
+		background: #0f172a;
+		border-color: #334155;
+	}
+
+	:global(.dark) .catering-item:hover {
+		background: #1e293b;
+		border-color: #475569;
+	}
+
+	:global(.dark) .catering-item.selected {
+		background: rgba(59, 130, 246, 0.15);
+		border-color: #3b82f6;
+	}
+
+	:global(.dark) .catering-name {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .catering-price {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .catering-total {
+		border-top-color: #334155;
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .total-amount {
+		color: #60a5fa;
+	}
+
+	:global(.dark) .admin-note-input {
+		background: #0f172a;
+		border-color: #334155;
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .admin-note-input::placeholder {
+		color: #475569;
+	}
+
+	:global(.dark) .admin-note-input:focus {
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+	}
+
+	:global(.dark) .workflow-step:not(:last-child)::before {
+		background: #334155;
+	}
+
+	:global(.dark) .workflow-step.completed::before {
+		background: #065f46;
+	}
+
+	:global(.dark) .workflow-step.rejected::before {
+		background: #7f1d1d;
+	}
+
+	:global(.dark) .step-indicator {
+		background: #334155;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .workflow-step.completed .step-indicator {
+		background: #065f46;
+		color: #6ee7b7;
+	}
+
+	:global(.dark) .workflow-step.in-progress .step-indicator {
+		background: #78350f;
+		color: #fcd34d;
+	}
+
+	:global(.dark) .workflow-step.rejected .step-indicator {
+		background: #7f1d1d;
+		color: #fca5a5;
+	}
+
+	:global(.dark) .step-title {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .step-time {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .assignee-name {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .btn-cancel,
+	:global(.dark) .btn-reject {
+		background: #1e293b;
+		color: #94a3b8;
+		border-color: #334155;
+	}
+
+	:global(.dark) .btn-cancel:hover,
+	:global(.dark) .btn-reject:hover {
+		background: #0f172a;
+	}
+
+	:global(.dark) .email-confirmation {
+		background: rgba(16, 185, 129, 0.1);
+		border-color: rgba(16, 185, 129, 0.3);
+	}
+
+	:global(.dark) .email-title {
+		color: #34d399;
+	}
+
+	:global(.dark) .recipients-label,
+	:global(.dark) .preview-label {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .recipient-item,
+	:global(.dark) .preview-item {
+		color: #94a3b8;
 	}
 </style>

@@ -595,6 +595,9 @@
 		background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
 		color: white;
 	}
+	:global(.dark) .embedded-header {
+		background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
+	}
 
 	.header-title {
 		display: flex;
@@ -1139,5 +1142,167 @@
 
 	:global(.leaflet-control-zoom a:hover) {
 		background: #f1f5f9 !important;
+	}
+
+	/* ══════════════════════════════════════
+	   Dark mode overrides
+	   ══════════════════════════════════════ */
+
+	:global(.dark) .room-selector-embedded {
+		background: #1e293b;
+	}
+
+	/* embedded-header gradient stays */
+
+	:global(.dark) .embedded-body .sidebar {
+		background: #1e293b;
+		border-right-color: #334155;
+	}
+
+	:global(.dark) .embedded-body .room-preview-floating {
+		background: #1e293b;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+	}
+
+	:global(.dark) .preview-info h3 {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .preview-info p {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .preview-meta {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .sidebar-footer {
+		background: #1e293b;
+		border-top-color: #334155;
+	}
+
+	:global(.dark) .confirm-btn.disabled {
+		background: #334155;
+		color: #475569;
+	}
+
+	:global(.dark) .modal-container {
+		background: #1e293b;
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+	}
+
+	:global(.dark) .modal-header {
+		border-bottom-color: #334155;
+	}
+
+	:global(.dark) .modal-header h2 {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .close-btn {
+		background: #334155;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .close-btn:hover {
+		background: #475569;
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .sidebar {
+		border-right-color: #334155;
+	}
+
+	:global(.dark) .filter-section {
+		background: #0f172a;
+		border-bottom-color: #334155;
+	}
+
+	:global(.dark) .filter-label {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .location-tab {
+		background: #1e293b;
+		border-color: #334155;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .location-tab:hover {
+		border-color: #3b82f6;
+		color: #60a5fa;
+		background: rgba(59, 130, 246, 0.1);
+	}
+
+	:global(.dark) .room-list {
+		background: #0f172a;
+	}
+
+	:global(.dark) .room-card {
+		background: #1e293b;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	}
+
+	:global(.dark) .room-card:hover {
+		border-color: #3b82f6;
+		box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+	}
+
+	:global(.dark) .room-card.selected {
+		background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+		border-color: #3b82f6;
+	}
+
+	:global(.dark) .room-name {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) .room-address {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .room-details {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .eq-tag {
+		background: #334155;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .eq-more {
+		background: #475569;
+		color: #94a3b8;
+	}
+
+	:global(.dark) .room-preview {
+		background: #1e293b;
+		border-top-color: #334155;
+	}
+
+	:global(.dark) .preview-details {
+		border-bottom-color: #334155;
+	}
+
+	:global(.dark) .detail-label {
+		color: #94a3b8;
+	}
+
+	:global(.dark) .detail-value {
+		color: #f1f5f9;
+	}
+
+	:global(.dark) :global(.leaflet-control-zoom a) {
+		background: #1e293b !important;
+		color: #60a5fa !important;
+	}
+
+	:global(.dark) :global(.leaflet-control-zoom a:hover) {
+		background: #334155 !important;
+	}
+
+	:global(.dark) :global(.leaflet-popup-content-wrapper) {
+		background: #1e293b;
+		color: #f1f5f9;
 	}
 </style>

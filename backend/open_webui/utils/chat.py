@@ -190,10 +190,44 @@ async def generate_chat_completion(
 
     model = models[model_id]
 
+    # --- Auto-emit thinking status events ---
+    # Suppressed for orchestrator pipe (it emits its own events to the sidebar).
+    # Enabled for all other models so the ThinkingSidebar can track direct agent chats.
+    _is_orchestrator = model_id.startswith("orchestrator_pipe") or model.get("owned_by") == "orchestrator"
+    metadata = form_data.get("metadata", {})
+    __event_emitter__ = None
+    is_task = metadata.get("task") is not None
+    if not is_task and metadata and all(
+        k in metadata for k in ("session_id", "chat_id", "message_id")
+    ):
+        __event_emitter__ = get_event_emitter(metadata)
+
+    model_name = model.get("name", model_id)
+
+    async def _auto_status(action: str, description: str, done: bool = False):
+        if _is_orchestrator:
+            return
+        if __event_emitter__:
+            try:
+                await __event_emitter__(
+                    {
+                        "type": "status",
+                        "data": {
+                            "action": action,
+                            "description": description,
+                            "done": done,
+                        },
+                    }
+                )
+            except Exception:
+                pass
+
     if getattr(request.state, "direct", False):
-        return await generate_direct_chat_completion(
+        result = await generate_direct_chat_completion(
             request, form_data, user=user, models=models
         )
+        await _auto_status("complete", "Response generated.", done=True)
+        return result
     else:
         # Check if user has access to the model
         if not bypass_filter and user.role == "user":
@@ -264,8 +298,10 @@ async def generate_chat_completion(
             result = await route_to_agent(form_data, user, request)
 
             orch_session_id = None
+            orch_start_time = None
+            orch_routing_tokens = None
             if result is not None:
-                selected_model_id, orch_session_id = result
+                selected_model_id, orch_session_id, orch_start_time, orch_routing_tokens = result
 
                 if selected_model_id == "PERMISSION_DENIED":
                     error_msg = "Sorry, you don't have permission to access the selected agent. Please contact your admin."
@@ -335,10 +371,24 @@ async def generate_chat_completion(
 
                 async def orchestrator_stream_wrapper(stream):
                     yield f"data: {json.dumps({'selected_model_id': selected_model_id})}\n\n"
+                    worker_tokens = {"in": 0, "out": 0}
                     async for chunk in stream:
+                        # Try to extract usage from SSE chunks
+                        if isinstance(chunk, (str, bytes)):
+                            chunk_str = chunk if isinstance(chunk, str) else chunk.decode()
+                            if chunk_str.startswith("data: ") and "[DONE]" not in chunk_str:
+                                try:
+                                    chunk_data = json.loads(chunk_str[6:].strip())
+                                    usage = chunk_data.get("usage")
+                                    if usage:
+                                        worker_tokens["in"] = usage.get("prompt_tokens", 0)
+                                        worker_tokens["out"] = usage.get("completion_tokens", 0)
+                                except (json.JSONDecodeError, AttributeError):
+                                    pass
                         yield chunk
                     # Emit agent_done then session_done after stream completes
                     if orch_session_id:
+                        elapsed = int((time.time() - orch_start_time) * 1000) if orch_start_time else 0
                         try:
                             await orch_publish(
                                 {
@@ -347,6 +397,9 @@ async def generate_chat_completion(
                                     "agent_id": selected_model_id,
                                     "agent_label": selected_agent_label,
                                     "timestamp": time.time(),
+                                    "elapsed_ms": elapsed,
+                                    "worker_tokens": worker_tokens,
+                                    "routing_tokens": orch_routing_tokens or {"in": 0, "out": 0},
                                 }
                             )
                             await orch_publish(
@@ -355,6 +408,11 @@ async def generate_chat_completion(
                                     "session_id": orch_session_id,
                                     "message": "Completed",
                                     "timestamp": time.time(),
+                                    "response_time_ms": elapsed,
+                                    "total_tokens": {
+                                        "routing": orch_routing_tokens or {"in": 0, "out": 0},
+                                        "worker": worker_tokens,
+                                    },
                                 }
                             )
                         except Exception:
@@ -381,6 +439,12 @@ async def generate_chat_completion(
                     bypass_system_prompt=bypass_system_prompt,
                 )
                 if orch_session_id:
+                    elapsed = int((time.time() - orch_start_time) * 1000) if orch_start_time else 0
+                    worker_usage = non_stream_response.get("usage", {})
+                    worker_tokens = {
+                        "in": worker_usage.get("prompt_tokens", 0),
+                        "out": worker_usage.get("completion_tokens", 0),
+                    }
                     try:
                         await orch_publish(
                             {
@@ -389,6 +453,9 @@ async def generate_chat_completion(
                                 "agent_id": selected_model_id,
                                 "agent_label": selected_agent_label,
                                 "timestamp": time.time(),
+                                "elapsed_ms": elapsed,
+                                "worker_tokens": worker_tokens,
+                                "routing_tokens": orch_routing_tokens or {"in": 0, "out": 0},
                             }
                         )
                         await orch_publish(
@@ -397,6 +464,11 @@ async def generate_chat_completion(
                                 "session_id": orch_session_id,
                                 "message": "Completed",
                                 "timestamp": time.time(),
+                                "response_time_ms": elapsed,
+                                "total_tokens": {
+                                    "routing": orch_routing_tokens or {"in": 0, "out": 0},
+                                    "worker": worker_tokens,
+                                },
                             }
                         )
                     except Exception:
@@ -405,11 +477,15 @@ async def generate_chat_completion(
 
         if model.get("pipe"):
             # Below does not require bypass_filter because this is the only route the uses this function and it is already bypassing the filter
-            return await generate_function_chat_completion(
+            await _auto_status("calling_agent", f"Calling agent {model_name}...")
+            result = await generate_function_chat_completion(
                 request, form_data, user=user, models=models
             )
+            await _auto_status("complete", "Response generated.", done=True)
+            return result
         if model.get("owned_by") == "ollama":
             # Using /ollama/api/chat endpoint
+            await _auto_status("calling_llm", f"Calling LLM ({model_name})...")
             form_data = convert_payload_openai_to_ollama(form_data)
             response = await generate_ollama_chat_completion(
                 request=request,
@@ -426,8 +502,10 @@ async def generate_chat_completion(
                     background=response.background,
                 )
             else:
+                await _auto_status("complete", "Response generated.", done=True)
                 return convert_response_ollama_to_openai(response)
         else:
+            await _auto_status("calling_llm", f"Calling LLM ({model_name})...")
             return await generate_openai_chat_completion(
                 request=request,
                 form_data=form_data,
