@@ -495,7 +495,7 @@ def get_or_create_group(
         headers=admin_headers,
         json={
             "name": group_name,
-            "description": f"Dummy accounts group for {group_name}",
+            "description": group_name,
             "permissions": target_permissions,
         },
         timeout=timeout,
