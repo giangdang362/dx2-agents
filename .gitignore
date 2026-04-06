@@ -315,3 +315,4 @@ cypress/screenshots
 .github/
 *.yml
 !backend/open_webui/system_prompts.yml
+!src/lib/components/chat/suggestion.yml
