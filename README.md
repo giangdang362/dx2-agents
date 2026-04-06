@@ -30,24 +30,27 @@ mkdir data
 # Dummy gmail account for testing
 
 ```bash
+BACKEND_PORT=8082
 python3 scripts/signup_dummy_accounts.py \
-  --base-url http://localhost:8080 \
+  --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email your-admin@example.com \
   --admin-password 'your-admin-password' \
   --permission-profile manager
 ```
 
 ```bash
+BACKEND_PORT=8082
 python3 scripts/signup_dummy_accounts.py \
-  --base-url http://localhost:8080 \
+  --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email your-admin@example.com \
   --admin-password 'your-admin-password' \
   --permission-profile employee
 ```
 
 ```bash
+BACKEND_PORT=8082
 python3 scripts/signup_dummy_accounts.py \
-  --base-url http://localhost:8080 \
+  --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email your-admin@example.com \
   --admin-password 'your-admin-password' \
   --permission-profile auto

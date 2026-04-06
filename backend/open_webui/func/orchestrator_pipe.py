@@ -30,6 +30,7 @@ import certifi
 from pydantic import BaseModel, Field
 
 from open_webui.utils import llm_client
+from open_webui.utils.webui_url import resolve_webui_api_base_url
 
 _ssl_ctx = ssl.create_default_context(cafile=certifi.where())
 
@@ -67,8 +68,8 @@ class Pipe:
             description="System prompt for the routing LLM",
         )
         WEBUI_BASE_URL: str = Field(
-            default="http://localhost:8080",
-            description="Open WebUI base URL for internal API calls",
+            default="",
+            description="Override base URL for internal API calls. Leave empty to use the current WebUI URL.",
         )
 
     def __init__(self):
@@ -471,6 +472,7 @@ class Pipe:
         __event_emitter__: Callable = None,
         __task__: str = None,
         __metadata__: dict = None,
+        __request__=None,
     ) -> AsyncGenerator[str, None] | str:
         """
         Main entry point. Returns an AsyncGenerator for streaming or a str.
@@ -489,6 +491,11 @@ class Pipe:
 
         user_id = __user__.get("id", "")
         user_role = __user__.get("role", "")
+        webui_chat_url = resolve_webui_api_base_url(
+            "/api/chat/completions",
+            request=__request__,
+            explicit_base_url=self.valves.WEBUI_BASE_URL,
+        )
 
         session_id = str(uuid.uuid4())
         session_start_time = time.time()
@@ -587,7 +594,7 @@ class Pipe:
         def _agent_url_and_auth(agent_id: str) -> tuple[str, str]:
             agent = accessible_agents[agent_id]
             if agent["url"] is None:
-                url = f"{self.valves.WEBUI_BASE_URL}/api/chat/completions"
+                url = webui_chat_url
                 token = self._mint_user_token(user_id) if user_id else ""
                 auth = f"Bearer {token}"
             else:

@@ -16,7 +16,32 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA_FILE = (
     REPO_ROOT / "backend" / "open_webui" / "test" / "data" / "dummy_gmail_accounts.json"
 )
-DEFAULT_BASE_URL = os.environ.get("OPEN_WEBUI_BASE_URL", "http://localhost:8080")
+
+
+def _default_backend_port() -> str:
+    return (
+        os.environ.get("OPEN_WEBUI_BACKEND_PORT")
+        or os.environ.get("VITE_BACKEND_PORT")
+        or os.environ.get("BACKEND_PORT")
+        or os.environ.get("PORT")
+        or "8080"
+    )
+
+
+def _default_base_url() -> str:
+    explicit_base_url = os.environ.get("OPEN_WEBUI_BASE_URL") or os.environ.get(
+        "WEBUI_URL"
+    )
+    if explicit_base_url:
+        return explicit_base_url.rstrip("/")
+
+    host = os.environ.get("OPEN_WEBUI_BACKEND_HOST") or os.environ.get(
+        "OPEN_WEBUI_HOST", "localhost"
+    )
+    return f"http://{host}:{_default_backend_port()}"
+
+
+DEFAULT_BASE_URL = _default_base_url()
 DEFAULT_ADMIN_EMAIL = os.environ.get("OPEN_WEBUI_ADMIN_EMAIL") or os.environ.get(
     "WEBUI_ADMIN_EMAIL", ""
 )
