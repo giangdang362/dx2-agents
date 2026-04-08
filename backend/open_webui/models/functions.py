@@ -47,7 +47,7 @@ class FunctionModel(BaseModel):
     content: str
     meta: FunctionMeta
     is_active: bool = False
-    is_global: bool = False
+    is_global: bool = True
     updated_at: int  # timestamp in epoch
     created_at: int  # timestamp in epoch
 
@@ -63,7 +63,7 @@ class FunctionWithValvesModel(BaseModel):
     meta: FunctionMeta
     valves: Optional[dict] = None
     is_active: bool = False
-    is_global: bool = False
+    is_global: bool = True
     updated_at: int  # timestamp in epoch
     created_at: int  # timestamp in epoch
 

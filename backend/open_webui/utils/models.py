@@ -23,6 +23,7 @@ from open_webui.utils.plugin import (
     get_function_module_from_cache,
 )
 from open_webui.utils.access_control import has_access
+from open_webui.utils.agent_access import get_managed_agent_access_decision
 
 
 from open_webui.config import (
@@ -438,6 +439,35 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
 
 
 def check_model_access(user, model, db=None):
+    managed_agent_access = get_managed_agent_access_decision(
+        user, model.get("id"), db=db
+    )
+    if managed_agent_access is not None:
+        if managed_agent_access:
+            return
+        raise Exception("Model not found")
+
+    if model.get("pipe"):
+        pipe_id = model.get("function_id") or model.get("id", "").split(".", 1)[0]
+        pipe_owner_id = model.get("user_id")
+        pipe_is_global = bool(model.get("is_global"))
+
+        if pipe_owner_id is None or "is_global" not in model:
+            function = Functions.get_function_by_id(pipe_id, db=db)
+            if not function or not function.is_active:
+                raise Exception("Model not found")
+            pipe_owner_id = function.user_id
+            pipe_is_global = function.is_global
+
+        if (
+            (user.role == "admin" and BYPASS_ADMIN_ACCESS_CONTROL)
+            or pipe_owner_id == user.id
+            or pipe_is_global
+        ):
+            return
+
+        raise Exception("Model not found")
+
     if model.get("arena"):
         meta = model.get("info", {}).get("meta", {})
         access_grants = meta.get("access_grants", [])
@@ -472,16 +502,37 @@ def get_filtered_models(models, user, db=None):
         or (user.role == "admin" and not BYPASS_ADMIN_ACCESS_CONTROL)
     ) and not BYPASS_MODEL_ACCESS_CONTROL:
         model_infos = {}
+        pipe_infos = {}
+        missing_pipe_ids = set()
+        user_groups = Groups.get_groups_by_member_id(user.id, db=db)
         for model in models:
             if model.get("arena"):
+                continue
+            if model.get("pipe"):
+                pipe_id = model.get("function_id") or model.get("id", "").split(".", 1)[0]
+                if not pipe_id:
+                    continue
+
+                if model.get("user_id") is not None and "is_global" in model:
+                    pipe_infos[pipe_id] = {
+                        "user_id": model.get("user_id"),
+                        "is_global": bool(model.get("is_global")),
+                    }
+                else:
+                    missing_pipe_ids.add(pipe_id)
                 continue
             info = model.get("info")
             if info:
                 model_infos[model["id"]] = info
 
-        user_group_ids = {
-            group.id for group in Groups.get_groups_by_member_id(user.id, db=db)
-        }
+        user_group_ids = {group.id for group in user_groups}
+
+        if missing_pipe_ids:
+            for function in Functions.get_functions_by_ids(list(missing_pipe_ids), db=db):
+                pipe_infos[function.id] = {
+                    "user_id": function.user_id,
+                    "is_global": function.is_global,
+                }
 
         # Batch-fetch accessible resource IDs in a single query instead of N has_access calls
         accessible_model_ids = AccessGrants.get_accessible_resource_ids(
@@ -495,6 +546,16 @@ def get_filtered_models(models, user, db=None):
 
         filtered_models = []
         for model in models:
+            managed_agent_access = get_managed_agent_access_decision(
+                user,
+                model.get("id"),
+                groups=user_groups,
+            )
+            if managed_agent_access is not None:
+                if managed_agent_access:
+                    filtered_models.append(model)
+                continue
+
             if model.get("arena"):
                 meta = model.get("info", {}).get("meta", {})
                 access_grants = meta.get("access_grants", [])
@@ -503,6 +564,17 @@ def get_filtered_models(models, user, db=None):
                     permission="read",
                     access_grants=access_grants,
                     user_group_ids=user_group_ids,
+                ):
+                    filtered_models.append(model)
+                continue
+
+            if model.get("pipe"):
+                pipe_id = model.get("function_id") or model.get("id", "").split(".", 1)[0]
+                pipe_info = pipe_infos.get(pipe_id)
+                if pipe_info and (
+                    (user.role == "admin" and BYPASS_ADMIN_ACCESS_CONTROL)
+                    or pipe_info["user_id"] == user.id
+                    or pipe_info["is_global"]
                 ):
                     filtered_models.append(model)
                 continue

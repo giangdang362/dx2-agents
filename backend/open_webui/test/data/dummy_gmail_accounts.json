@@ -1,55 +1,69 @@
 {
-  "Managers": [
+  "CS-Staff": [
     {
-      "name": "Emma Johnson",
-      "email": "emma.johnson.dev@gmail.com",
+      "name": "Mason Clark",
+      "email": "clark.mason.cs.staff@gmail.com",
       "password": "1"
     },
     {
-      "name": "Noah Williams",
-      "email": "noah.williams.team@gmail.com",
+      "name": "Lily Adams",
+      "email": "adams.lily.cs.staff@gmail.com",
       "password": "1"
     },
     {
-      "name": "Olivia Brown",
-      "email": "olivia.brown.work@gmail.com",
-      "password": "1"
-    },
-    {
-      "name": "Liam Davis",
-      "email": "liam.davis.office@gmail.com",
-      "password": "1"
-    },
-    {
-      "name": "Sophia Miller",
-      "email": "sophia.miller.staff@gmail.com",
+      "name": "Owen Brooks",
+      "email": "brooks.owen.cs.staff@gmail.com",
       "password": "1"
     }
   ],
-  "Employees": [
+  "CS-Manager": [
     {
-      "name": "James Wilson",
-      "email": "james.wilson.biz@gmail.com",
+      "name": "Ava Bennett",
+      "email": "bennett.ava.cs.manager@gmail.com",
       "password": "1"
     },
     {
-      "name": "Ava Moore",
-      "email": "ava.moore.mail@gmail.com",
+      "name": "Ethan Foster",
+      "email": "foster.ethan.cs.manager@gmail.com",
       "password": "1"
     },
     {
-      "name": "Benjamin Taylor",
-      "email": "benjamin.taylor.pro@gmail.com",
+      "name": "Chloe Perry",
+      "email": "perry.chloe.cs.manager@gmail.com",
+      "password": "1"
+    }
+  ],
+  "Technical-Staff": [
+    {
+      "name": "Liam Carter",
+      "email": "carter.liam.technical.staff@gmail.com",
       "password": "1"
     },
     {
-      "name": "Mia Anderson",
-      "email": "mia.anderson.contact@gmail.com",
+      "name": "Grace Turner",
+      "email": "turner.grace.technical.staff@gmail.com",
       "password": "1"
     },
     {
-      "name": "Lucas Thomas",
-      "email": "lucas.thomas.user@gmail.com",
+      "name": "Noah Hayes",
+      "email": "hayes.noah.technical.staff@gmail.com",
+      "password": "1"
+    }
+  ],
+  "Technical-Manager": [
+    {
+      "name": "Sophia Reed",
+      "email": "reed.sophia.technical.manager@gmail.com",
+      "password": "1"
+    },
+    {
+      "name": "Caleb Morgan",
+      "email": "morgan.caleb.technical.manager@gmail.com",
+      "password": "1"
+    },
+    {
+      "name": "Harper Collins",
+      "email": "collins.harper.technical.manager@gmail.com",
       "password": "1"
     }
   ]
