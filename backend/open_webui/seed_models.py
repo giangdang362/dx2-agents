@@ -135,7 +135,7 @@ SEED_FUNCTIONS: list[dict] = [
         "path": Path(__file__).resolve().parent / "func" / "orchestrator_pipe.py",
         "description": "Routes user requests to the appropriate specialist agent using LLM-based intent analysis.",
         "is_active": True,
-        "is_global": False,
+        "is_global": True,
     },
     {
         "id": "meeting_room_agent_pipe",
@@ -143,7 +143,7 @@ SEED_FUNCTIONS: list[dict] = [
         "path": Path(__file__).resolve().parent / "func" / "meeting_room_agent_pipe.py",
         "description": "CMC Global meeting room booking assistant — book, list, and cancel meetings.",
         "is_active": True,
-        "is_global": False,
+        "is_global": True,
     },
 ]
 
@@ -152,7 +152,7 @@ SEED_MODELS: list[dict] = [
         "id": "kinetix",
         "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
         "name": "Kinetix",
-        "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
+        "description": "Mechanical engineering AI Agent specialized in semiconductors and electronics engineering.",
         "tool_ids": ["ask"],
         "action_ids": ["mindmap"],
         "system": _get_seed_model_system_prompt("kinetix"),

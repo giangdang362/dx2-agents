@@ -49,9 +49,24 @@ python3 scripts/signup_dummy_accounts.py \
 
 ```bash
 BACKEND_PORT=8082
-python3 scripts/signup_dummy_accounts.py \
+python scripts/signup_dummy_accounts.py \
   --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email your-admin@example.com \
   --admin-password 'your-admin-password' \
-  --permission-profile auto
+  --group Sales-Staff \
+  --group Finance-Manager \
+  --group HR-Director
+```
+
+## Example
+
+```bash
+BACKEND_PORT=8082
+python scripts/signup_dummy_accounts.py \
+  --base-url "http://localhost:${BACKEND_PORT}" \
+  --admin-email a@gmail.com \
+  --admin-password '1' \
+  --group Sales-Staff \
+  --group Finance-Manager \
+  --group HR-Director
 ```
