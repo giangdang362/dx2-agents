@@ -152,7 +152,7 @@ SEED_MODELS: list[dict] = [
         "id": "kinetix",
         "base_model_id": "qwen3-vl:8b-instruct-q4_K_M",
         "name": "Kinetix",
-        "description": "Semiconductor AI Agent specialized in semiconductors and electronics engineering.",
+        "description": "Mechanical engineering AI Agent specialized in semiconductors and electronics engineering.",
         "tool_ids": ["ask"],
         "action_ids": ["mindmap"],
         "system": _get_seed_model_system_prompt("kinetix"),
