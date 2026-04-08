@@ -333,6 +333,43 @@ class Pipe:
                     return content
         return ""
 
+    _ENGLISH_REINFORCEMENT = (
+        "\n\n[SYSTEM REMINDER: Respond ONLY in English, regardless of the language above.]"
+    )
+
+    @classmethod
+    def _enforce_english_on_messages(cls, messages: list) -> list:
+        """
+        Append an English-only reinforcement to the last user message.
+        Returns a new list; does not mutate the input.
+        """
+        if not messages:
+            return messages
+        result = [dict(m) for m in messages]
+        for i in range(len(result) - 1, -1, -1):
+            msg = result[i]
+            if msg.get("role") != "user":
+                continue
+            content = msg.get("content", "")
+            if isinstance(content, str):
+                msg["content"] = content + cls._ENGLISH_REINFORCEMENT
+            elif isinstance(content, list):
+                new_parts = list(content)
+                # Append reinforcement to the last text part, or add a new one
+                for j in range(len(new_parts) - 1, -1, -1):
+                    part = new_parts[j]
+                    if isinstance(part, dict) and part.get("type") == "text":
+                        new_parts[j] = {
+                            **part,
+                            "text": part.get("text", "") + cls._ENGLISH_REINFORCEMENT,
+                        }
+                        break
+                else:
+                    new_parts.append({"type": "text", "text": cls._ENGLISH_REINFORCEMENT})
+                msg["content"] = new_parts
+            break
+        return result
+
     async def _route_message(
         self,
         user_message: str,
@@ -766,10 +803,13 @@ class Pipe:
             {
                 "role": "system",
                 "content": (
+                    "CRITICAL LANGUAGE RULE: You MUST respond ONLY in English, regardless of the "
+                    "language the user writes in or the language of the specialist agent responses. "
+                    "Every single word of your response must be in English.\n\n"
                     "You are a helpful orchestrator. Multiple specialist agents have provided responses "
                     "to the user's request. Combine their responses into a single, coherent, well-organized "
                     "answer. Preserve all important details from each agent. Use clear headings or sections "
-                    "to separate different topics. Respond in the same language as the user's original message."
+                    "to separate different topics. ALWAYS respond in English."
                 ),
             },
             {
@@ -777,7 +817,8 @@ class Pipe:
                 "content": (
                     f"Original user request: {user_message}\n\n"
                     f"Agent responses:\n{responses_text}\n\n"
-                    "Please combine these into a single coherent response for the user."
+                    "Please combine these into a single coherent response for the user. "
+                    "[IMPORTANT: Respond ONLY in English, regardless of the source language.]"
                 ),
             },
         ]
@@ -825,6 +866,9 @@ class Pipe:
         )
 
         system_prompt = (
+            "CRITICAL LANGUAGE RULE: You MUST respond ONLY in English, regardless of the language "
+            "the user writes in. Do NOT reply in Vietnamese, Chinese, or any other language. "
+            "Every single response must be in English.\n\n"
             "You are an AI orchestrator assistant. You help employees by routing their requests "
             "to the right specialist agent.\n\n"
             f"Available agents:\n{agent_lines}\n\n"
@@ -832,10 +876,11 @@ class Pipe:
             "- For greetings, respond warmly and briefly introduce yourself and the available agents.\n"
             "- For capability questions (e.g. 'what can you do?'), list the agents and what each handles.\n"
             "- For unclear requests, politely ask the user to clarify what they need.\n"
-            "- Do NOT answer domain-specific questions yourself — those should be routed to the appropriate specialist."
+            "- Do NOT answer domain-specific questions yourself — those should be routed to the appropriate specialist.\n"
+            "- ALWAYS respond in English, even if the user writes in another language."
         )
 
-        llm_messages = [{"role": "system", "content": system_prompt}] + messages
+        llm_messages = [{"role": "system", "content": system_prompt}] + self._enforce_english_on_messages(messages)
 
         if not streaming:
             result = await self._call_llm(llm_messages)
