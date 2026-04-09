@@ -53,9 +53,10 @@ python scripts/signup_dummy_accounts.py \
   --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email your-admin@example.com \
   --admin-password 'your-admin-password' \
-  --group Sales-Staff \
-  --group Finance-Manager \
-  --group HR-Director
+  --group Technical-Manager \
+  --group CS-Manager \
+  --group Technical-Staff \
+  --group CS-Staff
 ```
 
 ## Example
@@ -66,7 +67,8 @@ python scripts/signup_dummy_accounts.py \
   --base-url "http://localhost:${BACKEND_PORT}" \
   --admin-email a@gmail.com \
   --admin-password '1' \
-  --group Sales-Staff \
-  --group Finance-Manager \
-  --group HR-Director
+  --group Technical-Manager \
+  --group CS-Manager \
+  --group Technical-Staff \
+  --group CS-Staff
 ```
