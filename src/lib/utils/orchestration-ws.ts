@@ -294,7 +294,11 @@ export function startDirectAgentSession(agentId: string, agentName: string) {
 	showControls.set(true);
 }
 
-export function pushDirectAgentStep(action: string, description: string) {
+export function pushDirectAgentStep(
+	action: string,
+	description: string,
+	payload: Record<string, any> = {}
+) {
 	let current = get(orchestrationSession);
 
 	// Auto-create session if none exists
@@ -312,6 +316,28 @@ export function pushDirectAgentStep(action: string, description: string) {
 		showControls.set(true);
 	}
 
+	// If this event completes an in-flight step with the same action
+	// (e.g. knowledge_search start → knowledge_search done), update it
+	// in place instead of appending a duplicate row.
+	if (payload?.done) {
+		const existingIdx = current.steps.findIndex(
+			(s) => s.step === action && !s.done
+		);
+		if (existingIdx !== -1) {
+			const updated = [...current.steps];
+			const prev = updated[existingIdx];
+			updated[existingIdx] = {
+				...prev,
+				done: true,
+				elapsed_ms: Date.now() - current.start_time,
+				message: description || prev.message,
+				data: { ...(prev.data || {}), ...payload }
+			};
+			orchestrationSession.set({ ...current, steps: updated });
+			return;
+		}
+	}
+
 	// Mark previous steps as done
 	const steps = current.steps.map((s) => (s.done ? s : { ...s, done: true }));
 
@@ -320,8 +346,8 @@ export function pushDirectAgentStep(action: string, description: string) {
 		message: description,
 		timestamp: Date.now() / 1000,
 		elapsed_ms: Date.now() - current.start_time,
-		done: false,
-		data: {}
+		done: !!payload?.done,
+		data: { ...payload }
 	});
 
 	orchestrationSession.set({

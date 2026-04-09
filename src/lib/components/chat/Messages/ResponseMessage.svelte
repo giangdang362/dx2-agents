@@ -164,6 +164,11 @@
 	let model = null;
 	$: model = $models.find((m) => m.id === message.model);
 
+	// Hide all citation UI (inline [n] chips, References section, Sources list)
+	// for the C-Agents orchestrator.  Users don't care which specialist handled
+	// the query — the orchestrator is presented as a single assistant.
+	$: isOrchestratorMessage = (message?.model ?? '').startsWith('orchestrator_pipe');
+
 	let edit = false;
 	let editedContent = '';
 	let editTextAreaElement: HTMLTextAreaElement;
@@ -686,12 +691,20 @@
 
 	$: displayContent = (() => {
 		const raw = message.content ?? '';
-		const stripped = raw
+		let stripped = raw
 			.replace(BOOKING_BLOCK_RE, '')
 			.replace(CANCEL_BLOCK_RE, '')
 			.replace(BOOKING_LIST_RE, '')
 			.replace(/<tool_code>[\s\S]*?<\/tool_code>/g, '')
 			.trim();
+		if (isOrchestratorMessage) {
+			// Drop trailing "References:" / "Sources:" / "Nguồn:" section
+			// the LLM appended, then remove any remaining inline [n] markers.
+			stripped = stripped
+				.replace(/\n+\s*(?:References|Sources|Nguồn(?:\s+tham khảo)?)\s*:[\s\S]*$/i, '')
+				.replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, '')
+				.trim();
+		}
 		if (message.done) return stripped;
 		return stripped
 			.replace(/```booking[\s\S]*$/, '')
@@ -991,7 +1004,7 @@
 									{history}
 									{selectedModels}
 									content={displayContent}
-									sources={message.sources}
+									sources={isOrchestratorMessage ? undefined : message.sources}
 									floatingButtons={message?.done &&
 										!readOnly &&
 										($settings?.showFloatingActionButtons ?? true)}
@@ -1030,7 +1043,7 @@
 								<Error content={message?.error?.content ?? message.content} />
 							{/if}
 
-							{#if (message?.sources || message?.citations) && (model?.info?.meta?.capabilities?.citations ?? true)}
+							{#if (message?.sources || message?.citations) && (model?.info?.meta?.capabilities?.citations ?? true) && !isOrchestratorMessage}
 								<Citations
 									bind:this={citationsElement}
 									id={message?.id}

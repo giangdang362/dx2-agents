@@ -13,7 +13,7 @@
 	class="flex items-center gap-2 px-2 py-1 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300"
 >
 	<img
-		src={agent?.meta?.profile_image_url || '/static/cmc-logo-loading.png'}
+		src={agent?.meta?.profile_image_url || '/static/favicon.png'}
 		class="w-6 h-6 rounded-full"
 		alt={agent?.name || $i18n.t('AI Assistant')}
 	/>

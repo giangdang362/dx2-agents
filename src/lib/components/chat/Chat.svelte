@@ -421,7 +421,8 @@
 					if (data?.description || data?.action) {
 						pushDirectAgentStep(
 							data.action || 'status',
-							data.description || data.action || 'Processing...'
+							data.description || data.action || 'Processing...',
+							data
 						);
 					}
 				} else if (type === 'chat:completion') {

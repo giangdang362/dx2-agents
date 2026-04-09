@@ -3,6 +3,7 @@
 # Known static asset paths used as default profile images
 _ALLOWED_STATIC_PATHS = (
     "/user.png",
+    "/static/favicon.png",
     "/static/cmc-logo-loading.png",
 )
 
