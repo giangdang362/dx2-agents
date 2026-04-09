@@ -1,56 +1,70 @@
 {
-  "group_a": [
+  "CS-Staff": [
     {
-      "name": "Dummy Group A User 01",
-      "email": "dummy.groupa.user01@gmail.com",
-      "password": "GrpA01!Test"
+      "name": "Mason Clark",
+      "email": "clark.mason.cs.staff@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 02",
-      "email": "dummy.groupa.user02@gmail.com",
-      "password": "GrpA02!Test"
+      "name": "Lily Adams",
+      "email": "adams.lily.cs.staff@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group A User 03",
-      "email": "dummy.groupa.user03@gmail.com",
-      "password": "GrpA03!Test"
-    },
-    {
-      "name": "Dummy Group A User 04",
-      "email": "dummy.groupa.user04@gmail.com",
-      "password": "GrpA04!Test"
-    },
-    {
-      "name": "Dummy Group A User 05",
-      "email": "dummy.groupa.user05@gmail.com",
-      "password": "GrpA05!Test"
+      "name": "Owen Brooks",
+      "email": "brooks.owen.cs.staff@gmail.com",
+      "password": "1"
     }
   ],
-  "group_b": [
+  "CS-Manager": [
     {
-      "name": "Dummy Group B User 01",
-      "email": "dummy.groupb.user01@gmail.com",
-      "password": "GrpB01!Test"
+      "name": "Ava Bennett",
+      "email": "bennett.ava.cs.manager@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 02",
-      "email": "dummy.groupb.user02@gmail.com",
-      "password": "GrpB02!Test"
+      "name": "Ethan Foster",
+      "email": "foster.ethan.cs.manager@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 03",
-      "email": "dummy.groupb.user03@gmail.com",
-      "password": "GrpB03!Test"
+      "name": "Chloe Perry",
+      "email": "perry.chloe.cs.manager@gmail.com",
+      "password": "1"
+    }
+  ],
+  "Technical-Staff": [
+    {
+      "name": "Liam Carter",
+      "email": "carter.liam.technical.staff@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 04",
-      "email": "dummy.groupb.user04@gmail.com",
-      "password": "GrpB04!Test"
+      "name": "Grace Turner",
+      "email": "turner.grace.technical.staff@gmail.com",
+      "password": "1"
     },
     {
-      "name": "Dummy Group B User 05",
-      "email": "dummy.groupb.user05@gmail.com",
-      "password": "GrpB05!Test"
+      "name": "Noah Hayes",
+      "email": "hayes.noah.technical.staff@gmail.com",
+      "password": "1"
+    }
+  ],
+  "Technical-Manager": [
+    {
+      "name": "Sophia Reed",
+      "email": "reed.sophia.technical.manager@gmail.com",
+      "password": "1"
+    },
+    {
+      "name": "Caleb Morgan",
+      "email": "morgan.caleb.technical.manager@gmail.com",
+      "password": "1"
+    },
+    {
+      "name": "Harper Collins",
+      "email": "collins.harper.technical.manager@gmail.com",
+      "password": "1"
     }
   ]
 }

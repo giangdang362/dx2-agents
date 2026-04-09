@@ -58,6 +58,7 @@ from open_webui.utils.payload import (
     apply_system_prompt_to_body,
 )
 from open_webui.utils.auth import get_admin_user, get_verified_user
+from open_webui.utils.agent_access import get_managed_agent_access_decision
 from open_webui.config import (
     UPLOAD_DIR,
 )
@@ -1342,10 +1343,20 @@ async def generate_chat_completion(
 
         # Check if user has access to the model
         if not bypass_filter and user.role == "user":
-            user_group_ids = {
-                group.id for group in Groups.get_groups_by_member_id(user.id)
-            }
-            if not (
+            user_groups = Groups.get_groups_by_member_id(user.id)
+            managed_agent_access = get_managed_agent_access_decision(
+                user,
+                model_info.id,
+                groups=user_groups,
+            )
+            if managed_agent_access is False:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Model not found",
+                )
+
+            user_group_ids = {group.id for group in user_groups}
+            if managed_agent_access is not True and not (
                 user.id == model_info.user_id
                 or AccessGrants.has_access(
                     user_id=user.id,
@@ -1453,10 +1464,20 @@ async def generate_openai_completion(
 
         # Check if user has access to the model
         if user.role == "user":
-            user_group_ids = {
-                group.id for group in Groups.get_groups_by_member_id(user.id)
-            }
-            if not (
+            user_groups = Groups.get_groups_by_member_id(user.id)
+            managed_agent_access = get_managed_agent_access_decision(
+                user,
+                model_info.id,
+                groups=user_groups,
+            )
+            if managed_agent_access is False:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Model not found",
+                )
+
+            user_group_ids = {group.id for group in user_groups}
+            if managed_agent_access is not True and not (
                 user.id == model_info.user_id
                 or AccessGrants.has_access(
                     user_id=user.id,
@@ -1541,10 +1562,20 @@ async def generate_openai_chat_completion(
 
         # Check if user has access to the model
         if user.role == "user":
-            user_group_ids = {
-                group.id for group in Groups.get_groups_by_member_id(user.id)
-            }
-            if not (
+            user_groups = Groups.get_groups_by_member_id(user.id)
+            managed_agent_access = get_managed_agent_access_decision(
+                user,
+                model_info.id,
+                groups=user_groups,
+            )
+            if managed_agent_access is False:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Model not found",
+                )
+
+            user_group_ids = {group.id for group in user_groups}
+            if managed_agent_access is not True and not (
                 user.id == model_info.user_id
                 or AccessGrants.has_access(
                     user_id=user.id,

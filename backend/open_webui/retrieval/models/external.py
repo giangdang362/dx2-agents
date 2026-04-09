@@ -7,15 +7,18 @@ from urllib.parse import quote
 from open_webui.env import ENABLE_FORWARD_USER_INFO_HEADERS, REQUESTS_VERIFY
 from open_webui.retrieval.models.base_reranker import BaseReranker
 from open_webui.utils.headers import include_user_info_headers
+from open_webui.utils.webui_url import resolve_webui_api_base_url
 
 log = logging.getLogger(__name__)
+
+DEFAULT_EXTERNAL_RERANKER_URL = resolve_webui_api_base_url("/v1/rerank")
 
 
 class ExternalReranker(BaseReranker):
     def __init__(
         self,
         api_key: str,
-        url: str = "http://localhost:8080/v1/rerank",
+        url: str = DEFAULT_EXTERNAL_RERANKER_URL,
         model: str = "reranker",
         timeout: Optional[int] = None,
     ):

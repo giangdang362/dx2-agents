@@ -14,6 +14,7 @@ import aiohttp
 from pydantic import BaseModel, Field
 
 from open_webui.models.demo.meeting_rooms import Bookings, BookingForm, BookingPatchForm
+from open_webui.utils.webui_url import resolve_webui_api_base_url
 
 # ---------------------------------------------------------------------------
 # Inlined reference data (from data/meeting_data.py)
@@ -784,8 +785,8 @@ class Pipe:
             description="Model name — Ollama model or Gemini model (e.g. gemini-2.0-flash)",
         )
         API_BASE_URL: str = Field(
-            default="http://localhost:8080",
-            description="Meeting Room API server base URL (booking CRUD)",
+            default="",
+            description="Override the meeting room API base URL. Leave empty to use the current WebUI URL.",
         )
 
     def __init__(self):
@@ -967,6 +968,7 @@ class Pipe:
         __user__: dict = None,
         __event_emitter__: Callable = None,
         __task__: str = None,
+        __request__=None,
     ) -> str:
         messages = body.get("messages", [])
 
@@ -990,6 +992,11 @@ class Pipe:
                 return "Approved successfully but unable to generate ticket information."
 
         user_email = (__user__ or {}).get("email", "")
+        api_base_url = resolve_webui_api_base_url(
+            "/api/v1/meeting-rooms",
+            request=__request__,
+            explicit_base_url=self.valves.API_BASE_URL,
+        )
 
         # Resolve relative date expressions in user messages
         for msg in messages:
@@ -1001,7 +1008,7 @@ class Pipe:
         # Reinforce English-only on the last user message
         non_system = self._enforce_english_on_messages(non_system)
         system_prompt = await get_booking_agent_system_prompt(
-            self.valves.API_BASE_URL, user_email
+            api_base_url, user_email
         )
         full_messages = [{"role": "system", "content": system_prompt}] + non_system
 

@@ -120,10 +120,13 @@ async def get_function_models(request):
                     pipe_models.append(
                         {
                             "id": sub_pipe_id,
+                            "function_id": pipe.id,
                             "name": sub_pipe_name,
                             "object": "model",
                             "created": pipe.created_at,
+                            "user_id": pipe.user_id,
                             "owned_by": "openai",
+                            "is_global": pipe.is_global,
                             "pipe": pipe_flag,
                             "has_user_valves": has_user_valves,
                         }
@@ -138,10 +141,13 @@ async def get_function_models(request):
                 pipe_models.append(
                     {
                         "id": pipe.id,
+                        "function_id": pipe.id,
                         "name": pipe.name,
                         "object": "model",
                         "created": pipe.created_at,
+                        "user_id": pipe.user_id,
                         "owned_by": "openai",
+                        "is_global": pipe.is_global,
                         "pipe": pipe_flag,
                         "has_user_valves": has_user_valves,
                     }

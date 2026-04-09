@@ -7,19 +7,29 @@ version: 1.0.0
 
 import json
 import aiohttp
+from fastapi import Request
 from pydantic import BaseModel, Field
 from typing import Optional
+
+from open_webui.utils.webui_url import resolve_webui_api_base_url
 
 
 class Tools:
     class Valves(BaseModel):
         API_BASE_URL: str = Field(
-            default="http://localhost:8080/api/v1/meeting-rooms",
-            description="Meeting Room API base URL",
+            default="",
+            description="Override the meeting room API base URL. Leave empty to use the current WebUI URL.",
         )
 
     def __init__(self):
         self.valves = self.Valves()
+
+    def _api_base_url(self, __request__: Optional[Request] = None) -> str:
+        return resolve_webui_api_base_url(
+            "/api/v1/meeting-rooms",
+            request=__request__,
+            explicit_base_url=self.valves.API_BASE_URL,
+        )
 
     async def create_booking(
         self,
@@ -43,6 +53,7 @@ class Tools:
         catering: dict = None,
         status: str = "draft",
         __user__: dict = {},
+        __request__: Request = None,
     ) -> str:
         """
         Create a new meeting room booking. Call this ONLY after the user confirms the booking details.
@@ -89,9 +100,10 @@ class Tools:
             "catering": catering,
         }
         try:
+            api_base_url = self._api_base_url(__request__)
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    f"{self.valves.API_BASE_URL}/bookings",
+                    f"{api_base_url}/bookings",
                     json=booking,
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
@@ -120,6 +132,7 @@ class Tools:
         invitees: list = None,
         catering: dict = None,
         __user__: dict = {},
+        __request__: Request = None,
     ) -> str:
         """
         Update an existing meeting room booking. Only the provided fields will be updated; omitted fields keep their current values.
@@ -142,10 +155,11 @@ class Tools:
         :return: Confirmation of the updated booking
         """
         try:
+            api_base_url = self._api_base_url(__request__)
             # Fetch existing booking first
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f"{self.valves.API_BASE_URL}/bookings/{id}",
+                    f"{api_base_url}/bookings/{id}",
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
                     if resp.status != 200:
@@ -167,7 +181,7 @@ class Tools:
 
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    f"{self.valves.API_BASE_URL}/bookings",
+                    f"{api_base_url}/bookings",
                     json=existing,
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
@@ -182,6 +196,7 @@ class Tools:
         self,
         id: str,
         __user__: dict = {},
+        __request__: Request = None,
     ) -> str:
         """
         Cancel an existing meeting room booking by setting its status to cancelled.
@@ -190,9 +205,10 @@ class Tools:
         :return: Confirmation of the cancellation
         """
         try:
+            api_base_url = self._api_base_url(__request__)
             async with aiohttp.ClientSession() as session:
                 async with session.patch(
-                    f"{self.valves.API_BASE_URL}/bookings/{id}",
+                    f"{api_base_url}/bookings/{id}",
                     json={"status": "cancelled"},
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
@@ -206,6 +222,7 @@ class Tools:
     async def list_bookings(
         self,
         __user__: dict = {},
+        __request__: Request = None,
     ) -> str:
         """
         List all active (non-cancelled, non-rejected) bookings for the current user. Use this when the user asks to see their upcoming meetings.
@@ -213,9 +230,10 @@ class Tools:
         :return: JSON array of active bookings
         """
         try:
+            api_base_url = self._api_base_url(__request__)
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f"{self.valves.API_BASE_URL}/bookings",
+                    f"{api_base_url}/bookings",
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
                     if resp.status != 200:
