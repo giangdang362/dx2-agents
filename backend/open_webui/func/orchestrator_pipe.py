@@ -527,18 +527,32 @@ class Pipe:
         user_id = __user__.get("id", "")
         user_role = __user__.get("role", "")
 
+        # Extract SocketIO routing fields from the orchestrator's metadata so
+        # we can forward them to sub-agent HTTP calls.  This lets the inner
+        # /api/chat/completions endpoint build an __event_emitter__ that targets
+        # the SAME chat session — sources, citations, and thinking-sidebar
+        # events from the sub-agent then reach the frontend automatically.
+        _chat_id = (__metadata__ or {}).get("chat_id")
+        _message_id = (__metadata__ or {}).get("message_id")
+        _session_id_socketio = (__metadata__ or {}).get("session_id")
+
         session_id = str(uuid.uuid4())
         session_start_time = time.time()
 
         async def emit(step: str, **kwargs):
             now = time.time()
+            elapsed_ms = int((now - session_start_time) * 1000)
             event_payload = {
                 "step": step,
                 "session_id": session_id,
                 "timestamp": now,
-                "elapsed_ms": int((now - session_start_time) * 1000),
+                "elapsed_ms": elapsed_ms,
                 **kwargs,
             }
+            # Terminal event — always include total response time so the
+            # sidebar can display "RESPONSE TIME 10.9s".
+            if step == "session_done" and "response_time_ms" not in event_payload:
+                event_payload["response_time_ms"] = elapsed_ms
             # 1) Publish to orchestration broadcast (ThinkingSidebar via WebSocket)
             try:
                 from open_webui.utils.orchestration_broadcast import publish as orch_publish
@@ -632,6 +646,59 @@ class Pipe:
                 auth = "Bearer sk-placeholder"
             return url, auth
 
+        def _build_forward_body(
+            agent_id: str,
+            forward_messages: list,
+        ) -> dict:
+            """Build the forward body for a sync, non-streaming sub-agent call.
+
+            We deliberately omit ``session_id`` so the sub-agent endpoint takes
+            the synchronous path at main.py:1959 (not the async-task path at
+            main.py:1942-1957).  This matters because:
+
+            * With ``session_id`` present, the sub-agent endpoint runs
+              ``process_chat`` as a detached background task and returns
+              ``{"status": true, "task_id": ...}`` immediately.  The sub-agent
+              streams content via SocketIO straight to the outer chat
+              session, but the orchestrator's own response generator ends up
+              yielding nothing — and the OUTER middleware's final batch
+              write at middleware.py:4486-4496 then overwrites the
+              sub-agent's DB content with an empty string.  That wipes the
+              assistant message in the database, which in turn breaks title
+              generation (reads empty content) and multi-turn context
+              (``load_messages_from_db`` returns empty assistant turns).
+
+            * With ``session_id`` stripped, the sub-agent runs synchronously,
+              its inner middleware skips all event-emitter-gated DB writes
+              (``if event_emitter:`` in non_streaming_chat_response_handler),
+              and the HTTP response body contains the full answer plus any
+              ``sources`` merged in by ``merge_events_into_response``.  The
+              orchestrator can then yield that real content to the outer
+              stream, so the outer batch write persists correct content —
+              fixing titles and follow-ups.
+
+            Trade-off: the sub-agent's fine-grained thinking-sidebar events
+            (knowledge_search, queries_generated, sources_retrieved, ...)
+            no longer reach the frontend because the sub-agent has no
+            event_emitter.  The orchestrator's own higher-level events
+            (ANALYZING → ROUTING → SPECIALIST MATCH → PROCESSING →
+            RESPONSE COMPLETE) still appear in the sidebar via the
+            orchestration broadcast channel.
+            """
+            fwd = {
+                **body,
+                "messages": forward_messages,
+                "model": agent_id,
+                "stream": False,
+            }
+            fwd.pop("metadata", None)
+            if _chat_id:
+                fwd["chat_id"] = _chat_id
+            if _message_id:
+                fwd["id"] = _message_id
+            fwd.pop("session_id", None)
+            return fwd
+
         # --- Helper: call one agent non-streaming ---
         async def _call_agent(agent_id: str) -> str:
             agent = accessible_agents[agent_id]
@@ -657,14 +724,7 @@ class Pipe:
                     ),
                 }
                 forward_messages = [scope_msg] + forward_messages
-            forward_body = {
-                **body,
-                "messages": forward_messages,
-                "model": agent_id,
-                "stream": False,
-            }
-            # Remove metadata to avoid recursive pipe invocation issues
-            forward_body.pop("metadata", None)
+            forward_body = _build_forward_body(agent_id, forward_messages)
             try:
                 connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
                 async with aiohttp.ClientSession(connector=connector) as session:
@@ -711,42 +771,14 @@ class Pipe:
                 action=action_map.get(selected_id, "Handling request"),
             )
             agent_url, forward_auth = _agent_url_and_auth(selected_id)
-            forward_body = {**body, "model": selected_id, "stream": streaming}
-            forward_body.pop("metadata", None)
+            forward_body = _build_forward_body(selected_id, list(messages))
 
-            if not streaming:
-                connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
-                async with aiohttp.ClientSession(connector=connector) as session:
-                    async with session.post(
-                        agent_url,
-                        json=forward_body,
-                        headers={
-                            "Authorization": forward_auth,
-                            "Content-Type": "application/json",
-                        },
-                        timeout=aiohttp.ClientTimeout(total=120),
-                    ) as resp:
-                        if resp.status != 200:
-                            err_text = await resp.text()
-                            await emit(
-                                "agent_done",
-                                agent_id=selected_id,
-                                agent_label=agent["name"],
-                            )
-                            await emit("session_done", message="Error")
-                            return f"Error from {agent['name']}: {err_text[:200]}"
-                        data = await resp.json()
-                text = (
-                    data.get("choices", [{}])[0].get("message", {}).get("content", "")
-                )
-                await emit(
-                    "agent_done", agent_id=selected_id, agent_label=agent["name"]
-                )
-                await emit("session_done", message="Completed")
-                return text
-
-            # Streaming single agent — return async generator
-            async def _stream_single():
+            # Call the sub-agent synchronously (non-streaming HTTP).  The
+            # sub-agent's inner middleware runs RAG retrieval, calls the
+            # pipe, and returns a response dict whose body has been
+            # enriched with ``sources`` via ``merge_events_into_response``.
+            async def _call_sub_agent() -> tuple[str, list, Optional[str]]:
+                """Return (text, sources, error_msg) from the sub-agent."""
                 connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
                 try:
                     async with aiohttp.ClientSession(connector=connector) as session:
@@ -761,17 +793,63 @@ class Pipe:
                         ) as resp:
                             if resp.status != 200:
                                 err_text = await resp.text()
-                                yield f"Error from {agent['name']}: {err_text[:200]}"
-                                return
-                            async for raw_line in resp.content:
-                                line = raw_line.decode("utf-8").strip()
-                                if not line:
-                                    continue
-                                if line == "data: [DONE]":
-                                    break
-                                # Pass through SSE lines as-is
-                                if line.startswith("data: "):
-                                    yield line
+                                return "", [], f"Error from {agent['name']}: {err_text[:200]}"
+                            data = await resp.json()
+                except Exception as e:
+                    return "", [], f"Error from {agent['name']}: {e!r}"
+                text = (
+                    data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    if isinstance(data, dict) else ""
+                )
+                sources = data.get("sources") or [] if isinstance(data, dict) else []
+                return text, sources, None
+
+            if not streaming:
+                text, sources, err_msg = await _call_sub_agent()
+                if err_msg:
+                    await emit("agent_done", agent_id=selected_id, agent_label=agent["name"])
+                    await emit("session_done", message="Error")
+                    return err_msg
+                # Forward sources to the outer chat so the frontend can
+                # attach them to the assistant message (source chips).
+                if sources and __event_emitter__:
+                    try:
+                        await __event_emitter__(
+                            {
+                                "type": "chat:completion",
+                                "data": {"sources": sources},
+                            }
+                        )
+                    except Exception as e:
+                        print(f"[orchestrator-pipe] source forward error: {e!r}", flush=True)
+                await emit("agent_done", agent_id=selected_id, agent_label=agent["name"])
+                await emit("session_done", message="Completed")
+                return text
+
+            # Streaming single agent — return async generator that yields
+            # the sub-agent's full content as a single OpenAI-format SSE
+            # chunk.  The outer middleware's stream_body_handler will
+            # accumulate this into ``output`` and do a final batch write
+            # with real content — so title generation, follow-up context,
+            # and message persistence all work correctly.
+            async def _stream_single():
+                try:
+                    text, sources, err_msg = await _call_sub_agent()
+                    if err_msg:
+                        yield f"data: {json.dumps({'choices': [{'delta': {'content': err_msg}}]})}"
+                        return
+                    if sources and __event_emitter__:
+                        try:
+                            await __event_emitter__(
+                                {
+                                    "type": "chat:completion",
+                                    "data": {"sources": sources},
+                                }
+                            )
+                        except Exception as e:
+                            print(f"[orchestrator-pipe] source forward error: {e!r}", flush=True)
+                    if text:
+                        yield f"data: {json.dumps({'choices': [{'delta': {'content': text}}]})}"
                 finally:
                     await emit(
                         "agent_done", agent_id=selected_id, agent_label=agent["name"]

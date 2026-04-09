@@ -136,6 +136,46 @@
 							{/each}
 						</div>
 					{/if}
+
+					<!-- Knowledge search: show the original query -->
+					{#if step.step === 'knowledge_search' && step.data?.query}
+						<p class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 italic break-words">
+							"{step.data.query}"
+						</p>
+					{/if}
+
+					<!-- Queries generated: list each expanded query as a chip -->
+					{#if step.step === 'queries_generated'}
+						{@const queries = (step.data?.queries ?? []) as string[]}
+						{#if queries.length > 0}
+							<div class="mt-1 flex flex-col gap-1">
+								{#each queries as q}
+									<div class="flex items-start gap-1.5">
+										<span class="text-[9px] text-purple-400 font-bold mt-[2px]">›</span>
+										<span class="text-[10px] text-gray-600 dark:text-gray-300 break-words leading-snug">
+											{q}
+										</span>
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 italic">
+								{$i18n.t('No queries generated (answered from chat context).')}
+							</p>
+						{/if}
+					{/if}
+
+					<!-- Sources retrieved: show count -->
+					{#if step.step === 'sources_retrieved' && step.data?.count !== undefined}
+						<p class="text-[10px] text-gray-600 dark:text-gray-300 mt-1">
+							<span class="font-semibold tabular-nums">{step.data.count}</span>
+							<span class="text-gray-400 dark:text-gray-500">
+								{step.data.count === 1
+									? $i18n.t('source retrieved from knowledge base')
+									: $i18n.t('sources retrieved from knowledge base')}
+							</span>
+						</p>
+					{/if}
 				</div>
 			</div>
 		{/each}

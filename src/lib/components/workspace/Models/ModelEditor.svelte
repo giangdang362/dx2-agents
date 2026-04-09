@@ -74,7 +74,7 @@
 		base_model_id: null,
 		name: '',
 		meta: {
-			profile_image_url: `${WEBUI_BASE_URL}/static/cmc-logo-loading.png`,
+			profile_image_url: `${WEBUI_BASE_URL}/static/favicon.png`,
 			description: '',
 			suggestion_prompts: null,
 			tags: []
@@ -466,7 +466,7 @@
 							<div class="self-center">
 								<button
 									class="rounded-2xl flex shrink-0 items-center {info.meta.profile_image_url !==
-									`${WEBUI_BASE_URL}/static/cmc-logo-loading.png`
+									`${WEBUI_BASE_URL}/static/favicon.png`
 										? 'bg-transparent'
 										: 'bg-white'} shadow-xl group relative"
 									type="button"
@@ -483,7 +483,7 @@
 										/>
 									{:else}
 										<img
-											src="{WEBUI_BASE_URL}/static/cmc-logo-loading.png"
+											src="{WEBUI_BASE_URL}/static/favicon.png"
 											alt="model profile"
 											class=" rounded-xl size-20 md:size-48 object-cover shrink-0"
 										/>
@@ -519,7 +519,7 @@
 									<button
 										class="px-2 py-1 text-gray-500 rounded-lg text-xs"
 										on:click={() => {
-											info.meta.profile_image_url = `${WEBUI_BASE_URL}/static/cmc-logo-loading.png`;
+											info.meta.profile_image_url = `${WEBUI_BASE_URL}/static/favicon.png`;
 										}}
 										type="button"
 									>

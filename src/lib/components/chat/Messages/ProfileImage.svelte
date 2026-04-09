@@ -2,13 +2,13 @@
 	import { WEBUI_BASE_URL } from '$lib/constants';
 
 	export let className = 'size-8';
-	export let src = `${WEBUI_BASE_URL}/static/cmc-logo-loading.png`;
+	export let src = `${WEBUI_BASE_URL}/static/favicon.png`;
 </script>
 
 <img
 	aria-hidden="true"
 	src={src === ''
-		? `${WEBUI_BASE_URL}/static/cmc-logo-loading.png`
+		? `${WEBUI_BASE_URL}/static/favicon.png`
 		: src.startsWith(WEBUI_BASE_URL) ||
 			  src.startsWith('https://www.gravatar.com/avatar/') ||
 			  src.startsWith('data:') ||

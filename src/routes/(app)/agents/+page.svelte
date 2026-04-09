@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { user, showSidebar, WEBUI_NAME } from '$lib/stores';
-	import { updateModelById, deleteModelById } from '$lib/apis/models';
+	import { updateModelById, deleteModelById, getModelById } from '$lib/apis/models';
 	import { getAgentsList } from '$lib/apis/agents';
 	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import EditAgentModal from '$lib/components/admin/Agents/EditAgentModal.svelte';
@@ -20,6 +20,12 @@
 	let selectedIds = new Set<string>();
 	let showDeleteConfirm = false;
 
+	// Favorites state
+	let favoriteIds: Set<string> = new Set();
+
+	// Collapsible categories state
+	let collapsedCategories: Set<string> = new Set();
+
 	$: isAdmin = $user?.role === 'admin';
 
 	onMount(async () => {
@@ -27,8 +33,45 @@
 			goto('/');
 			return;
 		}
+
+		if (typeof localStorage !== 'undefined') {
+			try {
+				const raw = localStorage.getItem('agentHub:favorites');
+				if (raw) favoriteIds = new Set(JSON.parse(raw));
+			} catch {}
+
+			try {
+				const rawCollapsed = localStorage.getItem('agentHub:collapsedCategories');
+				if (rawCollapsed) collapsedCategories = new Set(JSON.parse(rawCollapsed));
+			} catch {}
+		}
+
 		await loadData();
 	});
+
+	function toggleFavorite(agentId: string) {
+		if (favoriteIds.has(agentId)) {
+			favoriteIds.delete(agentId);
+		} else {
+			favoriteIds.add(agentId);
+		}
+		favoriteIds = favoriteIds;
+		try {
+			localStorage.setItem('agentHub:favorites', JSON.stringify([...favoriteIds]));
+		} catch {}
+	}
+
+	function toggleCategory(name: string) {
+		if (collapsedCategories.has(name)) {
+			collapsedCategories.delete(name);
+		} else {
+			collapsedCategories.add(name);
+		}
+		collapsedCategories = collapsedCategories;
+		try {
+			localStorage.setItem('agentHub:collapsedCategories', JSON.stringify([...collapsedCategories]));
+		} catch {}
+	}
 
 	async function loadData() {
 		loading = true;
@@ -72,10 +115,19 @@
 		}
 	}
 
-	function handleEditAgent(agent) {
+	async function handleEditAgent(agent: any) {
 		if (!agent.workspace_model_id) return;
-		selectedAgent = agent;
-		showEditModal = true;
+		try {
+			const fullModel = await getModelById($user?.token, agent.workspace_model_id);
+			if (!fullModel) {
+				toast.error($i18n.t('Failed to load agent'));
+				return;
+			}
+			selectedAgent = fullModel;
+			showEditModal = true;
+		} catch (e) {
+			toast.error($i18n.t('Failed to load agent'));
+		}
 	}
 
 	function isSelectable(agent) {
@@ -135,6 +187,33 @@
 
 	$: systemOnline = agents.some((a) => a.is_active);
 	$: onlineCount = agents.filter((a) => a.is_active).length;
+
+	// Group agents by their first tag; untagged agents fall into "General".
+	// "General" is always rendered last; other categories are sorted alphabetically.
+	// A synthetic "Favorites" category is prepended when any agents are favorited.
+	$: agentCategories = (() => {
+		const favorites = (agents as any[]).filter((a) => favoriteIds.has(a.id));
+
+		const groups = new Map<string, any[]>();
+		for (const agent of agents as any[]) {
+			const tags = agent.meta?.tags ?? [];
+			const categoryName = tags.length > 0 && tags[0]?.name ? tags[0].name : 'General';
+			if (!groups.has(categoryName)) groups.set(categoryName, []);
+			groups.get(categoryName)!.push(agent);
+		}
+		const regular = Array.from(groups.entries())
+			.map(([name, items]) => ({ name, items, isFavorites: false }))
+			.sort((a, b) => {
+				if (a.name === 'General') return 1;
+				if (b.name === 'General') return -1;
+				return a.name.localeCompare(b.name);
+			});
+
+		if (favorites.length > 0) {
+			return [{ name: 'Favorites', items: favorites, isFavorites: true }, ...regular];
+		}
+		return regular;
+	})();
 
 	const TAG_BADGE_CLASS = 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300';
 
@@ -238,13 +317,49 @@
 				</div>
 			</div>
 		{:else}
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
-				{#each agents as agent (agent.id)}
+			{#each agentCategories as category (category.name)}
+			{@const collapsed = collapsedCategories.has(category.name)}
+			<section class="mb-8" class:mb-3={collapsed}>
+				<button
+					type="button"
+					class="agent-section-header group flex items-center gap-2 mb-3 w-full text-left rounded-lg px-2 py-1.5 -mx-2 transition-colors"
+					class:opacity-70={collapsed}
+					on:click={() => toggleCategory(category.name)}
+					aria-expanded={!collapsed}
+					aria-controls="category-grid-{category.name}"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2"
+						stroke="currentColor"
+						class="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 shrink-0 transition-transform transition-colors duration-150 {collapsed ? '' : 'rotate-90'}"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+					</svg>
+					{#if category.isFavorites}
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-yellow-400 shrink-0">
+							<path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
+						</svg>
+					{/if}
+					<h2 class="text-sm font-semibold text-gray-700 dark:text-gray-200 capitalize">
+						{category.name}
+					</h2>
+					<span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-[11px] font-medium tabular-nums">
+						{category.items.length}
+					</span>
+				</button>
+			{#if !collapsed}
+			<div id="category-grid-{category.name}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+				{#each category.items as agent (agent.id)}
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<div
 						class="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border shadow-sm dark:shadow-gray-950/50 hover:shadow-md transition relative h-[10rem] cursor-pointer {selectedIds.has(agent.id)
 							? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800'
+							: favoriteIds.has(agent.id)
+							? 'border-yellow-300 dark:border-yellow-600/50 bg-yellow-50/30 dark:bg-yellow-900/5'
 							: 'border-gray-200 dark:border-gray-600'}"
 						on:click={() => {
 							if (selectMode) {
@@ -273,10 +388,30 @@
 
 						<!-- Online dot -->
 						<span
-							class="absolute top-4 right-4 w-2.5 h-2.5 rounded-full {agent.is_active
+							class="absolute top-4 right-10 w-2.5 h-2.5 rounded-full {agent.is_active
 								? 'bg-green-500'
 								: 'bg-gray-300 dark:bg-gray-600'}"
 						></span>
+
+						<!-- Favorite star button -->
+						{#if !selectMode}
+							<button
+								type="button"
+								class="absolute top-3 right-3 p-0.5 rounded-md text-gray-400 hover:text-yellow-400 dark:text-gray-500 dark:hover:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition"
+								title={favoriteIds.has(agent.id) ? $i18n.t('Unfavorite') : $i18n.t('Favorite')}
+								on:click|stopPropagation={() => toggleFavorite(agent.id)}
+							>
+								{#if favoriteIds.has(agent.id)}
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-yellow-400">
+										<path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
+									</svg>
+								{:else}
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+									</svg>
+								{/if}
+							</button>
+						{/if}
 
 						<!-- Avatar + Name -->
 						<div class="flex items-center gap-3 pr-5 {selectMode && isSelectable(agent) ? 'pl-6' : ''}">
@@ -318,7 +453,7 @@
 						</p>
 
 						<!-- Gear icon -->
-						{#if isAdmin && !selectMode}
+						{#if isAdmin && !selectMode && agent.source !== 'function'}
 							<button
 								class="absolute bottom-3 right-3 p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
 								title={$i18n.t('Edit Agent')}
@@ -333,6 +468,9 @@
 					</div>
 				{/each}
 			</div>
+			{/if}
+			</section>
+			{/each}
 		{/if}
 
 		<!-- Status Bar -->
@@ -353,3 +491,12 @@
 		{/if}
 	</div>
 </div>
+
+<style>
+	.agent-section-header {
+		background: color-mix(in oklab, var(--color-gray-800, #333) 50%, transparent);
+	}
+	.agent-section-header:hover {
+		background: color-mix(in oklab, var(--color-gray-700, #4b5563) 60%, transparent);
+	}
+</style>
