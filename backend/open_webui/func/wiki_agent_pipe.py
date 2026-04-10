@@ -70,16 +70,16 @@ OUTPUT FORMAT
 class Pipe:
     class Valves(BaseModel):
         LLM_PROVIDER: str = Field(
-            default="gemini",
-            description="LLM provider: 'ollama' or 'gemini'",
+            default="openai",
+            description="LLM provider: 'ollama', 'gemini', or 'openai' (OpenAI-compatible, incl. Azure AI Foundry via OPENAI_API_BASE_URL/OPENAI_API_KEY env)",
         )
         OLLAMA_BASE_URL: str = Field(
             default="http://localhost:11434",
             description="Ollama base URL (used when LLM_PROVIDER=ollama)",
         )
         MODEL: str = Field(
-            default="gemini-2.5-flash",
-            description="Model for generating answers (e.g. gemini-2.5-flash, phi4-mini)",
+            default="gpt-5.3-chat",
+            description="Model for generating answers (e.g. gpt-5.3-chat, gemini-2.5-flash, phi4-mini)",
         )
 
     def __init__(self):
@@ -97,6 +97,10 @@ class Pipe:
         try:
             if self.valves.LLM_PROVIDER == "gemini":
                 return await llm_client.gemini_chat(
+                    messages, model=self.valves.MODEL
+                )
+            if self.valves.LLM_PROVIDER == "openai":
+                return await llm_client.openai_chat(
                     messages, model=self.valves.MODEL
                 )
             return await llm_client.ollama_chat(

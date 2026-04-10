@@ -236,7 +236,7 @@
 			<div class="auth-center" id="auth-container">
 				<!-- Logo -->
 				<div class="logo-wrap">
-					<img src="/src/routes/auth/logo.svg" alt="CMC Global Logo" class="auth-logo" />
+					<img src="/logo.svg" alt="CMC Global Logo" class="auth-logo" />
 				</div>
 
 				<!-- Card -->

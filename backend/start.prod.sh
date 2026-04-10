@@ -4,6 +4,14 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR" || exit
 
+# ── Load .env if present (matches dev.sh behavior) ────────────────────────────
+ROOT_DIR=$( cd -- "$SCRIPT_DIR/.." &> /dev/null && pwd )
+if [ -f "$ROOT_DIR/.env" ]; then
+    set -a
+    . "$ROOT_DIR/.env"
+    set +a
+fi
+
 # ── Secret key ────────────────────────────────────────────────────────────────
 if [ -n "${WEBUI_SECRET_KEY_FILE}" ]; then
     KEY_FILE="${WEBUI_SECRET_KEY_FILE}"
@@ -39,6 +47,21 @@ if [ "$#" -gt 0 ]; then
     ARGS=("$@")
 else
     ARGS=(--workers "$UVICORN_WORKERS")
+fi
+
+# ── Pre-download embedding models (persist into mounted volume) ──────────────
+if [ "${USE_SLIM_DOCKER,,}" != "true" ]; then
+    "$PYTHON_CMD" -c "
+import os
+from sentence_transformers import SentenceTransformer
+model = os.environ.get('RAG_EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2')
+aux   = os.environ.get('AUXILIARY_EMBEDDING_MODEL', 'TaylorAI/bge-micro-v2')
+print(f'Ensuring embedding model: {model}')
+SentenceTransformer(model, device='cpu')
+print(f'Ensuring auxiliary model: {aux}')
+SentenceTransformer(aux, device='cpu')
+print('Embedding models ready.')
+"
 fi
 
 # ── Open WebUI ────────────────────────────────────────────────────────────────

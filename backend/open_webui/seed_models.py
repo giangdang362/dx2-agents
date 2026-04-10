@@ -145,6 +145,14 @@ SEED_FUNCTIONS: list[dict] = [
         "is_active": True,
         "is_global": True,
     },
+    {
+        "id": "wiki_agent",
+        "name": "Wiki Agent",
+        "path": Path(__file__).resolve().parent / "func" / "wiki_agent_pipe.py",
+        "description": "RAG-powered company wiki assistant — answers HR, policy, and benefits questions using knowledge base documents.",
+        "is_active": True,
+        "is_global": True,
+    },
 ]
 
 SEED_MODELS: list[dict] = [

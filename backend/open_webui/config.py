@@ -1974,22 +1974,81 @@ QUERY_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
 )
 
 DEFAULT_QUERY_GENERATION_PROMPT_TEMPLATE = """### Task:
-Analyze the chat history to determine the necessity of generating search queries, in the given language. By default, **prioritize generating 1-3 broad and relevant search queries** unless it is absolutely certain that no additional information is required. The aim is to retrieve comprehensive, updated, and valuable information even with minimal uncertainty. If no search is unequivocally needed, return an empty list.
+Analyze the chat history and generate search queries to retrieve comprehensive information from a company knowledge base (HR policies, benefits, regulations). The knowledge base contains Vietnamese and English documents.
 
-### Guidelines:
-- Respond **EXCLUSIVELY** with a JSON object. Any form of extra commentary, explanation, or additional text is strictly prohibited.
-- When generating search queries, respond in the format: { "queries": ["query1", "query2"] }, ensuring each query is distinct, concise, and relevant to the topic.
-- If and only if it is entirely certain that no useful results can be retrieved by a search, return: { "queries": [] }.
-- Err on the side of suggesting search queries if there is **any chance** they might provide useful or updated information.
-- Be concise and focused on composing high-quality search queries, avoiding unnecessary elaboration, commentary, or assumptions.
-- Today's date is: {{CURRENT_DATE}}.
-- Always prioritize providing actionable and broad queries that maximize informational coverage.
+### Core Rules:
+- Respond **EXCLUSIVELY** with a JSON object. No commentary, no explanation.
+- Format: { "queries": ["query1", "query2", ...] }
+- If no search is needed (pure greeting, thanks, meta-question about the assistant), return: { "queries": [] }
+- Generate queries in the SAME language as the user's question. If the user writes Vietnamese, generate Vietnamese queries. If English, generate English queries.
+- Each query must be distinct and target a different facet or sub-topic. Avoid near-duplicates.
+
+### Intent Detection — CRITICAL:
+Detect whether the user is asking a **listing / exhaustive** question or a **factual lookup**.
+
+**Listing intent** — triggered by words like:
+- Vietnamese: "tất cả", "liệt kê", "toàn bộ", "mọi", "những ... nào", "có ... gì", "bao gồm những gì", "danh sách"
+- English: "all", "list", "every", "what are the", "enumerate", "which ... are"
+
+When listing intent is detected:
+- Generate **6–10 queries**, each targeting a different sub-topic or facet of the subject.
+- Decompose the subject into its known dimensions. For HR/benefits questions about an employee type, expand across ALL benefit categories:
+  - bảo hiểm (insurance: BHXH, BHYT, BHTN, bảo hiểm sức khỏe)
+  - nghỉ phép (leave: nghỉ phép năm, nghỉ ốm, nghỉ thai sản, nghỉ lễ, nghỉ không lương)
+  - lương thưởng (salary & bonus: lương tháng 13, thưởng hiệu suất, thưởng lễ tết)
+  - trợ cấp & phụ cấp (allowances: ăn trưa, đi lại, điện thoại, công tác)
+  - đào tạo (training & development)
+  - sức khỏe (health check, wellness)
+  - hoạt động công ty (team building, company events)
+  - chế độ khác (other benefits: quà sinh nhật, cưới hỏi, hiếu hỉ)
+- Always include one broad query covering the main subject, plus one query per sub-topic above that is relevant.
+
+**Factual lookup intent** — specific amounts, deadlines, eligibility, "how much", "when", "who qualifies":
+- Generate **1–3 focused queries** targeting the specific fact.
+
+### Query Quality:
+- Keep each query concise (3–12 words), keyword-dense, and optimized for semantic + keyword retrieval.
+- Preserve key nouns from the user's question (e.g. "nhân viên chính thức", "nhân viên thử việc", "thực tập sinh") in every query where the employee type matters.
+- Do NOT answer the question. Only generate search queries.
+
+### Examples:
+
+User: "nhân viên chính thức có những phúc lợi nào, liệt kê tất cả"
+Output: { "queries": [
+  "phúc lợi nhân viên chính thức",
+  "bảo hiểm xã hội y tế thất nghiệp nhân viên chính thức",
+  "bảo hiểm sức khỏe nhân viên chính thức",
+  "nghỉ phép năm nghỉ lễ nhân viên chính thức",
+  "lương tháng 13 thưởng nhân viên chính thức",
+  "trợ cấp phụ cấp ăn trưa đi lại nhân viên chính thức",
+  "đào tạo phát triển nhân viên chính thức",
+  "chế độ hiếu hỉ cưới hỏi nhân viên chính thức",
+  "khám sức khỏe định kỳ nhân viên chính thức"
+] }
+
+User: "mức đóng bảo hiểm xã hội là bao nhiêu"
+Output: { "queries": [
+  "mức đóng bảo hiểm xã hội",
+  "tỷ lệ phần trăm BHXH nhân viên công ty"
+] }
+
+User: "list all leave types for probationary employees"
+Output: { "queries": [
+  "leave policy probationary employee",
+  "annual leave probation period",
+  "sick leave probationary employee",
+  "unpaid leave probation",
+  "public holiday probationary staff"
+] }
+
+User: "cảm ơn bạn"
+Output: { "queries": [] }
 
 ### Output:
-Strictly return in JSON format: 
-{
-  "queries": ["query1", "query2"]
-}
+Strictly return JSON only:
+{ "queries": ["...", "..."] }
+
+### Today's date: {{CURRENT_DATE}}
 
 ### Chat History:
 <chat_history>
@@ -2802,7 +2861,7 @@ BYPASS_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
 
 
 RAG_TOP_K = PersistentConfig(
-    "RAG_TOP_K", "rag.top_k", int(os.environ.get("RAG_TOP_K", "3"))
+    "RAG_TOP_K", "rag.top_k", int(os.environ.get("RAG_TOP_K", "15"))
 )
 RAG_TOP_K_RERANKER = PersistentConfig(
     "RAG_TOP_K_RERANKER",
@@ -2823,7 +2882,7 @@ RAG_HYBRID_BM25_WEIGHT = PersistentConfig(
 ENABLE_RAG_HYBRID_SEARCH = PersistentConfig(
     "ENABLE_RAG_HYBRID_SEARCH",
     "rag.enable_hybrid_search",
-    os.environ.get("ENABLE_RAG_HYBRID_SEARCH", "").lower() == "true",
+    os.environ.get("ENABLE_RAG_HYBRID_SEARCH", "True").lower() == "true",
 )
 
 ENABLE_RAG_HYBRID_SEARCH_ENRICHED_TEXTS = PersistentConfig(
@@ -3018,7 +3077,7 @@ TIKTOKEN_ENCODING_NAME = PersistentConfig(
 
 
 CHUNK_SIZE = PersistentConfig(
-    "CHUNK_SIZE", "rag.chunk_size", int(os.environ.get("CHUNK_SIZE", "1000"))
+    "CHUNK_SIZE", "rag.chunk_size", int(os.environ.get("CHUNK_SIZE", "2000"))
 )
 
 CHUNK_MIN_SIZE_TARGET = PersistentConfig(
@@ -3030,7 +3089,7 @@ CHUNK_MIN_SIZE_TARGET = PersistentConfig(
 CHUNK_OVERLAP = PersistentConfig(
     "CHUNK_OVERLAP",
     "rag.chunk_overlap",
-    int(os.environ.get("CHUNK_OVERLAP", "100")),
+    int(os.environ.get("CHUNK_OVERLAP", "300")),
 )
 
 DEFAULT_RAG_TEMPLATE = """### Task:

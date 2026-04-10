@@ -65,9 +65,9 @@ def resolve_webui_base_url(
         return explicit
 
     for candidate in (
-        _request_base_url(request),
         normalize_base_url(os.environ.get("OPEN_WEBUI_BASE_URL")),
         build_local_base_url(),
+        _request_base_url(request),
         _request_config_webui_url(request),
         _env_webui_url(),
     ):

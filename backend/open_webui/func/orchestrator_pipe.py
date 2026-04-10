@@ -38,16 +38,16 @@ _ssl_ctx = ssl.create_default_context(cafile=certifi.where())
 class Pipe:
     class Valves(BaseModel):
         LLM_PROVIDER: str = Field(
-            default="gemini",
-            description="LLM provider: 'ollama' or 'gemini'",
+            default="openai",
+            description="LLM provider: 'ollama', 'gemini', or 'openai' (OpenAI-compatible, incl. Azure AI Foundry via OPENAI_API_BASE_URL/OPENAI_API_KEY env)",
         )
         OLLAMA_BASE_URL: str = Field(
             default="http://localhost:11434",
             description="Ollama base URL (used when LLM_PROVIDER=ollama)",
         )
         ROUTING_MODEL: str = Field(
-            default="gemini-2.5-flash",
-            description="Model used for routing decisions and synthesis (e.g. 'gemini-2.0-flash' or 'phi4-mini')",
+            default="gpt-5.3-chat",
+            description="Model used for routing decisions and synthesis (e.g. 'gpt-5.3-chat', 'gemini-2.5-flash', or 'phi4-mini')",
         )
         ROUTING_SYSTEM_PROMPT: str = Field(
             default=(
@@ -88,6 +88,8 @@ class Pipe:
         try:
             if self.valves.LLM_PROVIDER == "gemini":
                 text = await llm_client.gemini_chat(messages, model=effective_model)
+            elif self.valves.LLM_PROVIDER == "openai":
+                text = await llm_client.openai_chat(messages, model=effective_model)
             else:
                 text = await llm_client.ollama_chat_openai(
                     messages, model=effective_model, base_url=self.valves.OLLAMA_BASE_URL
@@ -113,7 +115,7 @@ class Pipe:
 
     @asynccontextmanager
     async def _stream_llm(self, messages: list[dict], model: str | None = None):
-        """Streaming chat completion. Yields raw SSE text lines (Ollama) or text tokens (Gemini)."""
+        """Streaming chat completion. Yields raw SSE text lines (Ollama / OpenAI) or wrapped tokens (Gemini)."""
         effective_model = model or self.valves.ROUTING_MODEL
 
         if self.valves.LLM_PROVIDER == "gemini":
@@ -130,6 +132,14 @@ class Pipe:
                     yield f"data: {json.dumps(chunk)}"
 
             yield _gemini_lines()
+        elif self.valves.LLM_PROVIDER == "openai":
+            async def _openai_lines():
+                async for line in llm_client.openai_stream_sse(
+                    messages, model=effective_model
+                ):
+                    yield line
+
+            yield _openai_lines()
         else:
             # Ollama SSE streaming — yields raw SSE lines directly
             async def _ollama_lines():

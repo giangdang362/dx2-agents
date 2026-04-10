@@ -535,6 +535,7 @@ BOOKING WORKFLOW
    details in a structured table and ask the user to confirm. Do NOT output a booking
    block yet. Use this exact markdown format (adapt field values):
 
+   | | |
    |---|---|
    | **Title** | Meeting with Sony client |
    | **Date** | Wednesday, 05/03/2026 |
@@ -545,13 +546,14 @@ BOOKING WORKFLOW
    | **Equipment** | Projector, TV, Video Conference |
    | **Teabreak** | Tea + Coffee + Pastries (or "None") |
 
-   Then ask the user to confirm (in English).
+   After the table, always end with exactly this line:
+
+   **Type "confirm" to book this room, or tell me what you'd like to change.**
 
    Keep the table header row (| | | and |---|---|) exactly as shown.
    BOTH column labels AND values MUST be in English.
 
-7. BOOKING CREATION — output ONLY after the user explicitly confirms (says "yes", "đặt",
-   "xác nhận", "ok", "được", "đồng ý", or any clear approval).
+7. BOOKING CREATION — output ONLY after the user explicitly types "confirm" or "xác nhận".
 
    Output a short acknowledgement line followed by the ```booking code block so the frontend
    renders the booking card:
@@ -662,6 +664,7 @@ Step C1 — SEARCH: When user wants to cancel a meeting, search ACTIVE BOOKINGS 
 
 Step C2 — CONFIRM: Show a summary table before cancelling (do NOT cancel yet):
 
+  | | |
   |---|---|
   | **Title** | <title from registry> |
   | **Client** | <client from registry> |
@@ -679,11 +682,10 @@ Step C2 — CONFIRM: Show a summary table before cancelling (do NOT cancel yet):
     cancelled → Cancelled
     rejected  → Rejected
 
-  *Are you sure you want to cancel this meeting?*
+  **Type "confirm" to cancel this meeting, or "no" to keep it.**
 
-Step C3 — EXECUTE: ONLY after user explicitly confirms (says "có", "huỷ", "yes", "đồng ý",
-  "xác nhận", or any clear approval), output a ```cancel_booking code block so the frontend
-  updates the UI:
+Step C3 — EXECUTE: ONLY after the user explicitly types "confirm" or "xác nhận",
+  output a ```cancel_booking code block so the frontend updates the UI:
 
 ```cancel_booking
 {{"id": "<exact booking id copied from registry — e.g. MTG-HN-abc123...>"}}
@@ -773,16 +775,16 @@ async def get_booking_agent_system_prompt(
 class Pipe:
     class Valves(BaseModel):
         LLM_PROVIDER: str = Field(
-            default="gemini",
-            description="LLM provider: 'ollama' or 'gemini'",
+            default="openai",
+            description="LLM provider: 'ollama', 'gemini', or 'openai' (OpenAI-compatible, incl. Azure AI Foundry via OPENAI_API_BASE_URL/OPENAI_API_KEY env)",
         )
         OLLAMA_BASE_URL: str = Field(
             default="http://localhost:11434",
             description="Ollama base URL (used when LLM_PROVIDER=ollama)",
         )
         MODEL: str = Field(
-            default="gemini-2.5-flash",
-            description="Model name — Ollama model or Gemini model (e.g. gemini-2.0-flash)",
+            default="gpt-5.3-chat",
+            description="Model name (e.g. gpt-5.3-chat, gemini-2.5-flash, phi4-mini)",
         )
         API_BASE_URL: str = Field(
             default="",
@@ -805,6 +807,8 @@ class Pipe:
         try:
             if self.valves.LLM_PROVIDER == "gemini":
                 return await llm_client.gemini_chat(messages, model=self.valves.MODEL)
+            if self.valves.LLM_PROVIDER == "openai":
+                return await llm_client.openai_chat(messages, model=self.valves.MODEL)
             return await llm_client.ollama_chat(
                 messages, model=self.valves.MODEL, base_url=self.valves.OLLAMA_BASE_URL
             )

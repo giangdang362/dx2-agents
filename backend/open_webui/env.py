@@ -800,9 +800,17 @@ else:
         AIOHTTP_CLIENT_TIMEOUT = 300
 
 
-AIOHTTP_CLIENT_SESSION_SSL = (
-    os.environ.get("AIOHTTP_CLIENT_SESSION_SSL", "True").lower() == "true"
-)
+def _build_aiohttp_ssl_context():
+    """Return an SSLContext with certifi's CA bundle, or False to disable verification."""
+    _flag = os.environ.get("AIOHTTP_CLIENT_SESSION_SSL", "True").lower()
+    if _flag != "true":
+        return False
+    import ssl
+    import certifi
+    return ssl.create_default_context(cafile=certifi.where())
+
+
+AIOHTTP_CLIENT_SESSION_SSL = _build_aiohttp_ssl_context()
 
 AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST = os.environ.get(
     "AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST",

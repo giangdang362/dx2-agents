@@ -1,10 +1,13 @@
 """
 Shared async LLM client for Open WebUI pipe functions.
 
-Provides non-streaming and streaming helpers for both Ollama and Gemini.
+Provides non-streaming and streaming helpers for Ollama, Gemini, and any
+OpenAI-compatible endpoint (OpenAI, Azure AI Foundry MaaS, LiteLLM, etc.).
 All functions return extracted text strings (not raw API dicts).
 
 Gemini reads GEMINI_API_KEY from the environment.
+OpenAI-compatible helpers read OPENAI_API_KEY and OPENAI_API_BASE_URL from
+the environment, matching the connection seeded in seed_models.py.
 Ollama URL is passed per-call so each pipe keeps its own base_url valve.
 """
 
@@ -16,8 +19,10 @@ from typing import AsyncGenerator, Awaitable, Callable
 import aiohttp
 import certifi
 
-_GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+_GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 _GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
+_OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
+_OPENAI_BASE_URL = os.environ.get("OPENAI_API_BASE_URL", "").strip().rstrip("/")
 _ssl_ctx = ssl.create_default_context(cafile=certifi.where())
 
 
@@ -320,3 +325,124 @@ async def gemini_stream(
                 token = _gemini_text_from_chunk(chunk)
                 if token:
                     yield token
+
+
+# ---------------------------------------------------------------------------
+# OpenAI-compatible (OpenAI, Azure AI Foundry MaaS, LiteLLM, vLLM, etc.)
+# ---------------------------------------------------------------------------
+# Reads OPENAI_API_KEY and OPENAI_API_BASE_URL from env, matching the
+# connection seeded by seed_models.py. To target Azure AI Foundry, set
+# OPENAI_API_BASE_URL to the Azure MaaS endpoint and OPENAI_API_KEY to the
+# Azure key — same env var names, no Azure-specific config.
+
+
+async def openai_stream(
+    messages: list[dict],
+    model: str,
+    base_url: str | None = None,
+    api_key: str | None = None,
+) -> AsyncGenerator[str, None]:
+    """Streaming OpenAI-compatible call. Yields plain text tokens (like
+    gemini_stream / ollama_stream — use for pipes that consume text, not SSE)."""
+    effective_base = (base_url or _OPENAI_BASE_URL).rstrip("/")
+    url = f"{effective_base}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key or _OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {"model": model, "messages": messages, "stream": True}
+    connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
+    session = aiohttp.ClientSession(connector=connector)
+    try:
+        resp = await session.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=aiohttp.ClientTimeout(total=300),
+        )
+        if resp.status != 200:
+            err = await resp.text()
+            yield f"Error contacting OpenAI API (status {resp.status}): {err}"
+            return
+        async for raw_line in resp.content:
+            line = raw_line.decode("utf-8").strip()
+            if not line or not line.startswith("data:"):
+                continue
+            json_str = line[len("data:"):].strip()
+            if not json_str or json_str == "[DONE]":
+                continue
+            try:
+                chunk = _json.loads(json_str)
+            except _json.JSONDecodeError:
+                continue
+            token = chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
+            if token:
+                yield token
+    finally:
+        await session.close()
+
+
+async def openai_chat(
+    messages: list[dict],
+    model: str,
+    base_url: str | None = None,
+    api_key: str | None = None,
+) -> str:
+    """Non-streaming OpenAI-compatible call. Returns assistant text."""
+    effective_base = (base_url or _OPENAI_BASE_URL).rstrip("/")
+    url = f"{effective_base}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key or _OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {"model": model, "messages": messages, "stream": False}
+    connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        async with session.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=aiohttp.ClientTimeout(total=120),
+        ) as resp:
+            if resp.status != 200:
+                err = await resp.text()
+                raise RuntimeError(f"OpenAI API error {resp.status}: {err}")
+            data = await resp.json()
+    return data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+
+async def openai_stream_sse(
+    messages: list[dict],
+    model: str,
+    base_url: str | None = None,
+    api_key: str | None = None,
+) -> AsyncGenerator[str, None]:
+    """Streaming OpenAI-compatible call. Yields raw SSE lines (same shape as
+    ollama_stream_sse — safe to feed into the orchestrator's existing SSE
+    consumer)."""
+    effective_base = (base_url or _OPENAI_BASE_URL).rstrip("/")
+    url = f"{effective_base}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key or _OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {"model": model, "messages": messages, "stream": True}
+    connector = aiohttp.TCPConnector(ssl=_ssl_ctx)
+    session = aiohttp.ClientSession(connector=connector)
+    try:
+        resp = await session.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=aiohttp.ClientTimeout(total=300),
+        )
+        if resp.status != 200:
+            err = await resp.text()
+            yield f"data: {_json.dumps({'error': err[:200]})}"
+            return
+        async for raw_line in resp.content:
+            line = raw_line.decode("utf-8").strip()
+            if line:
+                yield line
+    finally:
+        await session.close()
