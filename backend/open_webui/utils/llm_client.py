@@ -158,7 +158,10 @@ async def ollama_chat_openai(
                 err = await resp.text()
                 raise RuntimeError(f"Ollama error {resp.status}: {err}")
             data = await resp.json()
-    return data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    choices = data.get("choices") or []
+    if not choices:
+        return ""
+    return choices[0].get("message", {}).get("content", "")
 
 
 async def ollama_stream_sse(
@@ -375,7 +378,10 @@ async def openai_stream(
                 chunk = _json.loads(json_str)
             except _json.JSONDecodeError:
                 continue
-            token = chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
+            choices = chunk.get("choices") or []
+            if not choices:
+                continue
+            token = choices[0].get("delta", {}).get("content", "")
             if token:
                 yield token
     finally:
@@ -408,7 +414,10 @@ async def openai_chat(
                 err = await resp.text()
                 raise RuntimeError(f"OpenAI API error {resp.status}: {err}")
             data = await resp.json()
-    return data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    choices = data.get("choices") or []
+    if not choices:
+        return ""
+    return choices[0].get("message", {}).get("content", "")
 
 
 async def openai_stream_sse(
