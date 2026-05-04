@@ -153,6 +153,14 @@ SEED_FUNCTIONS: list[dict] = [
         "is_active": True,
         "is_global": True,
     },
+    {
+        "id": "unittest_agent_pipe",
+        "name": "Unit Test Generator",
+        "path": Path(__file__).resolve().parent / "func" / "unittest_agent_pipe.py",
+        "description": "Generates comprehensive unit tests for source code (Python/pytest, TS/vitest, JS/jest, Go/testing, Java/JUnit 5).",
+        "is_active": True,
+        "is_global": True,
+    },
 ]
 
 SEED_MODELS: list[dict] = [

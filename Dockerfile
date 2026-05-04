@@ -127,10 +127,18 @@ RUN chown -R $UID:$GID /app $HOME
 # Install common system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    ca-certificates \
     git build-essential pandoc gcc netcat-openbsd curl jq \
     python3-dev \
     ffmpeg libsm6 libxext6 zstd \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Install any custom/corporate CA certs placed under ./certs/ (optional).
+# Drop *.crt files (PEM, with .crt extension) into the certs/ directory at the
+# repo root before building. They will be added to the system trust store.
+COPY ./certs/ /usr/local/share/ca-certificates/
+RUN update-ca-certificates || true
 
 # install python dependencies
 COPY --chown=$UID:$GID ./backend/requirements.txt ./requirements.txt

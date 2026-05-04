@@ -14,6 +14,7 @@ MANAGED_AGENT_IDS = frozenset(
         "orchestrator_pipe",
         "kinetix",
         "silicore",
+        "unittest_agent_pipe",
     }
 )
 

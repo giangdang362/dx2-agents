@@ -3,8 +3,11 @@
 docs
 kubernetes
 node_modules
-/.svelte-kit
-/package
+.svelte-kit
+package
+.venv
+build
+.git
 .env
 .env.*
 vite.config.js.timestamp-*
